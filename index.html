@@ -195,6 +195,15 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
 .workout-ready-banner-text{flex:1;font-size:13px;color:var(--text2)}
 .workout-ready-banner-text strong{display:block;font-size:14px;color:var(--text);margin-bottom:2px}
 
+/* FORM CARGAS */
+.form-cargas { margin-top: 12px; display: flex; flex-direction: column; gap: 10px; }
+.form-cargas-row { display: grid; grid-template-columns: 1fr 72px 36px 56px 36px; align-items: center; gap: 8px; }
+.form-cargas-label { font-size: 13px; font-weight: 600; color: var(--text); }
+.form-cargas-input { background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; padding: 7px 10px; color: var(--text); font-size: 14px; outline: none; text-align: center; width: 100%; font-family: inherit; }
+.form-cargas-input:focus { border-color: var(--orange); }
+.form-cargas-unit { font-size: 11px; color: var(--text3); }
+.form-cargas-btn { width: 100%; margin-top: 12px; background: var(--orange); border: none; border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 700; color: #fff; cursor: pointer; font-family: inherit; }
+
 </style>
 </head>
 <body>
@@ -732,21 +741,10 @@ P_HISTORICO. Qual é a sua situação atual com o treino?
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    PERGUNTAS DE FORÇA DE REFERÊNCIA
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   P_1RM. Você já fez algum teste de 1 repetição máxima nos exercícios básicos?
-   [Sim, sei minhas cargas máximas | Nunca testei formalmente | Não sei o que é isso]
-   → SE "Sim, sei minhas cargas máximas":
-      Perguntar para cada exercício básico relevante (um por vez):
-      "Qual é o seu 1RM no [exercício]? (se não souber exato, pode estimar)"
-      Exercícios a perguntar: Agachamento Livre | Supino Reto | Terra | Desenvolvimento | Remada Curvada
-      Salvar cada valor no perfil do usuário.
-      Caleb usa esses valores para classificar o nível real pelo ratio força/peso corporal (tabela Nuckols) e calibrar cargas iniciais.
-   → SE "Nunca testei formalmente" ou "Não sei o que é isso":
-      Caleb explica brevemente: "Sem problema — não precisa testar agora. Me diz a última carga que você usou e quantas repetições fez em cada movimento básico, e eu estimo o seu máximo a partir disso."
-      Perguntar para cada exercício básico (um por vez):
-      "No [exercício], qual foi a última carga que você usou e quantas repetições conseguiu fazer com boa técnica?"
-      Caleb aplica a fórmula NASM: 1RM estimado = Carga × (1 + Repetições / 30)
-      Exemplo: 80kg × (1 + 8/30) = 80 × 1.267 = 101.3kg.
-      Salvar o 1RM estimado no perfil com flag "estimado: true".
+   P_1RM. Caleb OBRIGATORIAMENTE pede os números com um formulário de uma só vez (NUNCA faça perguntas exercício a exercício).
+   Para solicitar, o Caleb envia sua mensagem explicativa e CONCLUI COM A TAG ESPECIAL: [FORM_CARGAS]
+   Exemplo de texto do Caleb: 
+   "Perfeito. Para calibrar as cargas do seu treino, me passa a última carga e o número de repetições que você fez em cada movimento abaixo. Se não treina algum deles, pode deixar em branco.\n[FORM_CARGAS]"
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    COMO USAR OS DADOS DE 1RM
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -2269,6 +2267,11 @@ function formatCalebMsg(text, containerId) {
     .replace(/\[PERFIL_JSON\][\s\S]*?\[\/PERFIL_JSON\]/g, '')
     .trim();
 
+  // Detectar [FORM_CARGAS]
+  if (text.includes('[FORM_CARGAS]')) {
+    text = text.replace(/\[FORM_CARGAS\]/g, getFormCargasHTML());
+  }
+
   // Detectar padrão [Opção A | Opção B | ...] e renderizar como chips
   const parts = text.split(/(\[[^\]]+\|[^\]]+\])/g);
   let result = '';
@@ -2381,6 +2384,93 @@ function resetAll() {
   const banner = document.getElementById('workout-ready-banner');
   if (banner) banner.remove();
   showOnly('screen-splash');
+}
+
+// ══════════════════════════════════════════════════════
+// FORMULARIO DE CARGAS (1RM)
+// ══════════════════════════════════════════════════════
+function getFormCargasHTML() {
+  const exs = [
+    {id:'agachamento', name:'Agachamento Livre'},
+    {id:'supino', name:'Supino Reto'},
+    {id:'terra', name:'Levantamento Terra'},
+    {id:'desenvolvimento', name:'Desenvolvimento (ombros)'},
+    {id:'remada', name:'Remada Curvada'}
+  ];
+  let html = '<div class="form-cargas">';
+  exs.forEach(ex => {
+    html += `
+    <div class="form-cargas-row">
+      <div class="form-cargas-label" data-id="${ex.id}">${ex.name}</div>
+      <input type="number" class="form-cargas-input fc-kg" data-id="${ex.id}" placeholder="kg" inputmode="decimal">
+      <div class="form-cargas-unit">kg</div>
+      <input type="number" class="form-cargas-input fc-reps" data-id="${ex.id}" placeholder="reps" inputmode="numeric">
+      <div class="form-cargas-unit">reps</div>
+    </div>`;
+  });
+  html += `<button class="form-cargas-btn" onclick="confirmCargasForm(this)">Confirmar cargas</button>`;
+  html += '</div>';
+  return html;
+}
+
+function confirmCargasForm(btn) {
+  const wrapper = btn.closest('.form-cargas');
+  if (!wrapper) return;
+  const exs = [
+    {id:'agachamento', name:'Agachamento Livre'},
+    {id:'supino', name:'Supino Reto'},
+    {id:'terra', name:'Terra'},
+    {id:'desenvolvimento', name:'Desenvolvimento'},
+    {id:'remada', name:'Remada Curvada'}
+  ];
+  
+  let resultMsg = "";
+  let rmData = {};
+  
+  try {
+    const existing = localStorage.getItem('caleb_rm_data');
+    if (existing) rmData = JSON.parse(existing);
+  } catch(e) {}
+  
+  exs.forEach(ex => {
+    const kgInput = wrapper.querySelector(`.fc-kg[data-id="${ex.id}"]`);
+    const repsInput = wrapper.querySelector(`.fc-reps[data-id="${ex.id}"]`);
+    const kg = kgInput ? parseFloat(kgInput.value) : NaN;
+    const reps = repsInput ? parseInt(repsInput.value) : NaN;
+    
+    if (!isNaN(kg) && !isNaN(reps) && kg > 0 && reps > 0) {
+      const rm1 = kg * (1 + reps / 30);
+      resultMsg += `${ex.name}: ${kg}kg × ${reps} reps\n`;
+      rmData[ex.id] = { carga: kg, reps: reps, rm1: rm1 };
+    } else {
+      resultMsg += `${ex.name}: não informado\n`;
+      if (!rmData[ex.id]) rmData[ex.id] = null;
+    }
+  });
+
+  localStorage.setItem('caleb_rm_data', JSON.stringify(rmData));
+  
+  wrapper.querySelectorAll('input, button').forEach(el => el.disabled = true);
+  btn.textContent = "Confirmado ✓";
+  
+  setTimeout(() => {
+    const isOnboarding = document.getElementById('screen-onboarding').classList.contains('off') === false;
+    
+    if (isOnboarding) {
+       const inp = document.getElementById('ob-input');
+       if (inp) {
+         inp.value = resultMsg.trim();
+         if (typeof sendOnboarding === 'function') sendOnboarding();
+       }
+    } else {
+       const cInp = document.getElementById('chat-input');
+       if (cInp) {
+         cInp.value = resultMsg.trim();
+         if (typeof sendChat === 'function') sendChat();
+         else if (typeof sendChatMsg === 'function') sendChatMsg(resultMsg.trim());
+       }
+    }
+  }, 200);
 }
 
 // ══════════════════════════════════════════════════════
