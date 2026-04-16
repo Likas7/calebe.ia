@@ -2267,11 +2267,6 @@ function formatCalebMsg(text, containerId) {
     .replace(/\[PERFIL_JSON\][\s\S]*?\[\/PERFIL_JSON\]/g, '')
     .trim();
 
-  // Detectar [FORM_CARGAS]
-  if (text.includes('[FORM_CARGAS]')) {
-    text = text.replace(/\[FORM_CARGAS\]/g, getFormCargasHTML());
-  }
-
   // Detectar padrão [Opção A | Opção B | ...] e renderizar como chips
   const parts = text.split(/(\[[^\]]+\|[^\]]+\])/g);
   let result = '';
@@ -2324,12 +2319,23 @@ function appendBubble(containerId, role, text) {
   if (!c) return;
   const wrap = document.createElement('div');
   wrap.className = 'bubble-wrap' + (role === 'user' ? ' user' : '');
+  
   if (role === 'user') {
     wrap.innerHTML = `<div class="bubble user">${esc(text)}</div>`;
   } else {
-    const formatted = formatCalebMsg(text, containerId);
-    wrap.innerHTML = `<div class="avatar-c">C</div><div class="bubble caleb">${formatted}</div>`;
+    const hasForm = text.includes('[FORM_CARGAS]');
+    if (hasForm) {
+      const textPart = text.replace(/\[FORM_CARGAS\]/g, '').trim();
+      const textHtml = formatCalebMsg(textPart, containerId); // escapa normalmente
+      const formHtml = buildFormCargas(); // HTML puro, não escapar
+      // Montar a bolha com os dois juntos
+      wrap.innerHTML = `<div class="avatar-c">C</div><div class="bubble caleb">${textHtml}${formHtml}</div>`;
+    } else {
+      const formatted = formatCalebMsg(text, containerId);
+      wrap.innerHTML = `<div class="avatar-c">C</div><div class="bubble caleb">${formatted}</div>`;
+    }
   }
+  
   c.appendChild(wrap);
   scrollToBottom(containerId);
 }
@@ -2389,69 +2395,99 @@ function resetAll() {
 // ══════════════════════════════════════════════════════
 // FORMULARIO DE CARGAS (1RM)
 // ══════════════════════════════════════════════════════
-function getFormCargasHTML() {
-  const exs = [
-    {id:'agachamento', name:'Agachamento Livre'},
-    {id:'supino', name:'Supino Reto'},
-    {id:'terra', name:'Levantamento Terra'},
-    {id:'desenvolvimento', name:'Desenvolvimento (ombros)'},
-    {id:'remada', name:'Remada Curvada'}
+function buildFormCargas() {
+  const exercises = [
+    { id: 'agachamento',    label: 'Agachamento Livre' },
+    { id: 'supino',         label: 'Supino Reto' },
+    { id: 'terra',          label: 'Levantamento Terra' },
+    { id: 'desenvolvimento',label: 'Desenvolvimento (ombros)' },
+    { id: 'remada',         label: 'Remada Curvada' }
   ];
-  let html = '<div class="form-cargas">';
-  exs.forEach(ex => {
-    html += `
-    <div class="form-cargas-row">
-      <div class="form-cargas-label" data-id="${ex.id}">${ex.name}</div>
-      <input type="number" class="form-cargas-input fc-kg" data-id="${ex.id}" placeholder="kg" inputmode="decimal">
-      <div class="form-cargas-unit">kg</div>
-      <input type="number" class="form-cargas-input fc-reps" data-id="${ex.id}" placeholder="reps" inputmode="numeric">
-      <div class="form-cargas-unit">reps</div>
+
+  const rows = exercises.map(ex => `
+    <div style="display:grid;grid-template-columns:1fr 70px 28px 52px 28px;
+                align-items:center;gap:8px;padding:6px 0;
+                border-bottom:1px solid var(--border);">
+      <span style="font-size:13px;font-weight:600;color:var(--text)">${ex.label}</span>
+      <input type="number" min="0" step="0.5" placeholder="kg"
+             id="fc-kg-${ex.id}"
+             style="background:var(--surface2);border:1px solid var(--border2);
+                    border-radius:8px;padding:7px 8px;color:var(--text);
+                    font-size:13px;text-align:center;outline:none;width:100%;
+                    font-family:inherit;"
+             onfocus="this.style.borderColor='var(--orange)'"
+             onblur="this.style.borderColor='var(--border2)'"/>
+      <span style="font-size:11px;color:var(--text3)">kg</span>
+      <input type="number" min="0" max="50" step="1" placeholder="reps"
+             id="fc-reps-${ex.id}"
+             style="background:var(--surface2);border:1px solid var(--border2);
+                    border-radius:8px;padding:7px 8px;color:var(--text);
+                    font-size:13px;text-align:center;outline:none;width:100%;
+                    font-family:inherit;"
+             onfocus="this.style.borderColor='var(--orange)'"
+             onblur="this.style.borderColor='var(--border2)'"/>
+      <span style="font-size:11px;color:var(--text3)">reps</span>
+    </div>`).join('');
+
+  return `
+    <div style="margin-top:12px;">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;
+                  text-transform:uppercase;letter-spacing:.06em;">
+        Exercícios básicos
+      </div>
+      ${rows}
+      <button onclick="confirmCargasForm(event)"
+              style="width:100%;margin-top:14px;background:var(--orange);
+                     border:none;border-radius:10px;padding:13px;font-size:14px;
+                     font-weight:700;color:#fff;cursor:pointer;font-family:inherit;">
+        Confirmar cargas
+      </button>
     </div>`;
-  });
-  html += `<button class="form-cargas-btn" onclick="confirmCargasForm(this)">Confirmar cargas</button>`;
-  html += '</div>';
-  return html;
 }
 
-function confirmCargasForm(btn) {
-  const wrapper = btn.closest('.form-cargas');
-  if (!wrapper) return;
-  const exs = [
-    {id:'agachamento', name:'Agachamento Livre'},
-    {id:'supino', name:'Supino Reto'},
-    {id:'terra', name:'Terra'},
-    {id:'desenvolvimento', name:'Desenvolvimento'},
-    {id:'remada', name:'Remada Curvada'}
+function confirmCargasForm(event) {
+  const exercises = [
+    { id: 'agachamento',    label: 'Agachamento Livre' },
+    { id: 'supino',         label: 'Supino Reto' },
+    { id: 'terra',          label: 'Levantamento Terra' },
+    { id: 'desenvolvimento',label: 'Desenvolvimento (ombros)' },
+    { id: 'remada',         label: 'Remada Curvada' }
   ];
-  
-  let resultMsg = "";
-  let rmData = {};
-  
-  try {
-    const existing = localStorage.getItem('caleb_rm_data');
-    if (existing) rmData = JSON.parse(existing);
-  } catch(e) {}
-  
-  exs.forEach(ex => {
-    const kgInput = wrapper.querySelector(`.fc-kg[data-id="${ex.id}"]`);
-    const repsInput = wrapper.querySelector(`.fc-reps[data-id="${ex.id}"]`);
-    const kg = kgInput ? parseFloat(kgInput.value) : NaN;
-    const reps = repsInput ? parseInt(repsInput.value) : NaN;
-    
-    if (!isNaN(kg) && !isNaN(reps) && kg > 0 && reps > 0) {
-      const rm1 = kg * (1 + reps / 30);
-      resultMsg += `${ex.name}: ${kg}kg × ${reps} reps\n`;
-      rmData[ex.id] = { carga: kg, reps: reps, rm1: rm1 };
+
+  const results = {};
+  const lines = [];
+
+  exercises.forEach(ex => {
+    const kgEl = document.getElementById('fc-kg-' + ex.id);
+    const repsEl = document.getElementById('fc-reps-' + ex.id);
+    const kg   = parseFloat(kgEl ? kgEl.value : NaN);
+    const reps = parseInt(repsEl ? repsEl.value : NaN);
+
+    if (kg > 0 && reps > 0) {
+      const rm1 = +(kg * (1 + reps / 30)).toFixed(1);
+      results[ex.id] = { carga: kg, reps, rm1 };
+      lines.push(`${ex.label}: ${kg}kg × ${reps} reps`);
     } else {
-      resultMsg += `${ex.name}: não informado\n`;
-      if (!rmData[ex.id]) rmData[ex.id] = null;
+      results[ex.id] = null;
+      lines.push(`${ex.label}: não informado`);
     }
   });
 
-  localStorage.setItem('caleb_rm_data', JSON.stringify(rmData));
+  // Salvar no localStorage
+  localStorage.setItem('caleb_rm_data', JSON.stringify(results));
+
+  // Desabilitar o botão e os inputs para evitar reenvio
+  document.querySelectorAll('[id^="fc-kg-"], [id^="fc-reps-"]')
+    .forEach(el => { el.disabled = true; el.style.opacity = '0.5'; });
   
-  wrapper.querySelectorAll('input, button').forEach(el => el.disabled = true);
-  btn.textContent = "Confirmado ✓";
+  if (event && event.target) {
+    event.target.disabled = true;
+    event.target.textContent = 'Enviado ✓';
+    event.target.style.opacity = '0.6';
+  }
+
+  // Enviar como mensagem do usuário
+  const msg = lines.join('\n');
   
   setTimeout(() => {
     const isOnboarding = document.getElementById('screen-onboarding').classList.contains('off') === false;
@@ -2459,15 +2495,15 @@ function confirmCargasForm(btn) {
     if (isOnboarding) {
        const inp = document.getElementById('ob-input');
        if (inp) {
-         inp.value = resultMsg.trim();
+         inp.value = msg;
          if (typeof sendOnboarding === 'function') sendOnboarding();
        }
     } else {
        const cInp = document.getElementById('chat-input');
        if (cInp) {
-         cInp.value = resultMsg.trim();
+         cInp.value = msg;
          if (typeof sendChat === 'function') sendChat();
-         else if (typeof sendChatMsg === 'function') sendChatMsg(resultMsg.trim());
+         else if (typeof sendChatMsg === 'function') sendChatMsg(msg);
        }
     }
   }, 200);
