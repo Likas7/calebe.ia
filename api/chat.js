@@ -22,10 +22,13 @@ module.exports = async function handler(req, res) {
 
   // Converter formato Claude → Gemini
   // Claude: role "assistant" → Gemini: role "model"
-  const geminiContents = messages.map(m => ({
-    role: m.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) }]
-  }));
+  // Garantir que o histórico sempre começa com "user"
+  const geminiContents = messages
+    .filter((m, i) => !(i === 0 && m.role === 'assistant'))
+    .map(m => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) }]
+    }));
 
   const body = {
     ...(system && {
@@ -52,7 +55,7 @@ module.exports = async function handler(req, res) {
   };
 
   try {
-    const model = 'gemini-1.5-flash-latest';
+    const model = 'gemini-1.5-flash';
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
     const geminiRes = await fetch(url, {
