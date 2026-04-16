@@ -112,6 +112,13 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 .borg-btn{flex:1;height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:var(--font)}
 .borg-btn.selected{background:var(--orange-dark);border-color:var(--orange);color:var(--orange)}
 
+/* ── OPTION CHIPS ── */
+.option-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;margin-bottom:4px}
+.option-chip{background:var(--surface2);border:1.5px solid var(--orange);border-radius:20px;padding:8px 16px;font-size:13px;color:var(--orange);font-weight:600;cursor:pointer;transition:all .18s;font-family:var(--font)}
+.option-chip:hover{background:var(--orange);color:#fff;transform:scale(1.02)}
+.option-chip.chosen{background:var(--orange);color:#fff;opacity:.85;cursor:default}
+.option-chip:disabled{cursor:default}
+
 /* ── WORKOUT ── */
 .exercise-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:12px}
 .set-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)}
@@ -748,16 +755,69 @@ function nuckolsLevel(ratio) {
 }
 
 // ══════════════════════════════════════════════════════
+// HELPERS SEGUROS
+// ══════════════════════════════════════════════════════
+function safeParseJSON(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key)) || fallback; }
+  catch { return fallback; }
+}
+
+// ── Sistema de ciclos e semanas ──────────────────────
+function getCurrentCycle() {
+  const sessions = safeParseJSON('caleb_sessions', []);
+  // Cada ciclo tem 4 semanas, cada semana tem (freq) sessões
+  // Simplificado: 1 sessão = 1 treino do dia corrente
+  const weeksCompleted = Math.floor(sessions.length / 4);
+  const currentWeek    = (sessions.length % 16 < 12)
+    ? Math.floor((sessions.length % 16) / 4) + 1
+    : 4; // semana 4 = deload
+  const totalCycle     = Math.floor(sessions.length / 16) + 1;
+  return {
+    cycle: totalCycle,
+    week: Math.max(1, currentWeek),
+    totalWeeks: 4,
+    isDeloadWeek: currentWeek === 4,
+    sessionCount: sessions.length
+  };
+}
+
+function updateCycleBadge() {
+  const c = getCurrentCycle();
+  const label = `Ciclo ${c.cycle} — Semana ${c.week} de ${c.totalWeeks}`;
+  ['home-cycle-badge', 'prog-cycle-label'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = label;
+  });
+  // Porcentagem do ciclo atual (16 sessões por ciclo)
+  const pct = Math.min(100, Math.round(((c.sessionCount % 16) / 16) * 100));
+  const pctEl = document.getElementById('prog-cycle-pct');
+  if (pctEl) pctEl.textContent = `${pct}%`;
+  const fill = document.querySelector('#screen-progress .progress-bar-fill');
+  if (fill) fill.style.width = `${pct}%`;
+}
+
+// ── Verificar necessidade de deload ──────────────────
+function checkDeload() {
+  const sessions = safeParseJSON('caleb_sessions', []);
+  if (sessions.length < 3) return false;
+  const recent = sessions.slice(-3);
+  const avg = recent.reduce((s, x) => s + (parseFloat(x.avgBorg) || 0), 0) / 3;
+  return avg >= 8.5;
+}
+
+// ══════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════
+let _timeInterval = null;
+
 function init() {
   const onboarded  = localStorage.getItem('caleb_onboarded');
   const profileStr = localStorage.getItem('caleb_profile');
   const chatStr    = localStorage.getItem('caleb_conversation');
 
   if (onboarded && profileStr) {
-    userProfile = JSON.parse(profileStr);
-    if (chatStr) chatHistory = JSON.parse(chatStr);
+    try { userProfile = JSON.parse(profileStr); } catch { userProfile = defaultProfile(); }
+    try { if (chatStr) chatHistory = JSON.parse(chatStr); } catch { chatHistory = []; }
     applyProfile();
     showOnly('screen-home');
   } else {
@@ -766,6 +826,14 @@ function init() {
 
   updateChart('supino');
   updateMetrics();
+  updateCycleBadge();
+
+  // Limpar interval anterior e evitar memory leak
+  if (_timeInterval) clearInterval(_timeInterval);
+  window.addEventListener('beforeunload', () => {
+    if (_timeInterval) clearInterval(_timeInterval);
+    if (workoutTimer) clearInterval(workoutTimer);
+  });
 }
 
 // ══════════════════════════════════════════════════════
@@ -869,6 +937,9 @@ async function sendOnboarding() {
         userProfile = defaultProfile();
       }
 
+      // Registrar data de início do protocolo
+      userProfile.startedAt = new Date().toISOString();
+
       const clean = reply
         .replace('[ONBOARDING_COMPLETO]','')
         .replace(/\[PERFIL_JSON\][\s\S]*?\[\/PERFIL_JSON\]/,'')
@@ -876,12 +947,14 @@ async function sendOnboarding() {
 
       appendBubble('ob-messages','caleb', clean || 'Protocolo montado! Levando você para o painel...');
       onboardingHistory.push({role:'assistant', content:reply});
+      localStorage.setItem('caleb_conversation', JSON.stringify(onboardingHistory));
 
       localStorage.setItem('caleb_profile', JSON.stringify(userProfile));
       localStorage.setItem('caleb_onboarded', '1');
 
       setTimeout(() => {
         applyProfile();
+        updateCycleBadge();
         showOnly('screen-home');
       }, 2200);
     } else {
@@ -892,7 +965,8 @@ async function sendOnboarding() {
     scrollToBottom('ob-messages');
   } catch(e) {
     hideLoader();
-    appendBubble('ob-messages','caleb', `Erro de conexão: ${e.message}\nVerifique sua internet e tente novamente.`);
+    appendBubble('ob-messages','caleb',
+      `Erro de conexão: ${e.message}\nVerifique sua internet e tente novamente.`);
   }
 }
 
@@ -921,7 +995,7 @@ function updateNextWorkoutCard() {
   if (!userProfile) return;
   const proto = ['001','002','003'].includes(userProfile.protocolo) ? userProfile.protocolo : '001';
   const templates = WK[proto] || WK['001'];
-  const sessions = JSON.parse(localStorage.getItem('caleb_sessions')||'[]');
+  const sessions = safeParseJSON('caleb_sessions', []);
   const keys = Object.keys(templates);
   const wk = templates[keys[sessions.length % keys.length]];
 
@@ -934,6 +1008,9 @@ function updateNextWorkoutCard() {
   if (subEl)   subEl.textContent   = wk.sub;
   if (exsEl)   exsEl.textContent   = `${wk.exercises.length} exercícios`;
   if (rirEl)   rirEl.textContent   = wk.rir;
+
+  // Atualizar badge de ciclo na home também
+  updateCycleBadge();
 }
 
 function applyProfileScreen() {
@@ -1050,7 +1127,7 @@ function showWorkout() {
   const proto = (userProfile && ['001','002','003'].includes(userProfile.protocolo))
     ? userProfile.protocolo : '001';
   const templates = WK[proto] || WK['001'];
-  const sessions  = JSON.parse(localStorage.getItem('caleb_sessions')||'[]');
+  const sessions  = safeParseJSON('caleb_sessions', []);
   const keys      = Object.keys(templates);
   const wk        = templates[keys[sessions.length % keys.length]];
 
@@ -1124,48 +1201,131 @@ function cancelWorkout() {
 function finishWorkout() {
   clearInterval(workoutTimer);
 
+  // ── Coletar Borg de cada exercício ──────────────────
   const borgVals = [];
   document.querySelectorAll('.borg-btn.selected').forEach(b => {
     borgVals.push(parseInt(b.dataset.val));
   });
   const avgBorg = borgVals.length
-    ? (borgVals.reduce((a,b)=>a+b,0)/borgVals.length).toFixed(1)
+    ? parseFloat((borgVals.reduce((a,b)=>a+b,0)/borgVals.length).toFixed(1))
     : null;
 
-  const sessions = JSON.parse(localStorage.getItem('caleb_sessions')||'[]');
-  sessions.push({date:new Date().toISOString(), avgBorg, duration:workoutSeconds});
+  // ── Coletar pesos registrados por exercício ──────────
+  const exerciseData = [];
+  const proto = (userProfile && ['001','002','003'].includes(userProfile.protocolo))
+    ? userProfile.protocolo : '001';
+  const templates = WK[proto] || WK['001'];
+  const sessions0 = safeParseJSON('caleb_sessions', []);
+  const keys = Object.keys(templates);
+  const wk = templates[keys[sessions0.length % keys.length]];
+
+  document.querySelectorAll('.exercise-card').forEach((card, i) => {
+    const exName = wk.exercises[i]?.name || `Exercício ${i+1}`;
+    const setWeights = [];
+    card.querySelectorAll('.set-input').forEach(inp => {
+      const v = parseFloat(inp.value);
+      if (!isNaN(v) && v > 0) setWeights.push(v);
+    });
+    if (setWeights.length > 0) {
+      exerciseData.push({ name: exName, weights: setWeights });
+    }
+  });
+
+  // ── Salvar sessão com dados completos ────────────────
+  const sessions = safeParseJSON('caleb_sessions', []);
+  sessions.push({
+    date: new Date().toISOString(),
+    avgBorg,
+    duration: workoutSeconds,
+    workout: wk.title,
+    exercises: exerciseData
+  });
   localStorage.setItem('caleb_sessions', JSON.stringify(sessions));
 
-  if (avgBorg) {
+  // ── Salvar histórico de pesos por exercício ──────────
+  if (exerciseData.length > 0) {
+    const weights = safeParseJSON('caleb_weights', {});
+    const dateKey = new Date().toISOString().split('T')[0];
+    exerciseData.forEach(ex => {
+      if (!weights[ex.name]) weights[ex.name] = [];
+      const maxW = Math.max(...ex.weights);
+      weights[ex.name].push({ date: dateKey, max: maxW, all: ex.weights });
+      // Manter apenas as últimas 12 entradas
+      if (weights[ex.name].length > 12) weights[ex.name] = weights[ex.name].slice(-12);
+    });
+    localStorage.setItem('caleb_weights', JSON.stringify(weights));
+  }
+
+  // ── Atualizar Borg na home ───────────────────────────
+  if (avgBorg !== null) {
     const el = document.getElementById('home-borg');
     if (el) el.textContent = avgBorg;
     const bar = document.getElementById('home-borg-bar');
     if (bar) bar.style.width = `${(avgBorg/10)*100}%`;
   }
 
+  // ── Verificar necessidade de deload ─────────────────
+  const needsDeload = checkDeload();
+
   showOnly('screen-home');
   updateMetrics();
+  updateCycleBadge();
+  updateNextWorkoutCard();
+
+  // ── Feedback ao usuário ──────────────────────────────
+  const mins = Math.floor(workoutSeconds/60);
+  let msg = `Sessão concluída! 🎉\nDuração: ${mins} min`;
+  if (avgBorg !== null) msg += `\nBorg médio: ${avgBorg}`;
+  if (needsDeload) msg += `\n\n⚠️ Borg médio alto nas últimas sessões. O Caleb recomenda uma semana de deload (-40% volume).`;
+  alert(msg);
 }
 
 // ══════════════════════════════════════════════════════
 // PROGRESS
 // ══════════════════════════════════════════════════════
 function updateChart(exercise) {
-  const data = CHART_DATA[exercise];
-  if (!data) return;
+  const mockData = CHART_DATA[exercise];
+  if (!mockData) return;
 
-  const maxVal = Math.max(...data.vals);
   const container = document.getElementById('chart-bars');
   if (!container) return;
 
-  container.innerHTML = data.vals.map((v,i) => `
+  // Tentar usar pesos reais salvos
+  const weights = safeParseJSON('caleb_weights', {});
+  // Mapear key do select para nomes de exercícios usados nos treinos
+  const nameMap = {
+    supino: 'Supino Inclinado com Halteres',
+    agachamento: 'Agachamento Livre',
+    terra: 'Levantamento Terra Romeno',
+    rosca: 'Rosca Inclinada com Halteres',
+    desenvolvimento: 'Desenvolvimento com Halteres'
+  };
+  const exName = nameMap[exercise];
+  const realHist = exName && weights[exName] ? weights[exName] : null;
+
+  // Usar dados reais se existirem, senão mock
+  let vals, unit;
+  if (realHist && realHist.length > 0) {
+    // Mostrar últimas 4 entradas (ou menos)
+    const last4 = realHist.slice(-4);
+    vals = last4.map(e => e.max);
+    unit = 'kg';
+    // Preencher com o primeiro valor se menos de 4 entradas
+    while (vals.length < 4) vals.unshift(vals[0]);
+  } else {
+    vals = mockData.vals;
+    unit = mockData.unit;
+  }
+
+  const maxVal = Math.max(...vals);
+  container.innerHTML = vals.map((v,i) => `
     <div class="chart-bar-wrap">
       <span class="chart-val">${v}</span>
-      <div class="chart-bar ${i===data.vals.length-1?'current':''}" style="height:${Math.max(6,Math.round((v/maxVal)*80))}px;"></div>
+      <div class="chart-bar ${i===vals.length-1?'current':''}" style="height:${Math.max(6,Math.round((v/maxVal)*80))}px;"></div>
     </div>`).join('');
 
   const bw = (userProfile && userProfile.peso) ? parseFloat(userProfile.peso) : 75;
-  const last  = data.vals[data.vals.length-1];
+  const last  = vals[vals.length-1];
   const ratio = bw > 0 ? last/bw : 0;
   const lv    = nuckolsLevel(ratio);
 
@@ -1178,25 +1338,41 @@ function updateChart(exercise) {
 }
 
 function updateMetrics() {
-  const sessions = JSON.parse(localStorage.getItem('caleb_sessions')||'[]');
+  const sessions = safeParseJSON('caleb_sessions', []);
   const total    = sessions.length;
 
   const el = (id, v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
 
-  el('metric-sessions', total || '—');
+  el('metric-sessions', total || '0');
 
-  const expected = 9; // approx
-  const adh = total>0 ? Math.min(100,Math.round((total/expected)*100))+'%' : '—';
+  // Aderência real: sessões concluídas vs esperadas no ciclo atual
+  const c = getCurrentCycle();
+  const sessionsDoneCycle = (c.sessionCount % 16) || sessions.length;
+  const expectedPerCycle  = 16;
+  const adh = sessionsDoneCycle > 0
+    ? Math.min(100, Math.round((sessionsDoneCycle / expectedPerCycle) * 100)) + '%'
+    : '—';
   el('metric-adherence', adh);
 
-  const borgList = sessions.filter(s=>s.avgBorg).map(s=>parseFloat(s.avgBorg));
-  const avgBorg  = borgList.length ? (borgList.reduce((a,b)=>a+b,0)/borgList.length).toFixed(1) : '—';
+  const borgList = sessions.filter(s => s.avgBorg != null).map(s => parseFloat(s.avgBorg));
+  const avgBorg  = borgList.length
+    ? (borgList.reduce((a,b) => a+b, 0) / borgList.length).toFixed(1)
+    : '—';
   el('metric-borg', avgBorg);
 
-  // fake progressions count
-  el('metric-progressions', total >= 2 ? Math.max(1,Math.floor(total/2)) : '—');
+  // Progressões reais: comparar pesos salvos entre primeira e última sessão com o exercício
+  const weights = safeParseJSON('caleb_weights', {});
+  let progressions = 0;
+  Object.values(weights).forEach(hist => {
+    if (hist.length >= 2) {
+      const first = hist[0].max;
+      const last  = hist[hist.length-1].max;
+      if (last > first) progressions++;
+    }
+  });
+  el('metric-progressions', progressions > 0 ? progressions : (total >= 2 ? '—' : '—'));
 
-  // home borg
+  // Home borg
   if (avgBorg !== '—') {
     const hb = document.getElementById('home-borg');
     if (hb) hb.textContent = avgBorg;
@@ -1206,34 +1382,114 @@ function updateMetrics() {
 }
 
 // ══════════════════════════════════════════════════════
-// API
+// API — com retry e botões disabled durante loading
 // ══════════════════════════════════════════════════════
-async function callCaleb(messages, system) {
-  const res = await fetch('/api/chat', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({messages, system})
+function setInputsDisabled(disabled) {
+  ['ob-input','chat-input'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.disabled = disabled;
   });
-  if (!res.ok) {
-    const err = await res.json().catch(()=>({error:`HTTP ${res.status}`}));
-    throw new Error(err.error || `HTTP ${res.status}`);
+  document.querySelectorAll('.chat-send-btn').forEach(btn => {
+    btn.disabled = disabled;
+    btn.style.opacity = disabled ? '0.5' : '';
+  });
+}
+
+async function callCaleb(messages, system, attempt = 1) {
+  const MAX_RETRIES = 3;
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({messages, system})
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({error:`HTTP ${res.status}`}));
+      // Retry automático em 429/5xx
+      if ((res.status === 429 || res.status >= 500) && attempt < MAX_RETRIES) {
+        const delay = 1000 * attempt;
+        await new Promise(r => setTimeout(r, delay));
+        return callCaleb(messages, system, attempt + 1);
+      }
+      throw new Error(err.error || `HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    return data.text;
+  } catch(e) {
+    if (attempt < MAX_RETRIES && e.message && e.message.startsWith('Failed to fetch')) {
+      await new Promise(r => setTimeout(r, 1000 * attempt));
+      return callCaleb(messages, system, attempt + 1);
+    }
+    throw e;
   }
-  const data = await res.json();
-  return data.text;
 }
 
 // ══════════════════════════════════════════════════════
-// BUBBLES
+// BUBBLES + CHIPS
 // ══════════════════════════════════════════════════════
+function formatCalebMsg(text, containerId) {
+  text = text
+    .replace(/\[ONBOARDING_COMPLETO\]/g, '')
+    .replace(/\[PERFIL_JSON\][\s\S]*?\[\/PERFIL_JSON\]/g, '')
+    .trim();
+
+  // Detectar padrão [Opção A | Opção B | ...] e renderizar como chips
+  const parts = text.split(/(\[[^\]]+\|[^\]]+\])/g);
+  let result = '';
+
+  parts.forEach((part, i) => {
+    if (i % 2 === 1 && /\|/.test(part)) {
+      // Grupo de opções
+      const inner = part.slice(1, -1);
+      const opts = inner.split('|').map(o => o.trim()).filter(Boolean);
+      const isOnboarding = containerId.includes('ob-') || containerId.includes('onboarding');
+      const fn = isOnboarding ? 'sendObChip' : 'sendChatChip';
+      result += '<div class="option-chips">' +
+        opts.map(opt => {
+          const safe = opt.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+          return `<button class="option-chip" onclick="${fn}(this,'${safe}')">${opt}</button>`;
+        }).join('') +
+        '</div>';
+    } else {
+      result += part
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+    }
+  });
+  return result;
+}
+
+function sendObChip(btn, text) {
+  btn.closest('.option-chips').querySelectorAll('.option-chip')
+    .forEach(b => { b.disabled = true; });
+  btn.classList.add('chosen');
+  setTimeout(() => {
+    const inp = document.getElementById('ob-input');
+    if (inp) inp.value = text;
+    if (typeof sendOnboarding === 'function') sendOnboarding();
+  }, 160);
+}
+
+function sendChatChip(btn, text) {
+  btn.closest('.option-chips').querySelectorAll('.option-chip')
+    .forEach(b => { b.disabled = true; });
+  btn.classList.add('chosen');
+  setTimeout(() => {
+    if (typeof sendChatMsg === 'function') sendChatMsg(text);
+  }, 160);
+}
+
 function appendBubble(containerId, role, text) {
   const c = document.getElementById(containerId);
   if (!c) return;
   const wrap = document.createElement('div');
-  wrap.className = 'bubble-wrap' + (role==='user'?' user':'');
-  if (role==='user') {
+  wrap.className = 'bubble-wrap' + (role === 'user' ? ' user' : '');
+  if (role === 'user') {
     wrap.innerHTML = `<div class="bubble user">${esc(text)}</div>`;
   } else {
-    wrap.innerHTML = `<div class="avatar-c">C</div><div class="bubble caleb">${esc(text)}</div>`;
+    const formatted = formatCalebMsg(text, containerId);
+    wrap.innerHTML = `<div class="avatar-c">C</div><div class="bubble caleb">${formatted}</div>`;
   }
   c.appendChild(wrap);
   scrollToBottom(containerId);
@@ -1257,10 +1513,12 @@ function showLoader(text) {
   const tx = document.getElementById('loader-text');
   if (tx) tx.textContent = text || 'Caleb está pensando...';
   if (el) el.classList.add('visible');
+  setInputsDisabled(true);
 }
 function hideLoader() {
   const el = document.getElementById('loader');
   if (el) el.classList.remove('visible');
+  setInputsDisabled(false);
 }
 
 // ══════════════════════════════════════════════════════
