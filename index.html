@@ -162,6 +162,39 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 .report-result{font-size:12px;color:var(--text2)}
 .report-rec{font-size:12px;color:var(--orange);font-style:italic;background:var(--orange-dark);border-radius:6px;padding:6px 8px;margin-top:6px}
 select{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;font-family:var(--font);outline:none;width:100%;-webkit-appearance:none}
+
+/* ── TRAINING SCREEN ── */
+.training-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+.training-tabs::-webkit-scrollbar{display:none}
+.training-tab{flex-shrink:0;padding:12px 20px;font-size:14px;font-weight:600;color:var(--text3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .2s;font-family:var(--font)}
+.training-tab.active{color:var(--orange);border-bottom-color:var(--orange)}
+.training-session{display:none;padding:16px;flex-direction:column;gap:12px}
+.training-session.active{display:flex}
+.training-ex-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px}
+.training-ex-name{font-size:16px;font-weight:700;margin-bottom:4px}
+.training-ex-spec{font-size:12px;color:var(--text2);margin-bottom:8px}
+.training-ex-note{font-size:12px;color:var(--text3);font-style:italic;border-left:2px solid var(--orange);padding-left:10px}
+.training-locked{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:16px;padding:40px 24px;text-align:center}
+.training-locked-icon{font-size:48px;opacity:.3}
+.training-locked-text{font-size:15px;color:var(--text2);line-height:1.6}
+.version-history{padding:0 16px 32px}
+.version-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.version-item:last-child{border-bottom:none}
+.version-info{flex:1}
+.version-label{font-size:13px;font-weight:600}
+.version-date{font-size:11px;color:var(--text3);margin-top:2px}
+.version-actions{display:flex;gap:6px}
+.version-btn{font-size:11px;font-weight:600;padding:5px 10px;border-radius:7px;border:1px solid var(--border2);background:none;color:var(--text2);cursor:pointer;font-family:var(--font);transition:all .15s}
+.version-btn:active{background:var(--orange-dark);border-color:var(--orange);color:var(--orange)}
+.version-current{font-size:10px;font-weight:700;color:var(--orange);background:var(--orange-dark);border-radius:5px;padding:2px 7px}
+/* Toast */
+.toast{position:fixed;bottom:calc(80px + 16px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--orange);border-radius:12px;padding:10px 18px;font-size:13px;font-weight:600;color:var(--text);z-index:300;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* Home workout-ready banner */
+.workout-ready-banner{background:var(--orange-dark);border:1px solid rgba(232,93,47,.4);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:12px;cursor:pointer}
+.workout-ready-banner-text{flex:1;font-size:13px;color:var(--text2)}
+.workout-ready-banner-text strong{display:block;font-size:14px;color:var(--text);margin-bottom:2px}
+
 </style>
 </head>
 <body>
@@ -292,6 +325,10 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
     <button class="nav-btn active" id="nav-home" onclick="navTo('home')">
       <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
       <span>Home</span>
+    </button>
+    <button class="nav-btn" id="nav-training" onclick="navTo('training')">
+      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+      <span>Treino</span>
     </button>
     <button class="nav-btn" id="nav-progress" onclick="navTo('progress')">
       <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
@@ -452,6 +489,10 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
       <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
       <span>Home</span>
     </button>
+    <button class="nav-btn" id="nav2-training" onclick="navTo('training')">
+      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+      <span>Treino</span>
+    </button>
     <button class="nav-btn active" id="nav2-progress" onclick="navTo('progress')">
       <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       <span>Progresso</span>
@@ -507,6 +548,10 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
       <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
       <span>Home</span>
     </button>
+    <button class="nav-btn" id="nav3-training" onclick="navTo('training')">
+      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+      <span>Treino</span>
+    </button>
     <button class="nav-btn" id="nav3-progress" onclick="navTo('progress')">
       <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       <span>Progresso</span>
@@ -522,6 +567,57 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
 </div>
 
 </div><!-- #app -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════════════════════
+     TELA — TREINO ATUAL
+     ═══════════════════════════════════ -->
+<div class="screen off" id="screen-training">
+  <div class="top-bar">
+    <div class="logo">CALEB<span>.IA</span></div>
+    <div class="badge" id="training-version-badge"><div class="badge-dot"></div>Semana 1 · v1</div>
+  </div>
+
+  <!-- Locked state (before onboarding) -->
+  <div id="training-locked" class="training-locked" style="display:none">
+    <div class="training-locked-icon">🔒</div>
+    <div class="training-locked-text">
+      <strong style="display:block;font-size:17px;font-weight:800;color:var(--text);margin-bottom:8px;">Treino ainda não gerado</strong>
+      Complete o onboarding para que o Caleb monte seu protocolo personalizado.
+    </div>
+    <button class="btn-primary" style="max-width:240px" onclick="navTo('home')">Voltar ao Início</button>
+  </div>
+
+  <!-- Unlocked state -->
+  <div id="training-unlocked" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+    <div class="training-tabs" id="training-tabs"></div>
+    <div class="scroll-content" id="training-sessions-wrap"></div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="nav-btn" id="nav4-home" onclick="navTo('home')">
+      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="nav-btn active" id="nav4-training" onclick="navTo('training')">
+      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+      <span>Treino</span>
+    </button>
+    <button class="nav-btn" id="nav4-progress" onclick="navTo('progress')">
+      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span>Progresso</span>
+    </button>
+    <button class="nav-btn" id="nav4-profile" onclick="navTo('profile')">
+      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Perfil</span>
+    </button>
+  </div>
+  <button class="fab" onclick="openChat()" style="bottom:calc(80px + 16px)">
+    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+  </button>
+</div>
 
 <script>
 // ══════════════════════════════════════════════════════
@@ -759,6 +855,57 @@ NUNCA ultrapassa MRV de nenhum grupo muscular
 NUNCA gera treino da semana sem o check-in semanal
 NUNCA faz mais de 1 pergunta por mensagem
 NUNCA nega ser uma IA quando perguntado diretamente
+
+# QUANDO O USUÁRIO PEDIR ADAPTAÇÃO DO TREINO
+
+Quando o usuário mencionar: menos dias, menos tempo, cansáço, nova atividade
+esportiva, viagem, lesão leve ou qualquer mudança de contexto — Caleb deve:
+
+1. Fazer as perguntas necessárias antes de adaptar (uma por vez):
+   - Nova atividade esportiva: qual? em quais dias? que intensidade?
+     [Leve — só para me movimentar | Moderada — me canso bastante | Alta — treino de verdade]
+     é prioridade ou complementar ao treino de força?
+   - Cansáço: é essa semana ou algo recorrente?
+   - Menos tempo: quanto tempo disponível por sessão?
+   - Menos dias: quais dias estão disponíveis?
+
+2. Adaptar baseado no que foi dito E no treino atual (disponível no contexto
+   como "# TREINO ATUAL DO USUÁRIO", se presente)
+
+3. Entregar o treino adaptado explicando:
+   - O que mudou e por quê
+   - O que foi preservado e por quê
+   - Como voltar ao treino anterior se quiser
+
+4. Terminar com a tag [TREINO_ATUALIZADO] para que o app
+   atualize automaticamente a aba Treino
+
+IMPORTANTE: nunca apague o histórico de versões — o usuário pode sempre
+voltar para qualquer versão anterior.
+
+# ANÁLISE DE PROGRESSÃO — COMO CALEB INTERPRETA OS DADOS (FIM DE CICLO)
+
+Quando receber o relatório de um ciclo (geralmente enviado automaticamente
+pelo sistema após 4 semanas), Caleb deve:
+
+- Identificar discrepâncias relevantes entre exercícios.
+  Ex: supino progrediu 50% mas agachamento só 10% — isso é incomum e merece escrutínio.
+
+- Fazer perguntas abertas sobre as discrepâncias — nunca assumir o motivo:
+  [Sim, sinto dificuldade com esse exercício | Não, foi só essa fase | Tive medo de aumentar a carga | Outro motivo]
+
+- Investigar se o problema é técnico, psicológico, físico ou de contexto:
+  Técnico: nunca aprendeu o movimento direito → oferecer regredir carga e focar na técnica
+  Psicológico: medo de carga heavy → progressão gradual
+  Físico: dor ou desconforto → adaptar exercício
+  Contexto: cansaço, foco → validar expectativa
+
+- Fazer as perguntas UMA DE CADA VEZ, sempre usando chips horizontais para facilitar.
+
+- Ao final da investigação: gerar recomendações para o próximo ciclo e
+  atualizar o treino se necessário, utilizando novamente a tag [TREINO_ATUALIZADO].
+
+- Tom: investigativo, encorajador e sem julgamento. Seu objetivo é entender e facilitar o seu atleta.
 `;
 
 // ══════════════════════════════════════════════════════
@@ -957,27 +1104,248 @@ function hideScreen(id) {
 }
 
 function navTo(section) {
-  const map = {home:'screen-home', progress:'screen-progress', profile:'screen-profile'};
+  const map = {
+    home: 'screen-home',
+    training: 'screen-training',
+    progress: 'screen-progress',
+    profile: 'screen-profile'
+  };
   const target = map[section];
   if (!target) return;
 
-  ['screen-home','screen-progress','screen-profile'].forEach(id => {
+  ['screen-home','screen-training','screen-progress','screen-profile'].forEach(id => {
     document.getElementById(id).classList.add('off');
   });
   document.getElementById(target).classList.remove('off');
 
-  // sync nav buttons on all three screens
-  [['nav-home','nav-progress','nav-profile'],
-   ['nav2-home','nav2-progress','nav2-profile'],
-   ['nav3-home','nav3-progress','nav3-profile']].forEach(set => {
-    ['home','progress','profile'].forEach((s,i) => {
+  // sync nav buttons on all four screens
+  [
+    ['nav-home', 'nav-training', 'nav-progress', 'nav-profile'],
+    ['nav2-home','nav2-training','nav2-progress','nav2-profile'],
+    ['nav3-home','nav3-training','nav3-progress','nav3-profile'],
+    ['nav4-home','nav4-training','nav4-progress','nav4-profile']
+  ].forEach(set => {
+    ['home','training','progress','profile'].forEach((s,i) => {
       const btn = document.getElementById(set[i]);
       if (btn) btn.classList.toggle('active', s === section);
     });
   });
 
-  if (section === 'profile') applyProfileScreen();
+  if (section === 'profile')  applyProfileScreen();
   if (section === 'progress') { updateChart('supino'); updateMetrics(); }
+  if (section === 'training') loadTrainingScreen();
+}
+
+// ══════════════════════════════════════════════════════
+// WORKOUT VERSION SYSTEM
+// ══════════════════════════════════════════════════════
+function saveWorkoutVersion(content, reason) {
+  const versions = safeParseJSON('caleb_workout_versions', []);
+  // Mark all previous as not current
+  versions.forEach(v => v.isCurrent = false);
+  versions.push({
+    version: versions.length + 1,
+    createdAt: new Date().toISOString(),
+    reason: reason || 'Treino atualizado',
+    content,
+    isCurrent: true
+  });
+  localStorage.setItem('caleb_workout_versions', JSON.stringify(versions));
+  return versions[versions.length - 1];
+}
+
+function getCurrentWorkout() {
+  const versions = safeParseJSON('caleb_workout_versions', []);
+  return versions.find(v => v.isCurrent) || null;
+}
+
+function restoreWorkoutVersion(index) {
+  const versions = safeParseJSON('caleb_workout_versions', []);
+  const target = versions[index];
+  if (!target) return;
+  saveWorkoutVersion(target.content, `Restaurado de v${target.version}`);
+  loadTrainingScreen();
+  showToast('Versão restaurada ✅');
+}
+
+function containsWorkout(text) {
+  return /━{3,}|^TREINO\s+[A-Z]/m.test(text);
+}
+
+// ── Renderizar aba Treino ──────────────────────────
+function loadTrainingScreen() {
+  const locked   = document.getElementById('training-locked');
+  const unlocked = document.getElementById('training-unlocked');
+  const current  = getCurrentWorkout();
+
+  if (!current) {
+    locked.style.display   = 'flex';
+    unlocked.style.display = 'none';
+    return;
+  }
+
+  locked.style.display   = 'none';
+  unlocked.style.display = 'flex';
+
+  renderTrainingContent(current);
+}
+
+function renderTrainingContent(version) {
+  const tabsEl    = document.getElementById('training-tabs');
+  const sessionsEl = document.getElementById('training-sessions-wrap');
+  const badgeEl   = document.getElementById('training-version-badge');
+  const c = getCurrentCycle();
+  if (badgeEl) badgeEl.innerHTML = `<div class="badge-dot"></div>Semana ${c.week} · v${version.version}`;
+
+  // Parse sessions from workout text: detect blocks starting with TREINO
+  const blocks = version.content.split(/(?=\u2501{3,})/g).filter(b => /TREINO\s+[A-Z\u2014\u2013-]/i.test(b) || /^\d+\.\s+/m.test(b));
+
+  // Build session groups by ━ separator lines
+  const rawSessions = version.content.split(/\n(?=\u2501{3,}.*\nTREINO)/i);
+  const sessions = rawSessions.length > 1 ? rawSessions : splitIntoSessions(version.content);
+
+  tabsEl.innerHTML = '';
+  sessionsEl.innerHTML = '';
+
+  if (sessions.length === 0) {
+    // Fallback: show raw text
+    sessionsEl.innerHTML = `<div style="padding:20px;font-size:14px;color:var(--text2);white-space:pre-wrap;line-height:1.6">${esc(version.content.replace(/\[TREINO_ATUALIZADO\]/g,'').trim())}</div>`;
+    return;
+  }
+
+  sessions.forEach((session, i) => {
+    const letter = String.fromCharCode(65 + i); // A, B, C, D
+    const titleMatch = session.match(/TREINO\s+([A-Z])\s*[—\u2013-]\s*([^\n]+)/i);
+    const tabLabel   = titleMatch ? titleMatch[1] : letter;
+    const subtitle   = titleMatch ? titleMatch[2].trim() : `Treino ${letter}`;
+
+    // Tab button
+    const tab = document.createElement('button');
+    tab.className = 'training-tab' + (i === 0 ? ' active' : '');
+    tab.textContent = `Treino ${tabLabel}`;
+    tab.onclick = () => switchTrainingTab(i);
+    tabsEl.appendChild(tab);
+
+    // Session content
+    const sessionDiv = document.createElement('div');
+    sessionDiv.className = 'training-session' + (i === 0 ? ' active' : '');
+
+    // Header
+    sessionDiv.innerHTML = `<div style="margin-bottom:12px"><div style="font-size:20px;font-weight:800">Treino ${tabLabel}</div><div style="font-size:13px;color:var(--text2);margin-top:2px">${subtitle}</div></div>`;
+
+    // Parse exercises
+    const exBlocks = session.match(/\d+\.\s[\s\S]*?(?=(?:\d+\.|$|\u2501{3,}))/g) || [];
+    if (exBlocks.length === 0) {
+      sessionDiv.innerHTML += `<div style="font-size:13px;color:var(--text2);white-space:pre-wrap">${esc(session.trim())}</div>`;
+    } else {
+      exBlocks.forEach(block => {
+        const lines = block.trim().split('\n').filter(Boolean);
+        const name = lines[0].replace(/^\d+\.\s*/, '').trim();
+        const spec = lines.find(l => /x|min|RIR/i.test(l) && !l.startsWith('📝'))?.trim() || '';
+        const note = lines.find(l => l.includes('📝'))?.replace('📝','').trim() || '';
+        const card = document.createElement('div');
+        card.className = 'training-ex-card';
+        card.innerHTML = `
+          <div class="training-ex-name">${esc(name)}</div>
+          ${spec ? `<div class="training-ex-spec">${esc(spec)}</div>` : ''}
+          ${note ? `<div class="training-ex-note">${esc(note)}</div>` : ''}
+        `;
+        sessionDiv.appendChild(card);
+      });
+    }
+
+    // Start workout button
+    const startBtn = document.createElement('button');
+    startBtn.className = 'btn-primary';
+    startBtn.style.marginTop = '8px';
+    startBtn.textContent = 'Iniciar sessão';
+    startBtn.onclick = () => showWorkout();
+    sessionDiv.appendChild(startBtn);
+
+    sessionsEl.appendChild(sessionDiv);
+  });
+
+  // Version history
+  renderVersionHistory(sessionsEl);
+}
+
+function switchTrainingTab(index) {
+  document.querySelectorAll('#training-tabs .training-tab').forEach((t, i) =>
+    t.classList.toggle('active', i === index));
+  document.querySelectorAll('#training-sessions-wrap .training-session').forEach((s, i) =>
+    s.classList.toggle('active', i === index));
+}
+
+function splitIntoSessions(text) {
+  // Try split by TREINO X — pattern
+  const parts = text.split(/(?=\bTREINO\s+[A-Z]\b)/i);
+  return parts.filter(p => p.trim().length > 10);
+}
+
+function renderVersionHistory(container) {
+  const versions = safeParseJSON('caleb_workout_versions', []);
+  if (versions.length <= 1) return;
+
+  const section = document.createElement('div');
+  section.className = 'version-history';
+  section.innerHTML = `<div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;padding:20px 0 12px">Versões anteriores</div>`;
+
+  [...versions].reverse().forEach((v, ri) => {
+    const realIdx = versions.length - 1 - ri;
+    const date = new Date(v.createdAt).toLocaleDateString('pt-BR', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const item = document.createElement('div');
+    item.className = 'version-item';
+    item.innerHTML = `
+      <div class="version-info">
+        <div class="version-label">v${v.version} — ${v.reason} ${v.isCurrent ? '<span class="version-current">atual</span>' : ''}</div>
+        <div class="version-date">${date}</div>
+      </div>
+      <div class="version-actions">
+        <button class="version-btn" onclick="previewVersion(${realIdx})">Ver</button>
+        ${!v.isCurrent ? `<button class="version-btn" onclick="restoreWorkoutVersion(${realIdx})">Restaurar</button>` : ''}
+      </div>`;
+    section.appendChild(item);
+  });
+  container.appendChild(section);
+}
+
+function previewVersion(index) {
+  const versions = safeParseJSON('caleb_workout_versions', []);
+  const v = versions[index];
+  if (!v) return;
+  alert(`v${v.version} — ${v.reason}\n\n${v.content.substring(0, 600)}...`);
+}
+
+// ── Toast ──────────────────────────────────────────
+let _toastTimer = null;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  if (_toastTimer) clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ── Home workout-ready banner ───────────────────────
+function showWorkoutReadyBanner() {
+  const home = document.getElementById('screen-home');
+  if (!home) return;
+  if (document.getElementById('workout-ready-banner')) return; // already shown
+  const scroll = home.querySelector('.scroll-content');
+  if (!scroll) return;
+  const banner = document.createElement('div');
+  banner.id = 'workout-ready-banner';
+  banner.className = 'workout-ready-banner';
+  banner.innerHTML = `
+    <div style="font-size:24px">📄</div>
+    <div class="workout-ready-banner-text">
+      <strong>Seu treino está pronto!</strong>
+      Veja na aba Treino
+    </div>
+    <div style="font-size:18px;color:var(--orange)">›</div>`;
+  banner.onclick = () => navTo('training');
+  scroll.insertBefore(banner, scroll.firstChild);
 }
 
 // ══════════════════════════════════════════════════════
@@ -1050,6 +1418,11 @@ async function sendOnboarding() {
     } else {
       appendBubble('ob-messages','caleb', reply);
       onboardingHistory.push({role:'assistant', content:reply});
+    }
+
+    // ── Detectar e salvar treino gerado no onboarding ─────────────
+    if (!reply.includes('[ONBOARDING_COMPLETO]') && containsWorkout(reply)) {
+      saveWorkoutVersion(reply, 'Treino inicial');
     }
 
     scrollToBottom('ob-messages');
@@ -1191,6 +1564,11 @@ async function sendChatMsg(text) {
     sys += '\n\n# PERFIL DO USUÁRIO ATUAL\n' +
       Object.entries(userProfile).map(([k,v])=>`${k}: ${v}`).join('\n');
   }
+  // Injetar treino atual no contexto quando existe
+  const currentWk = getCurrentWorkout();
+  if (currentWk) {
+    sys += '\n\n# TREINO ATUAL DO USUÁRIO\n' + currentWk.content;
+  }
 
   showLoader('Caleb está pensando...');
   try {
@@ -1200,6 +1578,19 @@ async function sendChatMsg(text) {
     chatHistory.push({role:'assistant', content:reply});
     localStorage.setItem('caleb_conversation', JSON.stringify(chatHistory));
     scrollToBottom('chat-messages');
+
+    // ── Detectar treino atualizado via chat ─────────────────────
+    if (reply.includes('[TREINO_ATUALIZADO]')) {
+      const clean = reply.replace('[TREINO_ATUALIZADO]','').trim();
+      saveWorkoutVersion(clean, 'Adaptado via chat');
+      showToast('✅ Treino atualizado na aba Treino');
+      showWorkoutReadyBanner();
+    } else if (containsWorkout(reply) && !getCurrentWorkout()) {
+      // Salvar automaticamente se ainda não tinha treino salvo
+      saveWorkoutVersion(reply, 'Treino inicial via chat');
+      showToast('📄 Treino salvo na aba Treino');
+      showWorkoutReadyBanner();
+    }
   } catch(e) {
     hideLoader();
     appendBubble('chat-messages','caleb', `Erro: ${e.message}`);
@@ -1253,6 +1644,7 @@ function showWorkout() {
         <div class="borg-wrap" id="borg-${i}">
           ${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="borg-btn" data-val="${n}" onclick="selectBorg(${i},${n},this)">${n}</button>`).join('')}
         </div>
+        <textarea class="ex-obs-input" placeholder="Observação (opcional)" style="width:100%;margin-top:10px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;resize:none;outline:none;font-family:var(--font);" rows="2"></textarea>
       </div>`;
 
     content.appendChild(card);
@@ -1357,17 +1749,161 @@ function finishWorkout() {
   // ── Verificar necessidade de deload ─────────────────
   const needsDeload = checkDeload();
 
+  // --- NOVO: PARTE 1 - REGISTRO COMPLETO (caleb_session_logs) ---
+  const currentWk = getCurrentWorkout();
+  const currentVersion = currentWk ? currentWk.version : 1;
+  const sessionTarget = wk.title.replace('Treino ', ''); // 'A', 'B'...
+
+  const detailedExercises = [];
+  document.querySelectorAll('.exercise-card').forEach((card, i) => {
+    const exName = wk.exercises[i]?.name || `Exercício ${i+1}`;
+    const setsNodes = card.querySelectorAll('.set-row');
+    const sets = [];
+    setsNodes.forEach((row, sIdx) => {
+      const inp = row.querySelector('.set-input');
+      const check = row.querySelector('.set-check');
+      sets.push({
+        setNumber: sIdx + 1,
+        weightKg: parseFloat(inp.value) || 0,
+        completed: check.classList.contains('done')
+      });
+    });
+    
+    const borgBtn = document.getElementById(`borg-${i}`).querySelector('.borg-btn.selected');
+    const borgScore = borgBtn ? parseInt(borgBtn.dataset.val) : null;
+    
+    const obs = card.querySelector('.ex-obs-input')?.value.trim() || '';
+    
+    detailedExercises.push({
+      name: exName,
+      sets: sets,
+      borgScore: borgScore,
+      observation: obs
+    });
+  });
+
+  const sessionLog = {
+    date: new Date().toISOString(),
+    workoutVersion: currentVersion,
+    session: sessionTarget,
+    exercises: detailedExercises,
+    sessionBorgAvg: avgBorg,
+    durationSeconds: workoutSeconds
+  };
+
+  const sessLogs = safeParseJSON('caleb_session_logs', []);
+  sessLogs.push(sessionLog);
+  localStorage.setItem('caleb_session_logs', JSON.stringify(sessLogs));
+  // ----------------------------------------------------------------
+
   showOnly('screen-home');
   updateMetrics();
   updateCycleBadge();
   updateNextWorkoutCard();
+  
+  // --- NOVO: Verificação de Ciclo e Geração de Relatório ---
+  checkAndGenerateCycleReport();
 
   // ── Feedback ao usuário ──────────────────────────────
   const mins = Math.floor(workoutSeconds/60);
   let msg = `Sessão concluída! 🎉\nDuração: ${mins} min`;
   if (avgBorg !== null) msg += `\nBorg médio: ${avgBorg}`;
   if (needsDeload) msg += `\n\n⚠️ Borg médio alto nas últimas sessões. O Caleb recomenda uma semana de deload (-40% volume).`;
-  alert(msg);
+  
+  setTimeout(() => alert(msg), 100);
+}
+
+function checkAndGenerateCycleReport() {
+  const logs = safeParseJSON('caleb_session_logs', []);
+  if (logs.length === 0) return;
+  
+  const SESSIONS_PER_CYCLE = 16;
+  
+  // Se acabamos de concluir um múltiplo exato de sessões do ciclo (ex: 16, 32...)
+  if (logs.length % SESSIONS_PER_CYCLE === 0) {
+    const cycleNumber = logs.length / SESSIONS_PER_CYCLE;
+    const cycleLogs = logs.slice(-SESSIONS_PER_CYCLE);
+    
+    // Agrupar dados por exercício
+    const exStats = {};
+    const allObservations = [];
+    
+    cycleLogs.forEach(log => {
+      log.exercises.forEach(ex => {
+        if (!exStats[ex.name]) exStats[ex.name] = { loads: [], borgs: [] };
+        const maxSetW = Math.max(...ex.sets.filter(s => s.completed).map(s => s.weightKg), 0);
+        if (maxSetW > 0) exStats[ex.name].loads.push(maxSetW);
+        if (ex.borgScore) exStats[ex.name].borgs.push(ex.borgScore);
+        if (ex.observation) allObservations.push(`- ${ex.name} (Sessão ${log.session}): ${ex.observation}`);
+      });
+    });
+    
+    const finalExercises = [];
+    Object.keys(exStats).forEach(name => {
+      const d = exStats[name];
+      if (d.loads.length < 2) return;
+      const initialLoad = d.loads[0];
+      const finalLoad = d.loads[d.loads.length - 1];
+      const progression = initialLoad > 0 ? ((finalLoad - initialLoad) / initialLoad) * 100 : 0;
+      const borgAvg = d.borgs.length ? +(d.borgs.reduce((a,b)=>a+b,0)/d.borgs.length).toFixed(1) : 0;
+      
+      let status = '';
+      if (progression >= 15) status = 'Evoluiu bem ✅';
+      else if (progression >= 5 && progression < 15) status = 'Progresso normal 📈';
+      else if (progression > 0 && progression < 5) status = 'Estagnado ⚠️';
+      else status = 'Regrediu 📉';
+      
+      if (borgAvg >= 8.5) status += ' | 🔥 Possível sobrecarga';
+      if (borgAvg > 0 && borgAvg <= 5) status += ' | 💤 Carga abaixo do ideal';
+      
+      finalExercises.push({
+        name, initialLoad, finalLoad, progression, borgAvg, status
+      });
+    });
+    
+    const report = {
+      cycleNumber,
+      startDate: cycleLogs[0].date,
+      endDate: cycleLogs[cycleLogs.length - 1].date,
+      sessionsCompleted: cycleLogs.length,
+      sessionsPlanned: SESSIONS_PER_CYCLE,
+      exercises: finalExercises,
+      generatedAt: new Date().toISOString()
+    };
+    
+    const reports = safeParseJSON('caleb_cycle_reports', []);
+    reports.push(report);
+    localStorage.setItem('caleb_cycle_reports', JSON.stringify(reports));
+    
+    const chatContextMsg = `\n# RELATÓRIO DO CICLO ${cycleNumber}\nSessões completadas: ${report.sessionsCompleted} de ${report.sessionsPlanned} planejadas\nAderência: ${Math.round(report.sessionsCompleted/report.sessionsPlanned*100)}%\n\nEXERCÍCIOS:\n${finalExercises.map(e => `- ${e.name}: ${e.initialLoad}kg → ${e.finalLoad}kg (${e.progression > 0 ? '+' : ''}${e.progression.toFixed(1)}%) | Borg médio: ${e.borgAvg} | Status: ${e.status}`).join('\n')}\n\nObservações registradas pelo usuário durante as sessões:\n${allObservations.join('\n')}`;
+    
+    setTimeout(() => {
+      openChat();
+      appendBubble('chat-messages', 'user', "Gerei o relatório do nosso ciclo atual! O que você acha dos meus resultados?");
+      chatHistory.push({role:'user', content: "Mandei o relatório do nosso ciclo atual (gerado pelo meu app)." + chatContextMsg + "\n\nO que você acha dos meus resultados? Fale como meu treinador, focando bastante nesse relatório!"});
+      sendChatMsgHidden("Faça a análise deste ciclo conforme instruído no system prompt.");
+    }, 3000);
+  }
+}
+
+async function sendChatMsgHidden(triggerPrompt) {
+  let sys = SYSTEM;
+  if (userProfile) sys += '\n\n# PERFIL DO USUÁRIO ATUAL\n' + Object.entries(userProfile).map(([k,v])=>`${k}: ${v}`).join('\n');
+  const currentWk = getCurrentWorkout();
+  if (currentWk) sys += '\n\n# TREINO ATUAL DO USUÁRIO\n' + currentWk.content;
+  
+  showLoader('Caleb está analisando seu ciclo...');
+  try {
+    const reply = await callCaleb(chatHistory, sys);
+    hideLoader();
+    appendBubble('chat-messages','caleb', reply);
+    chatHistory.push({role:'assistant', content:reply});
+    localStorage.setItem('caleb_conversation', JSON.stringify(chatHistory));
+    scrollToBottom('chat-messages');
+  } catch(e) {
+    hideLoader();
+    appendBubble('chat-messages','caleb', `Erro na análise do ciclo: ${e.message}`);
+  }
 }
 
 // ══════════════════════════════════════════════════════
@@ -1391,28 +1927,64 @@ function updateChart(exercise) {
     desenvolvimento: 'Desenvolvimento com Halteres'
   };
   const exName = nameMap[exercise];
-  const realHist = exName && weights[exName] ? weights[exName] : null;
+  
+  // BUSCAR NO caleb_session_logs DIRETAMENTE COMO PEDIDO NA PARTE 2
+  const sessLogs = safeParseJSON('caleb_session_logs', []);
+  const sessionHist = [];
+  sessLogs.forEach(log => {
+    const ex = log.exercises.find(e => e.name === exName);
+    if (ex) {
+      const maxW = Math.max(...ex.sets.filter(s => s.completed).map(s => s.weightKg), 0);
+      if (maxW > 0) sessionHist.push({ max: maxW, borg: ex.borgScore });
+    }
+  });
 
-  // Usar dados reais se existirem, senão mock
-  let vals, unit;
-  if (realHist && realHist.length > 0) {
-    // Mostrar últimas 4 entradas (ou menos)
-    const last4 = realHist.slice(-4);
+  // Usar dados reais do session_logs ou o weights legado ou mock
+  let vals = [], borgs = [], unit = 'kg';
+  if (sessionHist.length > 0) {
+    const last4 = sessionHist.slice(-4);
     vals = last4.map(e => e.max);
-    unit = 'kg';
-    // Preencher com o primeiro valor se menos de 4 entradas
-    while (vals.length < 4) vals.unshift(vals[0]);
+    borgs = last4.map(e => e.borg || '-');
+    while (vals.length < 4) { vals.unshift(vals[0]); borgs.unshift('-'); }
   } else {
-    vals = mockData.vals;
-    unit = mockData.unit;
+    const realHist = exName && weights[exName] ? weights[exName] : null;
+    if (realHist && realHist.length > 0) {
+      const last4 = realHist.slice(-4);
+      vals = last4.map(e => e.max);
+      borgs = ['-','-','-','-'];
+      while (vals.length < 4) vals.unshift(vals[0]);
+    } else {
+      vals = mockData.vals;
+      borgs = ['-','-','-','-'];
+    }
   }
 
   const maxVal = Math.max(...vals);
   container.innerHTML = vals.map((v,i) => `
-    <div class="chart-bar-wrap">
+    <div class="chart-bar-wrap" style="position:relative;">
       <span class="chart-val">${v}</span>
       <div class="chart-bar ${i===vals.length-1?'current':''}" style="height:${Math.max(6,Math.round((v/maxVal)*80))}px;"></div>
+      ${borgs[i]!=='-' ? `<div style="position:absolute; bottom:-18px; font-size:9px; color:var(--orange);">B-${borgs[i]}</div>` : ''}
     </div>`).join('');
+    
+  // Se usamos sessionHist real, adicionar cálculo de progresso percentual abaixo do gráfico
+  let progressEl = document.getElementById('chart-progress-info');
+  if (!progressEl) {
+    progressEl = document.createElement('div');
+    progressEl.id = 'chart-progress-info';
+    progressEl.style = "font-size:12px; margin-top:16px; margin-bottom:8px; padding:8px; background:var(--surface2); border-radius:8px; display:flex; justify-content:space-between;";
+    const labels = container.nextElementSibling;
+    labels.parentNode.insertBefore(progressEl, labels.nextElementSibling);
+  }
+  
+  if (sessionHist.length >= 2) {
+    const firstLoad = sessionHist[0].max;
+    const maxNow = sessionHist[sessionHist.length-1].max;
+    const pct = firstLoad > 0 ? ((maxNow - firstLoad) / firstLoad) * 100 : 0;
+    progressEl.innerHTML = `<span><strong>Progressão:</strong></span> <span style="color:${pct >= 0 ? 'var(--green)' : 'red'};">${pct > 0 ? '+' : ''}${pct.toFixed(1)}%</span>`;
+  } else {
+    progressEl.innerHTML = `<span><strong>Progressão:</strong></span> <span style="color:var(--text3);">Dados insuficientes</span>`;
+  }
 
   const bw = (userProfile && userProfile.peso) ? parseFloat(userProfile.peso) : 75;
   const last  = vals[vals.length-1];
@@ -1624,7 +2196,7 @@ function confirmReset() {
 }
 
 function resetAll() {
-  ['caleb_profile','caleb_onboarded','caleb_conversation','caleb_sessions']
+  ['caleb_profile','caleb_onboarded','caleb_conversation','caleb_sessions','caleb_weights','caleb_workout_versions']
     .forEach(k => localStorage.removeItem(k));
   userProfile = null;
   chatHistory = [];
@@ -1632,6 +2204,8 @@ function resetAll() {
   chatInitialized = false;
   const cm = document.getElementById('chat-messages');
   if (cm) cm.innerHTML = '';
+  const banner = document.getElementById('workout-ready-banner');
+  if (banner) banner.remove();
   showOnly('screen-splash');
 }
 
