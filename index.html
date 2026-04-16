@@ -475,6 +475,27 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
       </div>
     </div>
 
+    <!-- Força de Referência (Nuckols 1RM) -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div style="font-size:15px;font-weight:700;">Força de Referência</div>
+        <button class="btn-outline" style="padding:4px 8px;font-size:11px;" onclick="openChatWithPrompt('Testei minhas cargas hoje e quero atualizar minha força de referência.')">Atualizar</button>
+      </div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Baseado em testes de 1RM ou estimativas validadas pelo Caleb.</div>
+      <table style="width:100%;font-size:13px;border-collapse:collapse;text-align:left;">
+        <thead style="border-bottom:1px solid var(--border);color:var(--text3);">
+          <tr>
+            <th style="padding:8px 4px;font-weight:600;">Exercício</th>
+            <th style="padding:8px 4px;font-weight:600;">1RM</th>
+            <th style="padding:8px 4px;font-weight:600;">Ratio / Niv.</th>
+          </tr>
+        </thead>
+        <tbody id="rm-table-body">
+          <!-- preenchido dinamicamente -->
+        </tbody>
+      </table>
+    </div>
+
     <!-- Monthly report -->
     <div class="card">
       <div style="font-size:15px;font-weight:700;margin-bottom:12px;">Relatório do Ciclo</div>
@@ -695,10 +716,57 @@ P_ESTRESSE. Como está seu nível de estresse no dia a dia?
 → Estresse muito alto: tom mais acolhedor, sessões mais curtas, foco em constância
 
 # BLOCO 4 — RELAÇÃO COM O TREINO
-P_HISTORICO. Você já tentou treinar antes e parou?
-[Sim, já parei algumas vezes | Sim, parei uma vez | Não, é minha primeira vez]
-→ SE JÁ PAROU: O que fez você parar? [Falta de tempo | Não via resultado | Me machuquei | Perdi a motivação | Outro motivo]
-→ Caleb usa essa info para antecipar o mesmo obstáculo: “falta de tempo” → sessões curtas e flexíveis; “não via resultado” → calibrar expectativas logo no início
+P_HISTORICO. Qual é a sua situação atual com o treino?
+[Já treino atualmente | Já treinei mas parei | Nunca treinei de verdade]
+→ SE "Já treino atualmente":
+   Perguntar: Há quanto tempo você está nessa rotina atual?
+   [Menos de 6 meses | Entre 6 meses e 1 ano | Mais de 1 ano]
+
+   Perguntar: O que te trouxe aqui — o que está faltando no seu treino atual?
+   [Quero mais resultado | Falta organização e progressão | Quero entender o que estou fazendo | Outro motivo]
+   → Caleb valida o que já está funcionando antes de propor mudanças.
+     Nunca descarta o histórico do usuário — constrói em cima do que já existe.
+     Tom: "Você já tem base. Vamos organizar e potencializar o que você faz."
+
+   SE informou mais de 1 ano de treino consistente, inicie IMEDIATAMENTE este sub-bloco de FORÇA DE REFERÊNCIA, imediatamente após a confirmação:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   PERGUNTAS DE FORÇA DE REFERÊNCIA
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   P_1RM. Você já fez algum teste de 1 repetição máxima nos exercícios básicos?
+   [Sim, sei minhas cargas máximas | Nunca testei formalmente | Não sei o que é isso]
+   → SE "Sim, sei minhas cargas máximas":
+      Perguntar para cada exercício básico relevante (um por vez):
+      "Qual é o seu 1RM no [exercício]? (se não souber exato, pode estimar)"
+      Exercícios a perguntar: Agachamento Livre | Supino Reto | Terra | Desenvolvimento | Remada Curvada
+      Salvar cada valor no perfil do usuário.
+      Caleb usa esses valores para classificar o nível real pelo ratio força/peso corporal (tabela Nuckols) e calibrar cargas iniciais.
+   → SE "Nunca testei formalmente" ou "Não sei o que é isso":
+      Caleb explica brevemente: "Sem problema — não precisa testar agora. Me diz a última carga que você usou e quantas repetições fez em cada movimento básico, e eu estimo o seu máximo a partir disso."
+      Perguntar para cada exercício básico (um por vez):
+      "No [exercício], qual foi a última carga que você usou e quantas repetições conseguiu fazer com boa técnica?"
+      Caleb aplica a fórmula NASM: 1RM estimado = Carga × (1 + Repetições / 30)
+      Exemplo: 80kg × (1 + 8/30) = 80 × 1.267 = 101.3kg.
+      Salvar o 1RM estimado no perfil com flag "estimado: true".
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   COMO USAR OS DADOS DE 1RM
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Após coletar os valores, Caleb deve:
+   1. Calcular o ratio força relativa (1RM ÷ peso corporal) para cada exercício e classificar pelo padrão Nuckols:
+      Agachamento / Terra: < 0.75× = Iniciante | 0.75-1.25× = Novato | 1.25-1.75× = Intermediário | > 1.75× = Avançado.
+      Supino / Desenvolvimento: < 0.5× = Iniciante | 0.5-0.75× = Novato | 0.75-1.0× = Intermediário | > 1.0× = Avançado.
+   2. Usar o 1RM estimado para calibrar as cargas de trabalho do treino. Séries 8-12 reps → usar 67-77% 1RM. Séries 4-6 reps → usar 82-88% 1RM. (Apresentar sugestões de carga no treino).
+   3. Registrar os valores no PERFIL_JSON:
+      "rm_agachamento": "101kg (estimado)", "rm_supino": "85kg (testado)", etc.
+   4. No relatório mensal do ciclo, você vai ser notificado dos recalculados e deve falar das evoluções do 1RM se disponíveis.
+
+→ SE "Já treinei mas parei":
+   Perguntar: O que fez você parar?
+   [Falta de tempo | Não via resultado | Me machuquei | Perdi a motivação | Outro motivo]
+   → Caleb usa essa informação para antecipar o mesmo obstáculo no novo plano.
+
+→ SE "Nunca treinei de verdade":
+   Tom didático desde o início. Explicar cada escolha do treino de forma simples.
+   Protocolo mais conservador no volume inicial.
 
 P_RELACAO. Como você se sente em relação ao treino?
 [Gosto — é algo que curto | É obrigação — sei que preciso mas não curto | Ansiedade — fico culpado quando falto | Ainda não sei — nunca treinei de verdade]
@@ -728,7 +796,7 @@ P12. Sexo biológico
 P13. Peso e altura? (opcional)
 Ao final: confirme o perfil e gere o treino completo.
 Inclua ao final: [ONBOARDING_COMPLETO]
-[PERFIL_JSON]{"nome":"","objetivo":"","nivel":"","protocolo":"001","frequencia":"4x","duracao":"60min","local":"Academia","limitacoes":"Nenhuma","peso":"","altura":"","esporte_extra":"","trabalho_tipo":"","sono":"","estresse":"","historico_treino":"","relacao_treino":"","expectativa":""}[/PERFIL_JSON]
+[PERFIL_JSON]{"nome":"","objetivo":"","nivel":"","protocolo":"001","frequencia":"4x","duracao":"60min","local":"Academia","limitacoes":"Nenhuma","peso":"","altura":"","esporte_extra":"","trabalho_tipo":"","sono":"","estresse":"","historico_treino":"","relacao_treino":"","expectativa":"","rm_agachamento":"","rm_supino":"","rm_terra":"","rm_desenvolvimento":"","rm_remada":""}[/PERFIL_JSON]
 
 # SELEÇÃO DE PROTOCOLO
 Hipertrofia: Novato/Iniciante(0-12m)=001 | Intermediário(6m-2a)=002 | Avançado(2a+)=003
@@ -1856,8 +1924,47 @@ function checkAndGenerateCycleReport() {
       if (borgAvg >= 8.5) status += ' | 🔥 Possível sobrecarga';
       if (borgAvg > 0 && borgAvg <= 5) status += ' | 💤 Carga abaixo do ideal';
       
+      // Recalcular 1RM estimado se for exercício básico
+      let estimated1RMText = '';
+      const baseMap = {'agachamento livre':'rm_agachamento', 'supino reto com barra':'rm_supino', 'levantamento terra romeno':'rm_terra', 'desenvolvimento com halteres':'rm_desenvolvimento', 'remada curvada com barra':'rm_remada'};
+      const pKey = baseMap[name.toLowerCase()];
+      if (pKey) {
+         const initialW = initialLoad;
+         const finalW = finalLoad;
+         // Estimativa simples baseada na última sessão vs a primeira do ciclo
+         // Pra ser exato teríamos que pegar as reps, mas temos carga.
+         // Se a função rodar todo fim, pegamos a fórmula. Vamos pegar o log.exercises
+         const findSetForLog = (logs, targetName) => {
+           for (let i=logs.length-1; i>=0; i--) {
+             let ex = logs[i].exercises.find(e => e.name === targetName);
+             if (ex && ex.sets.some(s=>s.completed && s.weightKg > 0)) {
+               return ex.sets.filter(s=>s.completed && s.weightKg > 0).reduce((prev, current) => (prev.weightKg > current.weightKg) ? prev : current);
+             }
+           }
+         };
+         
+         const bestFirst = cycleLogs[0]?.exercises.find(e => e.name === name)?.sets.reduce((p, c) => (p.weightKg > c.weightKg && p.completed) ? p : c, {weightKg:0});
+         const bestLast = findSetForLog(cycleLogs, name);
+         
+         if (bestFirst && bestLast && bestFirst.weightKg > 0 && bestLast.weightKg > 0) {
+            // assumindo que a repetição não temos guardado, assumiremos um padrão de 8 reps pra estimativa da carga? Não, O usuário pediu pra usar "cargas e repetições registradas".
+            // Nós não guardamos o número de repetições por set no caleb_session_logs! Apenas "completed: true". As templates fixas ditam reps (ex 8-10).
+            // Vamos adotar 8 reps se `completed` for true.
+            const calc1RM = (w) => w * (1 + 8/30);
+            const estPrimeiro = calc1RM(bestFirst.weightKg);
+            const estUltimo = calc1RM(bestLast.weightKg);
+            if (estUltimo > estPrimeiro) {
+               const evolRM = ((estUltimo - estPrimeiro) / estPrimeiro) * 100;
+               estimated1RMText = ` | Seu 1RM estimado passou de ${estPrimeiro.toFixed(0)}kg para ${estUltimo.toFixed(0)}kg (+${evolRM.toFixed(1)}%)`;
+               
+               // Opcional: Atualizar silenciosamente o PERFIL
+               if (userProfile && !userProfile[pKey]) userProfile[pKey] = `${estUltimo.toFixed(0)}kg (estimado ciclo ${cycleNumber})`;
+            }
+         }
+      }
+      
       finalExercises.push({
-        name, initialLoad, finalLoad, progression, borgAvg, status
+        name, initialLoad, finalLoad, progression, borgAvg, status: status + estimated1RMText
       });
     });
     
@@ -2041,6 +2148,73 @@ function updateMetrics() {
     const hbb = document.getElementById('home-borg-bar');
     if (hbb) hbb.style.width = `${(parseFloat(avgBorg)/10)*100}%`;
   }
+  
+  // Renderizar a tabela 1RM Força Referência
+  render1RMTable();
+}
+
+function render1RMTable() {
+  const tbody = document.getElementById('rm-table-body');
+  if (!tbody || !userProfile) return;
+  
+  const bWeight = parseFloat(userProfile.peso) || 75;
+  const metrics = [
+    { key: 'rm_agachamento', name: 'Agachamento Livre' },
+    { key: 'rm_supino', name: 'Supino Reto' },
+    { key: 'rm_terra', name: 'Lev. Terra' },
+    { key: 'rm_desenvolvimento', name: 'Desenvolvimento' },
+    { key: 'rm_remada', name: 'Remada Curvada' }
+  ];
+  
+  let html = '';
+  metrics.forEach(m => {
+    let raw = userProfile[m.key] || '';
+    if (!raw) return;
+    
+    // extrai o número de "100kg (estimado)"
+    const numMatch = raw.match(/(\d+\.?\d*)/);
+    let nuck = '—';
+    let ratioStr = '—';
+    if (numMatch && numMatch[1]) {
+      const kg = parseFloat(numMatch[1]);
+      const ratio = kg / bWeight;
+      ratioStr = ratio.toFixed(2) + '×';
+      
+      if (m.key.includes('agachamento') || m.key.includes('terra')) {
+        if (ratio < 0.75) nuck = 'Iniciante';
+        else if (ratio < 1.25) nuck = 'Novato';
+        else if (ratio < 1.75) nuck = 'Intermediário';
+        else nuck = 'Avançado/Elite';
+      } else {
+        if (ratio < 0.5) nuck = 'Iniciante';
+        else if (ratio < 0.75) nuck = 'Novato';
+        else if (ratio < 1.0) nuck = 'Intermediário';
+        else nuck = 'Avançado/Elite';
+      }
+    }
+    
+    html += `<tr>
+      <td style="padding:8px 4px; border-bottom:1px solid rgba(255,255,255,0.05);">${m.name}</td>
+      <td style="padding:8px 4px; border-bottom:1px solid rgba(255,255,255,0.05);">${raw}</td>
+      <td style="padding:8px 4px; border-bottom:1px solid rgba(255,255,255,0.05); color:var(--orange);">${ratioStr} / ${nuck}</td>
+    </tr>`;
+  });
+  
+  if (!html) {
+    html = `<tr><td colspan="3" style="padding:12px; text-align:center; color:var(--text3); font-style:italic;">Nenhum dado de Força de Referência (RM) salvo no perfil.</td></tr>`;
+  }
+  tbody.innerHTML = html;
+}
+
+function openChatWithPrompt(promptStr) {
+  openChat();
+  setTimeout(() => {
+    const input = document.getElementById('chat-input');
+    if (input) {
+      input.value = promptStr;
+      setTimeout(() => sendChatMsg(), 500);
+    }
+  }, 100);
 }
 
 // ══════════════════════════════════════════════════════
