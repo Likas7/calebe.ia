@@ -9,645 +9,787 @@
 <meta name="apple-mobile-web-app-title" content="CALEB.IA">
 <title>CALEB.IA</title>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
+  --orange:#e85d2f;--orange-dim:#3a1a0a;--orange-glow:rgba(232,93,47,0.2);
   --bg:#0a0a0a;--surface:#141414;--surface2:#1c1c1c;
   --border:#242424;--border2:#2e2e2e;
   --text:#f0f0f0;--text2:#a0a0a0;--text3:#565656;
-  --orange:#e85d2f;--orange-dark:#3a1a0a;--green:#3acb7a;
-  --tr:0.32s cubic-bezier(0.4,0,0.2,1);
-  --font:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;
+  --green:#3acb7a;--green-dim:#0d2a1a;
+  --radius:16px;--radius-sm:10px;--radius-xs:8px;
+  --nav-h:80px;--header-h:56px;--status-h:44px;
 }
-html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-family:var(--font);overflow:hidden;-webkit-font-smoothing:antialiased}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+input,textarea{font-family:inherit}
+textarea{resize:none}
+
 #app{position:fixed;inset:0;overflow:hidden}
 
-/* ── SCREENS ── */
-.screen{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg);transition:transform var(--tr),opacity var(--tr);transform:translateX(0);opacity:1;pointer-events:auto;z-index:1}
+/* SCREEN SYSTEM */
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg);
+  transition:transform .32s cubic-bezier(.4,0,.2,1),opacity .32s cubic-bezier(.4,0,.2,1);
+  will-change:transform,opacity}
 .screen.off{transform:translateX(100%);opacity:0;pointer-events:none}
-.screen.off-left{transform:translateX(-100%);opacity:0;pointer-events:none}
 .screen.off-up{transform:translateY(100%);opacity:0;pointer-events:none}
+.screen.off-left{transform:translateX(-20%);opacity:0;pointer-events:none}
 
-/* ── STATUS / TOP BAR ── */
-.top-bar{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);flex-shrink:0}
-.logo{font-size:20px;font-weight:800;letter-spacing:-.5px;color:var(--text)}
-.logo span{color:var(--orange)}
-.badge{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--text2);font-weight:500}
-.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--orange);animation:pulse 2s infinite}
+/* STATUS BAR */
+.status-bar{height:var(--status-h);display:flex;align-items:center;
+  justify-content:space-between;padding:0 24px;flex-shrink:0}
+.status-time{font-size:15px;font-weight:600}
+.status-icon{width:18px;height:10px;background:var(--text);border-radius:2px;opacity:.8}
+
+/* TOP BAR */
+.topbar{height:var(--header-h);display:flex;align-items:center;
+  justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);flex-shrink:0}
+.logo{font-size:19px;font-weight:800;letter-spacing:-.3px;color:var(--text)}
+.logo em{font-style:normal;color:var(--orange)}
+.version-pill{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);
+  background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 10px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--orange);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-/* ── SCROLL ── */
-.scroll-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
-::-webkit-scrollbar{width:0}
+/* CHAT HEADER */
+.chat-header{height:var(--header-h);display:flex;align-items:center;padding:0 16px;
+  gap:12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.icon-btn{width:36px;height:36px;border-radius:var(--radius-xs);background:var(--surface);
+  border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.icon-btn svg{width:16px;height:16px;stroke:var(--text);fill:none;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round}
+.caleb-info{flex:1;display:flex;align-items:center;gap:10px}
+.caleb-avatar{width:34px;height:34px;border-radius:10px;background:var(--orange-dim);
+  border:1px solid var(--orange);display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:800;color:var(--orange);flex-shrink:0}
+.caleb-name{font-size:15px;font-weight:600;line-height:1.2}
+.caleb-online{font-size:11px;color:var(--green);font-weight:500}
+.faq-btn{width:36px;height:36px;border-radius:var(--radius-xs);background:var(--surface);
+  border:1px solid var(--border);display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:700;color:var(--text2)}
 
-/* ── BOTTOM NAV ── */
-.bottom-nav{height:80px;display:flex;align-items:center;justify-content:space-around;border-top:1px solid var(--border);background:var(--bg);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0)}
-.nav-btn{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;color:var(--text);opacity:.38;cursor:pointer;padding:8px 20px;transition:opacity var(--tr)}
-.nav-btn.active{opacity:1;color:var(--orange)}
-.nav-btn span{font-size:11px;font-weight:500}
+/* BOTTOM NAV */
+.bottom-nav{height:var(--nav-h);display:flex;align-items:flex-start;padding-top:10px;
+  border-top:1px solid var(--border);flex-shrink:0;background:var(--bg)}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+  background:none;border:none;padding:6px 0;opacity:.38;transition:opacity .2s}
+.nav-btn.active{opacity:1}
+.nav-btn.active svg{stroke:var(--orange)}
+.nav-btn.active .nav-label{color:var(--orange)}
+.nav-btn svg{width:22px;height:22px;stroke:var(--text);fill:none;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round}
+.nav-label{font-size:10px;color:var(--text);font-weight:500}
 
-/* ── FAB ── */
-.fab{position:absolute;bottom:calc(80px + 16px);right:20px;width:54px;height:54px;border-radius:27px;background:var(--orange);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(232,93,47,.4);z-index:10;transition:transform .2s}
-.fab:active{transform:scale(.95)}
+/* FAB */
+.fab{position:fixed;bottom:calc(var(--nav-h) + 16px);right:20px;width:54px;height:54px;
+  border-radius:27px;background:var(--orange);border:none;display:flex;align-items:center;
+  justify-content:center;z-index:50;box-shadow:0 4px 24px var(--orange-glow);
+  transition:transform .2s}
+.fab:active{transform:scale(.92)}
+.fab svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-/* ── BUTTONS ── */
-.btn-primary{width:100%;height:52px;background:var(--orange);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;font-family:var(--font)}
-.btn-primary:active{transform:scale(.98);opacity:.9}
-.btn-outline{width:100%;height:48px;background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:14px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font)}
+/* SCROLL */
+.scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.scroll-area::-webkit-scrollbar{display:none}
+.scroll-area{scrollbar-width:none}
 
-/* ── CARDS ── */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px}
-.card-top-orange{position:relative;overflow:hidden}
-.card-top-orange::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--orange),#ff8c42)}
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
+.card-sm{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm)}
+.section-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;
+  letter-spacing:.08em;margin-bottom:10px}
 
-/* ── TAGS ── */
-.tag{display:inline-flex;align-items:center;font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border2);color:var(--text2);font-weight:500}
-.tag.orange{border-color:rgba(232,93,47,.5);color:var(--orange);background:rgba(232,93,47,.1)}
+/* BUTTONS */
+.btn-primary{width:100%;background:var(--orange);border:none;border-radius:var(--radius-sm);
+  padding:15px;font-size:16px;font-weight:700;color:#fff;letter-spacing:.01em;
+  transition:transform .15s,background .15s}
+.btn-primary:active{transform:scale(.97);background:#d14f22}
+.btn-outline{width:100%;background:none;border:1px solid var(--border2);border-radius:var(--radius-sm);
+  padding:13px;font-size:14px;font-weight:600;color:var(--text2);transition:border-color .2s,color .2s}
+.btn-outline:active{border-color:var(--orange);color:var(--orange)}
 
-/* ── CHAT BUBBLES ── */
-.bubble-wrap{display:flex;align-items:flex-end;gap:8px;margin-bottom:12px}
-.bubble-wrap.user{flex-direction:row-reverse}
-.avatar-c{width:32px;height:32px;border-radius:10px;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0}
-.bubble{max-width:82%;padding:12px 14px;font-size:14px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
-.bubble.caleb{background:var(--surface);border:1px solid var(--border);border-radius:4px 16px 16px 16px;color:var(--text)}
-.bubble.user{background:var(--orange-dark);border:1px solid rgba(232,93,47,.3);border-radius:16px 4px 16px 16px;color:var(--text)}
+/* TYPING */
+.typing-dots{display:flex;gap:4px;align-items:center;padding:14px 16px}
+.typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--text3);
+  animation:typingBounce 1.2s infinite}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0);background:var(--text3)}
+  30%{transform:translateY(-6px);background:var(--orange)}}
 
-/* ── CHAT INPUT ── */
-.chat-input-wrap{display:flex;align-items:flex-end;gap:10px;padding:12px 16px;border-top:1px solid var(--border);background:var(--bg);flex-shrink:0}
-.chat-textarea{flex:1;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:10px 14px;font-size:15px;color:var(--text);resize:none;outline:none;max-height:120px;font-family:var(--font);line-height:1.4}
-.chat-textarea::placeholder{color:var(--text3)}
-.chat-send-btn{width:40px;height:40px;border-radius:12px;background:var(--orange);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+/* BUBBLES */
+.msg-row{display:flex;gap:10px;margin-bottom:14px;animation:fadeUp .25s ease forwards;opacity:0;transform:translateY(6px)}
+.msg-row.user{flex-direction:row-reverse}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+.msg-av{width:30px;height:30px;border-radius:8px;background:var(--orange-dim);border:1px solid var(--orange);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;
+  color:var(--orange);flex-shrink:0;margin-top:2px}
+.bubble{max-width:78%;padding:12px 14px;border-radius:var(--radius);font-size:14px;line-height:1.6}
+.bubble.caleb{background:var(--surface);border:1px solid var(--border);border-top-left-radius:4px;color:var(--text)}
+.bubble.user{background:var(--orange-dim);border:1px solid rgba(232,93,47,.3);border-top-right-radius:4px;color:#e8a070}
+.bubble b{color:var(--text);font-weight:600}
 
-/* ── LOADER ── */
-#loader{position:fixed;inset:0;background:rgba(10,10,10,.85);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;opacity:0;pointer-events:none;transition:opacity .2s}
-#loader.visible{opacity:1;pointer-events:auto}
-.spinner{width:40px;height:40px;border:3px solid var(--border2);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-#loader p{color:var(--text2);font-size:14px}
+/* QUICK ACTIONS */
+.quick-grid{display:flex;flex-direction:column;gap:8px;width:100%}
+.quick-btn{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);
+  padding:13px 14px;font-size:13px;color:var(--text2);display:flex;align-items:center;gap:12px;
+  text-align:left;transition:background .18s,border-color .18s,color .18s}
+.quick-btn:active,.quick-btn.selected{background:var(--orange-dim);border-color:var(--orange);color:var(--text)}
+.quick-icon{width:32px;height:32px;border-radius:var(--radius-xs);background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.quick-icon svg{width:15px;height:15px;stroke:var(--orange);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-/* ── QUICK ACTIONS ── */
-.quick-action{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:13px 14px;cursor:pointer;text-align:left;width:100%;transition:background .2s,border-color .2s;font-family:var(--font)}
-.quick-action:active{background:var(--orange-dark);border-color:var(--orange)}
-.quick-action-icon{width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.quick-action span{font-size:14px;color:var(--text);font-weight:500}
+/* INPUT AREA */
+.input-area{padding:12px 16px 28px;border-top:1px solid var(--border);flex-shrink:0}
+.input-row{display:flex;gap:8px;align-items:flex-end;background:var(--surface);
+  border:1px solid var(--border2);border-radius:var(--radius-sm);padding:9px 9px 9px 14px;
+  transition:border-color .2s}
+.input-row:focus-within{border-color:var(--orange)}
+.chat-input{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:14px;
+  line-height:1.5;min-height:22px;max-height:110px}
+.chat-input::placeholder{color:var(--text3)}
+.send-btn{width:36px;height:36px;border-radius:var(--radius-xs);background:var(--orange);
+  border:none;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:background .15s,transform .15s}
+.send-btn:active{transform:scale(.92);background:#d14f22}
+.send-btn:disabled{background:var(--border)}
+.send-btn svg{width:15px;height:15px;fill:#fff}
 
-/* ── PROGRESS BAR ── */
-.progress-bar-wrap{background:var(--border);border-radius:100px;height:6px;overflow:hidden}
-.progress-bar-fill{height:100%;background:var(--orange);border-radius:100px;transition:width .5s ease}
+/* HOME CARDS */
+.next-workout-card{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:20px;margin-bottom:12px;position:relative;overflow:hidden}
+.next-workout-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--orange),#ff8c5a)}
+.pill-label{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;
+  color:var(--orange);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px}
+.pill-label .dot{width:5px;height:5px;border-radius:50%;background:var(--orange)}
+.workout-title{font-size:22px;font-weight:800;color:var(--text);margin-bottom:4px}
+.workout-subtitle{font-size:13px;color:var(--text2);margin-bottom:14px}
+.workout-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.tag{font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border2);color:var(--text2)}
+.tag.orange{border-color:var(--orange);color:var(--orange);background:var(--orange-dim)}
 
-/* ── CHART ── */
-.chart-wrap{display:flex;align-items:flex-end;gap:8px;height:100px;padding:0 4px}
+/* WEEK ROW */
+.week-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.day-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:10px 6px;text-align:center}
+.day-card.done{border-color:#1a4a2a;background:#0a1f10}
+.day-card.today{border-color:var(--orange);background:var(--orange-dim)}
+.day-letter{font-size:17px;font-weight:800;color:var(--text2);margin-bottom:2px}
+.day-card.done .day-letter{color:var(--green)}
+.day-card.today .day-letter{color:var(--orange)}
+.day-date{font-size:10px;color:var(--text3)}
+.day-check{font-size:12px;color:var(--green);margin-top:3px;font-weight:600}
+
+/* BORG CARD */
+.borg-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.borg-info{flex-shrink:0}
+.borg-label{font-size:11px;color:var(--text3);margin-bottom:2px}
+.borg-num{font-size:20px;font-weight:800;color:var(--text)}
+.borg-sub{font-size:11px;color:var(--green);font-weight:500}
+.borg-track{flex:1;height:6px;background:var(--border2);border-radius:3px;overflow:hidden}
+.borg-fill{height:100%;border-radius:3px;background:var(--orange)}
+
+/* CYCLE PILL */
+.cycle-pill{display:inline-flex;align-items:center;gap:8px;background:var(--surface);
+  border:1px solid var(--border);border-radius:20px;padding:6px 14px;margin-bottom:16px;font-size:12px}
+.cycle-pill-dot{width:6px;height:6px;border-radius:50%;background:var(--orange)}
+.cycle-pill-text{color:var(--text3)}
+.cycle-pill-week{color:var(--text);font-weight:600}
+
+/* STATS */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px}
+.stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.stat-val{font-size:22px;font-weight:800;color:var(--text)}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:3px}
+.stat-sub.green{color:var(--green)}
+.stat-sub.orange{color:var(--orange)}
+.prog-bar{height:6px;background:var(--border2);border-radius:3px;overflow:hidden;margin-top:8px}
+.prog-fill{height:100%;border-radius:3px;background:var(--orange)}
+
+/* EXERCISE SELECT */
+.ex-select-wrap{position:relative;margin-bottom:10px}
+.ex-select{width:100%;background:var(--surface);border:1px solid var(--border2);
+  border-radius:var(--radius-sm);color:var(--text);font-size:14px;padding:11px 36px 11px 14px;
+  appearance:none;cursor:pointer}
+.ex-select:focus{outline:none;border-color:var(--orange)}
+.ex-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  color:var(--text3);pointer-events:none;font-size:11px}
+
+/* CHART BARS */
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:120px;padding:0 4px}
 .chart-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
-.chart-bar{width:100%;border-radius:4px 4px 0 0;background:var(--border2);min-height:4px;transition:height .5s ease}
-.chart-bar.current{background:var(--orange)}
-.chart-val{font-size:11px;color:var(--text2);font-weight:600}
-.chart-label{font-size:10px;color:var(--text3)}
+.chart-bar{width:100%;border-radius:5px 5px 0 0;min-height:8px;transition:height .5s ease}
+.chart-bar-label{font-size:10px;color:var(--text3)}
+.chart-bar-val{font-size:11px;color:var(--text2);font-weight:600}
 
-/* ── NUCKOLS ── */
-.nuckols-bar{position:relative;height:8px;background:var(--border2);border-radius:100px;margin:8px 0}
-.nuckols-fill{height:100%;background:linear-gradient(90deg,var(--orange),#ff8c42);border-radius:100px;transition:width .5s ease}
-.nuckols-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--text3)}
+/* NUCKOLS */
+.nuck-bar{height:5px;background:var(--border2);border-radius:3px;overflow:hidden;margin:6px 0}
+.nuck-fill{height:100%;border-radius:3px;background:var(--orange);transition:width .6s ease}
+.nuck-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--text3)}
+.nuck-tag{display:inline-block;font-size:11px;font-weight:600;padding:3px 8px;border-radius:5px}
 
-/* ── BORG BUTTONS ── */
-.borg-wrap{display:flex;gap:4px}
-.borg-btn{flex:1;height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:var(--font)}
-.borg-btn.selected{background:var(--orange-dark);border-color:var(--orange);color:var(--orange)}
+/* PROFILE */
+.profile-avatar{width:64px;height:64px;border-radius:20px;background:var(--orange-dim);
+  border:2px solid var(--orange);display:flex;align-items:center;justify-content:center;
+  font-size:28px;font-weight:800;color:var(--orange);margin:0 auto 12px}
+.profile-name{font-size:20px;font-weight:800;text-align:center;margin-bottom:4px}
+.profile-sub{font-size:13px;color:var(--text2);text-align:center;margin-bottom:20px}
+.info-row{display:flex;justify-content:space-between;align-items:center;
+  padding:12px 0;border-bottom:1px solid var(--border)}
+.info-row:last-child{border-bottom:none}
+.info-key{font-size:13px;color:var(--text3)}
+.info-val{font-size:13px;font-weight:600;color:var(--orange)}
+.plan-badge{display:inline-flex;align-items:center;gap:6px;background:var(--orange-dim);
+  border:1px solid var(--orange);border-radius:20px;padding:6px 14px;font-size:12px;
+  font-weight:700;color:var(--orange);margin-bottom:16px}
 
-/* ── OPTION CHIPS ── */
+/* FAQ */
+.faq-section-title{font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;
+  letter-spacing:.1em;margin-bottom:10px;margin-top:20px}
+.faq-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:14px;margin-bottom:8px}
+.faq-q{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
+.faq-a{font-size:12px;color:var(--text2);line-height:1.6}
+.faq-ex{background:var(--surface2);border-radius:6px;padding:8px 10px;margin-top:8px;
+  font-size:12px;color:var(--orange);font-style:italic}
+
+/* SPLASH */
+.splash-content{flex:1;display:flex;flex-direction:column;justify-content:space-between;padding:32px 24px 20px}
+.splash-icon{width:72px;height:72px;border-radius:22px;background:var(--orange-dim);
+  border:2px solid var(--orange);display:flex;align-items:center;justify-content:center;
+  font-size:32px;font-weight:900;color:var(--orange);margin-bottom:20px}
+.splash-title{font-size:32px;font-weight:900;color:var(--text);line-height:1.1;
+  margin-bottom:12px;letter-spacing:-.5px}
+.splash-title em{font-style:normal;color:var(--orange)}
+.splash-desc{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:20px}
+.splash-features{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.feature-row{display:flex;align-items:flex-start;gap:12px}
+.feature-icon{width:28px;height:28px;border-radius:8px;background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.feature-icon svg{width:14px;height:14px;stroke:var(--orange);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.feature-text{font-size:13px;color:var(--text2);line-height:1.5}
+.feature-text strong{color:var(--text);font-weight:600}
+.splash-byline{text-align:center;font-size:12px;color:var(--text3);margin-top:14px;line-height:1.5}
+
+/* WORKOUT EXECUTION */
+.ex-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:10px}
+.ex-num{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.ex-name{font-size:18px;font-weight:700;margin-bottom:4px}
+.ex-spec{font-size:13px;color:var(--text2);margin-bottom:6px}
+.ex-note{font-size:12px;color:var(--text3);font-style:italic;border-left:2px solid var(--orange);
+  padding-left:8px;margin-bottom:14px}
+.set-rows{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.set-row{display:flex;align-items:center;gap:10px}
+.set-label{font-size:12px;color:var(--text3);width:48px;flex-shrink:0}
+.set-input{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;
+  color:var(--text);font-size:14px;padding:8px 12px;outline:none;text-align:center}
+.set-input:focus{border-color:var(--orange)}
+.set-unit{font-size:12px;color:var(--text3);width:24px}
+.set-check{width:28px;height:28px;border-radius:7px;border:1.5px solid var(--border2);
+  background:none;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:background .2s,border-color .2s}
+.set-check.done{background:var(--orange-dim);border-color:var(--orange)}
+.set-check svg{width:12px;height:12px;stroke:var(--orange);fill:none;stroke-width:2.5;
+  stroke-linecap:round;stroke-linejoin:round;display:none}
+.set-check.done svg{display:block}
+.borg-section{margin-top:4px}
+.borg-title-sm{font-size:12px;color:var(--text3);margin-bottom:8px}
+.borg-buttons{display:flex;gap:4px}
+.borg-btn{flex:1;padding:7px 0;border-radius:7px;border:1px solid var(--border);
+  background:var(--surface2);font-size:12px;font-weight:600;color:var(--text3);transition:all .15s}
+.borg-btn.sel{background:var(--orange-dim);border-color:var(--orange);color:var(--orange)}
 .option-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;margin-bottom:4px}
-.option-chip{background:var(--surface2);border:1.5px solid var(--orange);border-radius:20px;padding:8px 16px;font-size:13px;color:var(--orange);font-weight:600;cursor:pointer;transition:all .18s;font-family:var(--font)}
+.tooltip-term{border-bottom:1px dotted var(--orange);cursor:pointer}
+.chips-hint{font-size:11px;color:var(--text3);text-align:center;margin-top:6px;display:block}
+.option-chip{background:var(--surface2);border:1.5px solid var(--orange);border-radius:20px;padding:8px 16px;font-size:13px;color:var(--orange);font-weight:600;cursor:pointer;transition:all .18s;font-family:inherit;letter-spacing:.01em}
 .option-chip:hover{background:var(--orange);color:#fff;transform:scale(1.02)}
+.option-chip:active{transform:scale(.97)}
 .option-chip.chosen{background:var(--orange);color:#fff;opacity:.85;cursor:default}
 .option-chip:disabled{cursor:default}
+.chips-hint{font-size:11px;color:var(--text3);text-align:center;margin-top:6px;display:block}
 
-/* ── WORKOUT ── */
-.exercise-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:12px}
-.set-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)}
-.set-row:last-of-type{border-bottom:none}
-.set-label{font-size:12px;color:var(--text3);font-weight:600;width:28px;flex-shrink:0}
-.set-input{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;color:var(--text);font-size:15px;outline:none;font-family:var(--font)}
-.set-check{width:32px;height:32px;border-radius:8px;background:var(--surface2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0}
-.set-check.done{background:var(--orange-dark);border-color:var(--orange)}
+/* REPORT */
+.report-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.report-header{font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;
+  padding-bottom:10px;border-bottom:1px solid var(--border)}
+.report-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.report-row:last-child{border-bottom:none}
+.report-badge{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.badge-up{background:#0d2a1a}
+.badge-warn{background:#2a1a08}
+.badge-down{background:#2a0d0d}
+.report-ex{font-size:13px;color:var(--text);flex:1}
+.report-detail{font-size:12px;color:var(--text2)}
 
-/* ── MISC ── */
-.back-btn{background:none;border:none;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px;font-size:14px;padding:0;font-family:var(--font)}
-.section-title{font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;margin-top:20px}
-.day-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.day-cell{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 8px;text-align:center}
-.day-cell.done{border-color:rgba(58,203,122,.4);background:rgba(58,203,122,.08)}
-.day-cell.today{border-color:rgba(232,93,47,.5);background:var(--orange-dark)}
-.day-cell-label{font-size:13px;font-weight:700}
-.day-cell.done .day-cell-label{color:var(--green)}
-.day-cell.today .day-cell-label{color:var(--orange)}
-.day-cell.pending .day-cell-label{color:var(--text3)}
-.day-cell-sub{font-size:10px;color:var(--text3);margin-top:2px}
-.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.metric-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
-.metric-val{font-size:28px;font-weight:800;color:var(--orange)}
-.metric-label{font-size:12px;color:var(--text2);margin-top:2px}
-.profile-avatar{width:80px;height:80px;border-radius:24px;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:800;color:#fff;margin:0 auto}
-.data-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
-.data-row:last-child{border-bottom:none}
-.data-row-label{font-size:13px;color:var(--text2)}
-.data-row-value{font-size:13px;font-weight:600;color:var(--text)}
-.timer{font-size:20px;font-weight:700;color:var(--orange);font-variant-numeric:tabular-nums}
-.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:8px}
-.faq-item h4{font-size:14px;font-weight:700;margin-bottom:6px}
-.faq-item p{font-size:13px;color:var(--text2);line-height:1.5}
-.faq-item em{color:var(--orange);font-style:italic}
-.report-line{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border)}
-.report-line:last-child{border-bottom:none}
-.report-icon{font-size:16px;flex-shrink:0}
-.report-info{flex:1}
-.report-name{font-size:13px;font-weight:600}
-.report-result{font-size:12px;color:var(--text2)}
-.report-rec{font-size:12px;color:var(--orange);font-style:italic;background:var(--orange-dark);border-radius:6px;padding:6px 8px;margin-top:6px}
-select{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;font-family:var(--font);outline:none;width:100%;-webkit-appearance:none}
+/* LOADING */
+.loader-overlay{position:fixed;inset:0;background:rgba(10,10,10,.85);z-index:200;
+  display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.loader-spinner{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--orange);
+  border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader-text{font-size:14px;color:var(--text2)}
 
-/* ── TRAINING SCREEN ── */
-.training-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;scrollbar-width:none}
-.training-tabs::-webkit-scrollbar{display:none}
-.training-tab{flex-shrink:0;padding:12px 20px;font-size:14px;font-weight:600;color:var(--text3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .2s;font-family:var(--font)}
-.training-tab.active{color:var(--orange);border-bottom-color:var(--orange)}
-.training-session{display:none;padding:16px;flex-direction:column;gap:12px}
-.training-session.active{display:flex}
-.training-ex-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px}
-.training-ex-name{font-size:16px;font-weight:700;margin-bottom:4px}
-.training-ex-spec{font-size:12px;color:var(--text2);margin-bottom:8px}
-.training-ex-note{font-size:12px;color:var(--text3);font-style:italic;border-left:2px solid var(--orange);padding-left:10px}
-.training-locked{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:16px;padding:40px 24px;text-align:center}
-.training-locked-icon{font-size:48px;opacity:.3}
-.training-locked-text{font-size:15px;color:var(--text2);line-height:1.6}
-.version-history{padding:0 16px 32px}
-.version-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
-.version-item:last-child{border-bottom:none}
-.version-info{flex:1}
-.version-label{font-size:13px;font-weight:600}
-.version-date{font-size:11px;color:var(--text3);margin-top:2px}
-.version-actions{display:flex;gap:6px}
-.version-btn{font-size:11px;font-weight:600;padding:5px 10px;border-radius:7px;border:1px solid var(--border2);background:none;color:var(--text2);cursor:pointer;font-family:var(--font);transition:all .15s}
-.version-btn:active{background:var(--orange-dark);border-color:var(--orange);color:var(--orange)}
-.version-current{font-size:10px;font-weight:700;color:var(--orange);background:var(--orange-dark);border-radius:5px;padding:2px 7px}
-/* Toast */
-.toast{position:fixed;bottom:calc(80px + 16px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--orange);border-radius:12px;padding:10px 18px;font-size:13px;font-weight:600;color:var(--text);z-index:300;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-/* Home workout-ready banner */
-.workout-ready-banner{background:var(--orange-dark);border:1px solid rgba(232,93,47,.4);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:12px;cursor:pointer}
-.workout-ready-banner-text{flex:1;font-size:13px;color:var(--text2)}
-.workout-ready-banner-text strong{display:block;font-size:14px;color:var(--text);margin-bottom:2px}
+/* 1RM TABLE (Added for compatibility with local logic) */
+.rm-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+.rm-table th { text-align: left; font-size: 11px; color: var(--text3); padding: 8px 4px; border-bottom: 1px solid var(--border); }
+.rm-table td { font-size: 13px; padding: 10px 4px; border-bottom: 1px solid var(--border); }
+.rm-table td:last-child { color: var(--orange); font-weight: 600; text-align: right; }
 
-/* FORM CARGAS */
 .form-cargas { margin-top: 12px; display: flex; flex-direction: column; gap: 10px; }
-.form-cargas-row { display: grid; grid-template-columns: 1fr 72px 36px 56px 36px; align-items: center; gap: 8px; }
+.form-cargas-row {
+  display: grid;
+  grid-template-columns: 1fr 72px 36px 56px 36px;
+  align-items: center;
+  gap: 8px;
+}
 .form-cargas-label { font-size: 13px; font-weight: 600; color: var(--text); }
-.form-cargas-input { background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; padding: 7px 10px; color: var(--text); font-size: 14px; outline: none; text-align: center; width: 100%; font-family: inherit; }
+.form-cargas-input {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 7px 10px;
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+  text-align: center;
+  width: 100%;
+  font-family: inherit;
+}
 .form-cargas-input:focus { border-color: var(--orange); }
 .form-cargas-unit { font-size: 11px; color: var(--text3); }
-.form-cargas-btn { width: 100%; margin-top: 12px; background: var(--orange); border: none; border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 700; color: #fff; cursor: pointer; font-family: inherit; }
-
+.form-cargas-btn {
+  width: 100%;
+  margin-top: 12px;
+  background: var(--orange);
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+}
 </style>
 </head>
 <body>
 <div id="app">
 
-<!-- LOADER -->
-<div id="loader">
-  <div class="spinner"></div>
-  <p id="loader-text">Caleb está pensando...</p>
+<!-- LOADING -->
+<div class="loader-overlay" id="loader">
+  <div class="loader-spinner"></div>
+  <div class="loader-text" id="loader-text">Caleb está pensando...</div>
 </div>
 
-<!-- ═══════════════════════════════
-     TELA 1 — SPLASH
-     ═══════════════════════════════ -->
-<div class="screen" id="screen-splash">
-  <div class="top-bar">
-    <div class="logo">CALEB<span>.IA</span></div>
-    <div class="badge"><div class="badge-dot"></div>v1.1 M.A.X. Core</div>
+
+<!-- SCREEN: SPLASH -->
+<div class="screen" id="s-splash">
+  <div class="status-bar"><span class="status-time" id="t-splash">--:--</span><div class="status-icon"></div></div>
+  <div class="topbar">
+    <div class="logo">CALEB<em>.IA</em></div>
+    <div class="version-pill">v1.1 M.A.X. Core <div class="live-dot"></div></div>
   </div>
-  <div class="scroll-content" style="padding:24px 20px 40px;">
-    <div style="text-align:center;margin-bottom:24px;">
-      <div style="width:72px;height:72px;background:var(--orange);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:800;color:#fff;margin:0 auto 16px;">C</div>
-      <h1 style="font-size:26px;font-weight:800;line-height:1.25;margin-bottom:10px;">Seu personal trainer<br>com <span style="color:var(--orange)">I.A.</span></h1>
-      <p style="font-size:14px;color:var(--text2);line-height:1.65;">Protocolo construído sobre evidência publicada — periodização, progressão de carga e controle de volume, sem fila, sem horário fixo.</p>
-    </div>
-
-    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
-      <div style="display:flex;align-items:center;gap:14px;">
-        <div style="width:42px;height:42px;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--orange)" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+  <div class="splash-content">
+    <div>
+      <div class="splash-icon">C</div>
+      <div class="splash-title">Seu personal trainer<br>com <em>I.A.</em></div>
+      <div class="splash-desc">Treinamento de força com base científica real. Você tem o protocolo certo, no momento certo, sem depender de agenda.</div>
+      <div class="splash-features">
+        <div class="feature-row">
+          <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+          <div class="feature-text"><strong>Protocolo personalizado</strong><br>Baseado no seu nível, objetivo e rotina real</div>
         </div>
-        <div><div style="font-size:14px;font-weight:700;">Protocolo personalizado</div><div style="font-size:12px;color:var(--text2);">Montado para o seu nível e objetivo exatos</div></div>
-      </div>
-      <div style="display:flex;align-items:center;gap:14px;">
-        <div style="width:42px;height:42px;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--orange)" stroke-width="2"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        <div class="feature-row">
+          <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+          <div class="feature-text"><strong>Base técnico-científica</strong><br>Schoenfeld, Israetel, Helms, ACSM 2026</div>
         </div>
-        <div><div style="font-size:14px;font-weight:700;">Base técnico-científica</div><div style="font-size:12px;color:var(--text2);">Schoenfeld, Israetel, Helms, Nuckols e outros</div></div>
-      </div>
-      <div style="display:flex;align-items:center;gap:14px;">
-        <div style="width:42px;height:42px;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--orange)" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        <div class="feature-row">
+          <div class="feature-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+          <div class="feature-text"><strong>Evolução semana a semana</strong><br>Check-in adaptativo e relatório mensal com Escala de Borg</div>
         </div>
-        <div><div style="font-size:14px;font-weight:700;">Evolução semana a semana</div><div style="font-size:12px;color:var(--text2);">Progressão de carga e volume automatizados</div></div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:16px;font-size:13px;color:var(--text2);line-height:1.6">
+        A maioria dos apps te dá um treino qualquer. Aqui cada exercício tem um motivo e cada série tem um propósito.
+      </div>
+      <div style="display:inline-flex;align-items:center;gap:6px;border:1px solid var(--orange);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;color:var(--orange);margin-bottom:20px">
+        <div style="width:5px;height:5px;border-radius:50%;background:var(--orange)"></div>
+        TRIAL · 14 DIAS — ACESSO COMPLETO
       </div>
     </div>
-
-    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:20px;">
-      <p style="font-size:13px;color:var(--text2);line-height:1.65;font-style:italic;">"Não é um gerador genérico. É um protocolo construído sobre evidência publicada — sem invencionismo, sem atalhos."</p>
+    <div>
+      <button class="btn-primary" onclick="startOnboarding()">Montar Meu Protocolo</button>
+      <div class="splash-byline">Desenvolvido por Lucas<br>Personal Trainer · Especialista em Hipertrofia e Treinamento de Força</div>
     </div>
-
-    <div style="text-align:center;margin-bottom:18px;">
-      <span style="background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:6px 16px;font-size:12px;font-weight:700;color:var(--orange);letter-spacing:.05em;">TRIAL · 14 DIAS — ACESSO COMPLETO</span>
-    </div>
-
-    <button class="btn-primary" onclick="goToOnboarding()" style="margin-bottom:16px;">Montar Meu Protocolo</button>
-    <p style="text-align:center;font-size:11px;color:var(--text3);line-height:1.6;">Desenvolvido por Lucas — Personal Trainer<br>Especialista em Hipertrofia e Treinamento de Força</p>
   </div>
 </div>
 
-<!-- ═══════════════════════════════
-     TELA 2 — ONBOARDING
-     ═══════════════════════════════ -->
-<div class="screen off" id="screen-onboarding">
-  <div class="top-bar">
-    <div class="logo">CALEB<span>.IA</span></div>
-    <span style="font-size:13px;color:var(--text2);">Montando seu protocolo</span>
+
+<!-- SCREEN: ONBOARDING CHAT -->
+<div class="screen off" id="s-onboarding">
+  <div class="status-bar"><span class="status-time" id="t-onboarding">--:--</span><div class="status-icon"></div></div>
+  <div class="topbar">
+    <div class="logo">CALEB<em>.IA</em></div>
+    <div style="font-size:12px;color:var(--text3)">Montando seu protocolo</div>
   </div>
-  <div class="scroll-content" id="ob-messages" style="padding:16px;display:flex;flex-direction:column;"></div>
-  <div class="chat-input-wrap">
-    <textarea class="chat-textarea" id="ob-input" placeholder="Sua resposta..." rows="1" oninput="autoResize(this)" onkeydown="obKeydown(event)"></textarea>
-    <button class="chat-send-btn" onclick="sendOnboarding()">
-      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-    </button>
+  <div class="scroll-area" id="onboarding-msgs" style="padding:16px;display:flex;flex-direction:column;gap:2px"></div>
+  <div class="input-area">
+    <div class="input-row">
+      <textarea class="chat-input" id="onboarding-input" placeholder="Digite sua resposta..." rows="1"
+        oninput="autoResize(this)" onkeydown="handleKey(event,'onboarding')"></textarea>
+      <button class="send-btn" onclick="sendOnboarding()">
+        <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+      </button>
+    </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════
-     TELA 3 — HOME
-     ═══════════════════════════════ -->
-<div class="screen off" id="screen-home">
-  <div class="top-bar">
-    <div class="logo">CALEB<span>.IA</span></div>
-    <div class="badge"><div class="badge-dot"></div>v1.1 M.A.X. Core</div>
+<!-- SCREEN: HOME -->
+<div class="screen off" id="s-home">
+  <div class="status-bar"><span class="status-time" id="t-home">--:--</span><div class="status-icon"></div></div>
+  <div class="topbar">
+    <div class="logo">CALEB<em>.IA</em></div>
+    <div class="version-pill">v1.1 M.A.X. Core <div class="live-dot"></div></div>
   </div>
-  <div class="scroll-content" style="padding:20px 20px 24px;">
-    <div style="margin-bottom:16px;">
-      <h2 style="font-size:22px;font-weight:800;" id="home-greeting">Bom dia 👋</h2>
-      <div style="margin-top:8px;">
-        <span class="tag orange" id="home-cycle-badge">Ciclo 1 — Semana 1 de 4</span>
-      </div>
+  <div class="scroll-area" style="padding:18px 16px">
+    <div style="margin-bottom:16px">
+      <div style="font-size:13px;color:var(--text3);margin-bottom:3px">Bom dia,</div>
+      <div style="font-size:22px;font-weight:800" id="home-greeting">Atleta 👋</div>
     </div>
-
-    <!-- Next workout card -->
-    <div class="card card-top-orange" style="margin-bottom:16px;">
-      <div style="font-size:11px;font-weight:700;color:var(--orange);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;">PRÓXIMO TREINO</div>
-      <div style="font-size:28px;font-weight:800;margin-bottom:4px;" id="next-workout-title">Treino A</div>
-      <div style="font-size:14px;color:var(--text2);margin-bottom:12px;" id="next-workout-sub">Peito + Tríceps</div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;">
-        <span class="tag orange">Hoje</span>
-        <span class="tag" id="next-workout-exs">5 exercícios</span>
-        <span class="tag" id="next-workout-time">45–60 min</span>
-        <span class="tag" id="next-workout-rir">RIR 2–3</span>
+    <div class="cycle-pill">
+      <div class="cycle-pill-dot"></div>
+      <div class="cycle-pill-text">Ciclo 1 —</div>
+      <div class="cycle-pill-week" id="home-cycle">Semana 1 de 4</div>
+    </div>
+    <div class="next-workout-card">
+      <div class="pill-label"><div class="dot"></div>Próximo treino</div>
+      <div class="workout-title" id="home-title">Treino A</div>
+      <div class="workout-subtitle" id="home-sub">Peito + Tríceps</div>
+      <div class="workout-tags">
+        <div class="tag orange">Hoje</div>
+        <div class="tag" id="home-tag-ex">5 exercícios</div>
+        <div class="tag" id="home-tag-time">~60 min</div>
+        <div class="tag" id="home-tag-rir" onclick="showTooltip(event,'RIR')" style="cursor:pointer">RIR 1–2</div>
       </div>
       <button class="btn-primary" onclick="showWorkout()">Iniciar Treino</button>
     </div>
-
-    <!-- Week grid -->
-    <div class="section-title">Esta semana</div>
-    <div class="day-grid" style="margin-bottom:16px;" id="home-day-grid">
-      <div class="day-cell done"><div class="day-cell-label">A</div><div class="day-cell-sub">✓ Seg</div></div>
-      <div class="day-cell today"><div class="day-cell-label">B</div><div class="day-cell-sub">Hoje</div></div>
-      <div class="day-cell pending"><div class="day-cell-label">C</div><div class="day-cell-sub">Qui</div></div>
-      <div class="day-cell pending"><div class="day-cell-label">D</div><div class="day-cell-sub">Sáb</div></div>
+    <div class="week-row" id="home-week">
+      <div class="day-card today" onclick="showWorkoutByKey('A')" style="cursor:pointer"><div class="day-letter">A</div><div class="day-date">Hoje</div></div>
+      <div class="day-card" onclick="showWorkoutByKey('B')" style="cursor:pointer"><div class="day-letter">B</div><div class="day-date">Qui</div></div>
+      <div class="day-card" onclick="showWorkoutByKey('C')" style="cursor:pointer"><div class="day-letter">C</div><div class="day-date">Sex</div></div>
+      <div class="day-card" onclick="showWorkoutByKey('D')" style="cursor:pointer"><div class="day-letter">D</div><div class="day-date">Sáb</div></div>
     </div>
-
-    <!-- Borg card -->
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-        <div style="font-size:13px;color:var(--text2);">Borg médio — semana</div>
-        <div style="font-size:26px;font-weight:800;color:var(--orange);" id="home-borg">—</div>
+    <div class="borg-card">
+      <div class="borg-info">
+        <div class="borg-label" onclick="showTooltip(event,'Borg')" style="cursor:pointer;border-bottom:1px dotted var(--orange)">Borg médio — semana passada</div>
+        <div class="borg-num" id="home-borg">--</div>
+        <div class="borg-sub" id="home-borg-sub">Sem dados ainda</div>
       </div>
-      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">Zona alvo: 7–8 (Intermediário)</div>
-      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="home-borg-bar" style="width:0%"></div></div>
+      <div class="borg-track" style="flex:1"><div class="borg-fill" id="home-borg-fill" style="width:0%"></div></div>
     </div>
+    <div style="height:80px"></div>
   </div>
   <div class="bottom-nav">
-    <button class="nav-btn active" id="nav-home" onclick="navTo('home')">
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-      <span>Home</span>
+    <button class="nav-btn active" onclick="navTo('home')">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <div class="nav-label">Home</div>
     </button>
-    <button class="nav-btn" id="nav-training" onclick="navTo('training')">
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
-      <span>Treino</span>
+    <button class="nav-btn" onclick="navTo('training')">
+      <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+      <div class="nav-label">Treino</div>
     </button>
-    <button class="nav-btn" id="nav-progress" onclick="navTo('progress')">
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      <span>Progresso</span>
+    <button class="nav-btn" onclick="navTo('progress')">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <div class="nav-label">Progresso</div>
     </button>
-    <button class="nav-btn" id="nav-profile" onclick="navTo('profile')">
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span>Perfil</span>
+    <button class="nav-btn" onclick="navTo('profile')">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <div class="nav-label">Perfil</div>
     </button>
   </div>
   <button class="fab" onclick="openChat()">
-    <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
   </button>
 </div>
 
-<!-- ═══════════════════════════════
-     TELA 4 — CHAT FLUTUANTE
-     ═══════════════════════════════ -->
-<div class="screen off-up" id="screen-chat" style="z-index:5;">
-  <div style="height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;">
-    <button class="back-btn" onclick="closeChat()">
-      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-      Voltar
+<!-- SCREEN: CHAT FLUTUANTE -->
+<div class="screen off-up" id="s-chat">
+  <div class="status-bar"><span class="status-time" id="t-chat">--:--</span><div class="status-icon"></div></div>
+  <div class="chat-header">
+    <button class="icon-btn" onclick="hideScreen('s-chat')">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
-    <div style="display:flex;align-items:center;gap:10px;">
-      <div class="avatar-c" style="width:36px;height:36px;font-size:16px;">C</div>
-      <div>
-        <div style="font-size:14px;font-weight:700;">Caleb</div>
-        <div style="font-size:11px;color:var(--green);">● Online</div>
-      </div>
+    <div class="caleb-info">
+      <div class="caleb-avatar">C</div>
+      <div><div class="caleb-name">Caleb</div><div class="caleb-online">Online</div></div>
     </div>
-    <button onclick="showFaq()" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;width:32px;height:32px;color:var(--text2);cursor:pointer;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;">!</button>
+    <button class="faq-btn" onclick="showScreen('s-faq')">!</button>
   </div>
-  <div class="scroll-content" id="chat-messages" style="padding:16px;display:flex;flex-direction:column;"></div>
-  <div class="chat-input-wrap">
-    <textarea class="chat-textarea" id="chat-input" placeholder="Pergunte ou peça algo..." rows="1" oninput="autoResize(this)" onkeydown="chatKeydown(event)"></textarea>
-    <button class="chat-send-btn" onclick="sendChat()">
-      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-    </button>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════
-     TELA 5 — FAQ
-     ═══════════════════════════════ -->
-<div class="screen off" id="screen-faq" style="z-index:6;">
-  <div style="height:56px;display:flex;align-items:center;gap:12px;padding:0 20px;border-bottom:1px solid var(--border);flex-shrink:0;">
-    <button class="back-btn" onclick="showOnly('screen-chat')">
-      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <span style="font-size:16px;font-weight:700;">O que o Caleb pode fazer</span>
-  </div>
-  <div class="scroll-content" style="padding:16px 20px 40px;">
-    <div class="section-title">Adaptar o treino</div>
-    <div class="faq-item"><h4>Mudar os dias da semana</h4><p>Reorganiza a semana inteira sem perder progressão.</p><p style="margin-top:4px;"><em>"Caleb, semana que vem só consigo treinar terça, quinta e sábado"</em></p></div>
-    <div class="faq-item"><h4>Encaixar atividade extra</h4><p>Jogo de futebol, trilha, jiu-jítsu — Caleb ajusta o volume.</p><p style="margin-top:4px;"><em>"Vou jogar futsal quinta, como fica meu treino?"</em></p></div>
-    <div class="faq-item"><h4>Ajustar tempo por sessão</h4><p>Remove exercícios acessórios mantendo os compostos.</p><p style="margin-top:4px;"><em>"Tenho só 40 min hoje"</em></p></div>
-    <div class="faq-item"><h4>Reduzir intensidade</h4><p>Deload emergencial quando o corpo pede.</p><p style="margin-top:4px;"><em>"Estou cansado demais, preciso aliviar"</em></p></div>
-
-    <div class="section-title">Exercícios</div>
-    <div class="faq-item"><h4>Trocar um exercício</h4><p>Substitui mantendo o grupo muscular e a progressão.</p><p style="margin-top:4px;"><em>"Não tenho cabo, pode trocar o fly?"</em></p></div>
-    <div class="faq-item"><h4>Dúvidas de execução</h4><p>Explica a técnica, ponteiros de segurança e erros comuns.</p><p style="margin-top:4px;"><em>"Como executo o terra corretamente?"</em></p></div>
-
-    <div class="section-title">Nutrição</div>
-    <div class="faq-item"><h4>Proteína e calorias</h4><p>Calcula TDEE e meta proteica com base no seu perfil.</p><p style="margin-top:4px;"><em>"Quantas calorias devo comer para ganhar músculo?"</em></p></div>
-    <div class="faq-item"><h4>Suplementação</h4><p>Creatina e whey com base em evidência. Sem modinha.</p><p style="margin-top:4px;"><em>"Devo tomar BCAA?"</em></p></div>
-
-    <div class="section-title" style="color:var(--orange);">O que o Caleb NÃO faz</div>
-    <div class="faq-item" style="border-color:rgba(232,93,47,.3);"><h4>Diagnósticos médicos</h4><p>Dor ou lesão? Consulte um profissional de saúde.</p></div>
-    <div class="faq-item" style="border-color:rgba(232,93,47,.3);"><h4>Hormônios e medicamentos</h4><p>Nenhuma orientação sobre substâncias controladas.</p></div>
+  <div class="scroll-area" id="chat-msgs" style="padding:16px;display:flex;flex-direction:column;gap:2px"></div>
+  <div class="input-area">
+    <div class="input-row">
+      <textarea class="chat-input" id="chat-input" placeholder="Ou descreva o que precisa..." rows="1"
+        oninput="autoResize(this)" onkeydown="handleKey(event,'chat')"></textarea>
+      <button class="send-btn" onclick="sendChat()">
+        <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+      </button>
+    </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════
-     TELA 6 — EXECUÇÃO DO TREINO
-     ═══════════════════════════════ -->
-<div class="screen off" id="screen-workout">
-  <div style="height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);flex-shrink:0;">
-    <button class="back-btn" onclick="cancelWorkout()">
-      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+
+<!-- SCREEN: FAQ -->
+<div class="screen off" id="s-faq">
+  <div class="status-bar"><span class="status-time" id="t-faq">--:--</span><div class="status-icon"></div></div>
+  <div class="chat-header">
+    <button class="icon-btn" onclick="hideScreen('s-faq')">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
-    <span style="font-size:15px;font-weight:700;" id="workout-title">Treino A</span>
-    <span class="timer" id="workout-timer">00:00</span>
+    <div style="flex:1;font-size:16px;font-weight:700">O que o Caleb pode fazer</div>
   </div>
-  <div class="scroll-content" style="padding:16px 16px 8px;" id="workout-content"></div>
-  <div style="padding:12px 16px 16px;border-top:1px solid var(--border);flex-shrink:0;">
+  <div class="scroll-area" style="padding:0 16px 40px">
+    <div class="faq-section-title" style="margin-top:16px">Adaptar o treino</div>
+    <div class="faq-card"><div class="faq-q">Mudar os dias da semana</div><div class="faq-a">Se sua semana mudou, avise o Caleb. Ele reorganiza as sessões mantendo o volume e a progressão de carga.</div><div class="faq-ex">"Essa semana só posso treinar segunda, quarta e sexta"</div></div>
+    <div class="faq-card"><div class="faq-q">Encaixar atividade extra</div><div class="faq-a">Jiu-jítsu, natação, corrida — o Caleb ajusta o treino de força para não colidir com o esforço extra.</div><div class="faq-ex">"Vou começar jiu-jítsu às terças e quintas"</div></div>
+    <div class="faq-card"><div class="faq-q">Ajustar tempo por sessão</div><div class="faq-a">Com menos tempo, o Caleb remove isoladores (exercícios para músculos específicos) e mantém os compostos principais.</div><div class="faq-ex">"Essa semana tenho só 40 minutos por sessão"</div></div>
+    <div class="faq-card"><div class="faq-q">Reduzir ou aumentar intensidade</div><div class="faq-a">Semana difícil, energia baixa ou recuperação ruim — o Caleb reduz o volume automaticamente sem perder a progressão.</div><div class="faq-ex">"Estou me sentindo bem cansado essa semana"</div></div>
+    <div class="faq-section-title">Exercícios</div>
+    <div class="faq-card"><div class="faq-q">Trocar um exercício</div><div class="faq-a">Sem equipamento, desconforto ou preferência. O Caleb substitui mantendo o grupo muscular e o volume.</div><div class="faq-ex">"Não tenho cabo — o que substitui o fly?"</div></div>
+    <div class="faq-card"><div class="faq-q">Dúvidas de execução</div><div class="faq-a">Como executar, qual amplitude usar, qual cadência (velocidade do movimento), por que aquele exercício está no treino.</div><div class="faq-ex">"Como faço o agachamento búlgaro corretamente?"</div></div>
+    <div class="faq-section-title" style="color:var(--orange);">O que o Caleb NÃO faz</div>
+    <div class="faq-card"><div class="faq-q">Diagnósticos médicos</div><div class="faq-a">Dor ou lesão? Consulte um profissional de saúde.</div></div>
+    <div class="faq-card"><div class="faq-q">Hormônios e medicamentos</div><div class="faq-a">Nenhuma orientação sobre substâncias controladas.</div></div>
+  </div>
+</div>
+
+
+<!-- SCREEN: EXECUÇÃO DO TREINO -->
+<div class="screen off" id="s-workout">
+  <div class="status-bar"><span class="status-time" id="t-workout">--:--</span><div class="status-icon"></div></div>
+  <div class="chat-header">
+    <button class="icon-btn" onclick="cancelWorkout()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div style="flex:1">
+      <div style="font-size:15px;font-weight:700" id="wk-title">Treino A</div>
+      <div style="font-size:11px;color:var(--text3)" id="wk-sub">Iniciando sessão</div>
+    </div>
+    <div style="font-size:13px;font-weight:600;color:var(--orange)" id="wk-timer">00:00</div>
+  </div>
+  <div class="scroll-area" style="padding:14px 14px 40px" id="workout-content"></div>
+  <div style="padding:14px;border-top:1px solid var(--border);flex-shrink:0">
     <button class="btn-primary" onclick="finishWorkout()">Concluir Sessão</button>
   </div>
 </div>
 
-<!-- ═══════════════════════════════
-     TELA 7 — PROGRESSO
-     ═══════════════════════════════ -->
-<div class="screen off" id="screen-progress">
-  <div class="top-bar">
-    <div class="logo">CALEB<span>.IA</span></div>
-    <div class="badge"><div class="badge-dot"></div>v1.1 M.A.X. Core</div>
-  </div>
-  <div class="scroll-content" style="padding:20px 20px 24px;">
-    <h2 style="font-size:22px;font-weight:800;text-align:center;margin-bottom:16px;">Seu Progresso</h2>
 
-    <!-- Cycle card -->
-    <div class="card" style="margin-bottom:16px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <div>
-          <div style="font-size:13px;font-weight:700;" id="prog-cycle-label">Ciclo 1 — Semana 2 de 4</div>
-          <div style="font-size:12px;color:var(--text2);">Início: 01/04/2026</div>
-        </div>
-        <div style="font-size:22px;font-weight:800;color:var(--orange);" id="prog-cycle-pct">38%</div>
+<!-- SCREEN: PROGRESSO -->
+<div class="screen off" id="s-progress">
+  <div class="status-bar"><span class="status-time" id="t-progress">--:--</span><div class="status-icon"></div></div>
+  <div class="topbar"><div class="logo">CALEB<em>.IA</em></div><div class="version-pill">v1.1 M.A.X. Core <div class="live-dot"></div></div></div>
+  <div class="scroll-area" style="padding:18px 16px 40px">
+    <div style="font-size:22px;font-weight:800;text-align:center;margin-bottom:6px">Seu Progresso</div>
+    <div style="font-size:13px;color:var(--text2);text-align:center;margin-bottom:20px">Acompanhe sua evolução ao longo do tempo.</div>
+    <div class="card" style="padding:16px;margin-bottom:12px">
+      <div class="section-label">Ciclo atual — <span id="home-cycle-text">Semana 1 de 4</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-bar-fill" style="width:25%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-top:6px">
+        <span id="prog-started">Iniciado em --/--</span><span id="prog-pct">25% concluído</span>
       </div>
-      <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:38%"></div></div>
     </div>
-
-    <!-- Metrics -->
-    <div class="metric-grid" style="margin-bottom:16px;">
-      <div class="metric-card"><div class="metric-val" id="metric-sessions">—</div><div class="metric-label">Sessões completas</div></div>
-      <div class="metric-card"><div class="metric-val" id="metric-adherence">—</div><div class="metric-label">Aderência</div></div>
-      <div class="metric-card"><div class="metric-val" id="metric-borg">—</div><div class="metric-label">Borg médio</div></div>
-      <div class="metric-card"><div class="metric-val" id="metric-progressions">—</div><div class="metric-label">Progressões</div></div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-label">Sessões</div><div class="stat-val" id="metric-sessions">0</div><div class="stat-sub">este ciclo</div></div>
+      <div class="stat-card"><div class="stat-label">Aderência</div><div class="stat-val" id="metric-adherence">0%</div><div class="stat-sub" id="metric-adherence-sub">—</div></div>
+      <div class="stat-card"><div class="stat-label">Borg médio</div><div class="stat-val" id="metric-borg">--</div><div class="stat-sub">percepção de esforço</div></div>
+      <div class="stat-card"><div class="stat-label">Progressões</div><div class="stat-val" id="metric-progressions">0</div><div class="stat-sub orange" id="metric-progressions-sub">—</div></div>
     </div>
-
-    <!-- Chart card -->
-    <div class="card" style="margin-bottom:16px;">
-      <div style="font-size:15px;font-weight:700;margin-bottom:12px;">Evolução por exercício</div>
-      <select id="exercise-select" onchange="updateChart(this.value)" style="margin-bottom:16px;">
-        <option value="supino">Supino Inclinado</option>
-        <option value="agachamento">Agachamento</option>
-        <option value="terra">Terra</option>
-        <option value="rosca">Rosca Inclinada</option>
-        <option value="desenvolvimento">Desenvolvimento</option>
-      </select>
-      <div class="chart-wrap" id="chart-bars"></div>
-      <div style="display:flex;justify-content:space-between;padding:0 4px;margin-top:4px;">
-        <span class="chart-label">S1</span><span class="chart-label">S2</span><span class="chart-label">S3</span><span class="chart-label">S4</span>
+    <div class="card" style="padding:16px;margin-bottom:12px">
+      <div class="section-label" style="margin-bottom:12px">Evolução por exercício</div>
+      <div class="ex-select-wrap">
+        <select class="ex-select" id="exercise-select" onchange="updateChart(this.value)">
+          <option value="supino">Supino Inclinado</option>
+          <option value="agachamento">Agachamento Livre</option>
+          <option value="terra">Terra Romeno</option>
+          <option value="rosca">Rosca Inclinada</option>
+          <option value="desenvolvimento">Desenvolvimento</option>
+        </select>
+        <div class="ex-select-arrow">▼</div>
       </div>
-      <div style="margin-top:14px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-          <span style="font-size:12px;color:var(--text2);">Classificação Nuckols</span>
-          <span style="font-size:12px;font-weight:700;background:var(--orange-dark);color:var(--orange);padding:2px 8px;border-radius:6px;" id="nuckols-tag">Novato</span>
+      <div class="chart-bars" id="chart-bars"></div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+        <div class="section-label" style="margin-bottom:8px">Classificação Nuckols</div>
+        <div class="nuck-labels"><span>Inic.</span><span>Novato</span><span>Inter.</span><span>Avanç.</span><span>Elite</span></div>
+        <div class="nuck-bar"><div class="nuck-fill" id="nuckols-fill" style="width:45%"></div></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+          <span class="nuck-tag" id="nuckols-tag" style="background:var(--orange-dim);color:var(--orange)">Intermediário</span>
+          <span style="font-size:11px;color:var(--text3)" id="nuckols-ratio">0.94× peso corporal</span>
         </div>
-        <div class="nuckols-bar"><div class="nuckols-fill" id="nuckols-fill" style="width:25%"></div></div>
-        <div class="nuckols-labels"><span>Inic.</span><span>Novato</span><span>Inter.</span><span>Avanç.</span><span>Elite</span></div>
-        <div style="font-size:12px;color:var(--text2);margin-top:6px;" id="nuckols-ratio">Ratio: — × peso corporal</div>
       </div>
     </div>
 
     <!-- Força de Referência (Nuckols 1RM) -->
-    <div class="card" style="margin-bottom:16px;">
+    <div class="card" style="padding:16px;margin-bottom:16px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <div style="font-size:15px;font-weight:700;">Força de Referência</div>
-        <button class="btn-outline" style="padding:4px 8px;font-size:11px;" onclick="openChatWithPrompt('Testei minhas cargas hoje e quero atualizar minha força de referência.')">Atualizar</button>
+        <div class="section-label" style="margin-bottom:0">Força de Referência</div>
+        <button class="btn-outline" style="padding:4px 8px;font-size:11px;width:auto;height:auto" onclick="openChatWithPrompt('Testei minhas cargas hoje e quero atualizar minha força de referência.')">Atualizar</button>
       </div>
       <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Baseado em testes de 1RM ou estimativas validadas pelo Caleb.</div>
-      <table style="width:100%;font-size:13px;border-collapse:collapse;text-align:left;">
-        <thead style="border-bottom:1px solid var(--border);color:var(--text3);">
+      <table class="rm-table">
+        <thead>
           <tr>
-            <th style="padding:8px 4px;font-weight:600;">Exercício</th>
-            <th style="padding:8px 4px;font-weight:600;">1RM</th>
-            <th style="padding:8px 4px;font-weight:600;">Ratio / Niv.</th>
+            <th>Exercício</th>
+            <th>1RM</th>
+            <th>Ratio / Niv.</th>
           </tr>
         </thead>
-        <tbody id="rm-table-body">
-          <!-- preenchido dinamicamente -->
-        </tbody>
+        <tbody id="rm-table-body"></tbody>
       </table>
     </div>
 
-    <!-- Monthly report -->
-    <div class="card">
-      <div style="font-size:15px;font-weight:700;margin-bottom:12px;">Relatório do Ciclo</div>
-      <div class="report-line"><div class="report-icon">📈</div><div class="report-info"><div class="report-name">Supino Inclinado</div><div class="report-result">60 → 75kg (+25%)</div></div></div>
-      <div class="report-line"><div class="report-icon">📈</div><div class="report-info"><div class="report-name">Agachamento Livre</div><div class="report-result">80 → 95kg (+19%)</div></div></div>
-      <div class="report-line"><div class="report-icon">⚠️</div><div class="report-info"><div class="report-name">Leg Press</div><div class="report-result">Borg abaixo da zona alvo</div></div></div>
-      <div class="report-line"><div class="report-icon">📉</div><div class="report-info"><div class="report-name">Desenvolvimento</div><div class="report-result">Estagnado — 3 semanas</div><div class="report-rec">Avançar para Fase de Força (6–8 reps) no próximo ciclo. Aumentar volume de costas de 10 para 12 séries/semana.</div></div></div>
-    </div>
-  </div>
-  <div class="bottom-nav">
-    <button class="nav-btn" id="nav2-home" onclick="navTo('home')">
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-      <span>Home</span>
-    </button>
-    <button class="nav-btn" id="nav2-training" onclick="navTo('training')">
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
-      <span>Treino</span>
-    </button>
-    <button class="nav-btn active" id="nav2-progress" onclick="navTo('progress')">
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      <span>Progresso</span>
-    </button>
-    <button class="nav-btn" id="nav2-profile" onclick="navTo('profile')">
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span>Perfil</span>
-    </button>
-  </div>
-  <button class="fab" onclick="openChat()">
-    <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-  </button>
-</div>
-
-<!-- ═══════════════════════════════
-     TELA 8 — PERFIL
-     ═══════════════════════════════ -->
-<div class="screen off" id="screen-profile">
-  <div class="top-bar">
-    <div class="logo">CALEB<span>.IA</span></div>
-    <div class="badge"><div class="badge-dot"></div>v1.1 M.A.X. Core</div>
-  </div>
-  <div class="scroll-content" style="padding:20px 20px 24px;">
-    <div style="text-align:center;margin-bottom:24px;">
-      <div class="profile-avatar" id="profile-avatar">A</div>
-      <div style="font-size:20px;font-weight:800;margin-top:12px;" id="profile-name">Atleta</div>
-      <div style="font-size:13px;color:var(--text2);margin-top:2px;">Atleta Caleb.IA</div>
-      <div style="margin-top:10px;">
-        <span style="background:var(--orange-dark);border:1px solid rgba(232,93,47,.4);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--orange);font-weight:700;">⚡ TRIAL — 14 dias</span>
+    <div class="report-card">
+      <div class="report-header">Relatório do Ciclo</div>
+      <div id="cycle-report-container">
+          <div style="font-size:13px;color:var(--text3);text-align:center;padding:20px;">Nenhum relatório gerado ainda.</div>
       </div>
     </div>
-
-    <div class="card" style="margin-bottom:12px;">
-      <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em;">Dados do Protocolo</div>
-      <div class="data-row"><span class="data-row-label">Objetivo</span><span class="data-row-value" id="prof-objetivo">—</span></div>
-      <div class="data-row"><span class="data-row-label">Nível</span><span class="data-row-value" id="prof-nivel">—</span></div>
-      <div class="data-row"><span class="data-row-label">Protocolo</span><span class="data-row-value" id="prof-protocolo">—</span></div>
-      <div class="data-row"><span class="data-row-label">Frequência</span><span class="data-row-value" id="prof-frequencia">—</span></div>
-      <div class="data-row"><span class="data-row-label">Duração/sessão</span><span class="data-row-value" id="prof-duracao">—</span></div>
-      <div class="data-row"><span class="data-row-label">Local</span><span class="data-row-value" id="prof-local">—</span></div>
-    </div>
-
-    <div class="card" style="margin-bottom:20px;">
-      <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em;">Plano</div>
-      <div class="data-row"><span class="data-row-label">Status</span><span class="data-row-value" style="color:var(--green);">✓ Ativo</span></div>
-      <div class="data-row"><span class="data-row-label">Expira em</span><span class="data-row-value">14 dias</span></div>
-    </div>
-
-    <button class="btn-outline" onclick="confirmReset()">Reiniciar Protocolo</button>
   </div>
   <div class="bottom-nav">
-    <button class="nav-btn" id="nav3-home" onclick="navTo('home')">
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-      <span>Home</span>
+    <button class="nav-btn" onclick="navTo('home')">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <div class="nav-label">Home</div>
     </button>
-    <button class="nav-btn" id="nav3-training" onclick="navTo('training')">
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
-      <span>Treino</span>
+    <button class="nav-btn" onclick="navTo('training')">
+      <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+      <div class="nav-label">Treino</div>
     </button>
-    <button class="nav-btn" id="nav3-progress" onclick="navTo('progress')">
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      <span>Progresso</span>
+    <button class="nav-btn active" onclick="navTo('progress')">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <div class="nav-label">Progresso</div>
     </button>
-    <button class="nav-btn active" id="nav3-profile" onclick="navTo('profile')">
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span>Perfil</span>
+    <button class="nav-btn" onclick="navTo('profile')">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <div class="nav-label">Perfil</div>
     </button>
   </div>
-  <button class="fab" onclick="openChat()">
-    <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-  </button>
+  <button class="fab" onclick="openChat()"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></button>
+</div>
+
+
+<!-- SCREEN: PERFIL -->
+<div class="screen off" id="s-profile">
+  <div class="status-bar"><span class="status-time" id="t-profile">--:--</span><div class="status-icon"></div></div>
+  <div class="topbar"><div class="logo">CALEB<em>.IA</em></div><div class="version-pill">v1.1 M.A.X. Core <div class="live-dot"></div></div></div>
+  <div class="scroll-area" style="padding:24px 16px 40px">
+    <div class="profile-avatar" id="profile-avatar">?</div>
+    <div class="profile-name" id="profile-name">—</div>
+    <div class="profile-sub">Atleta Caleb.IA</div>
+    <div style="text-align:center;margin-bottom:20px"><div class="plan-badge">⚡ TRIAL — 14 dias</div></div>
+    <div class="stat-grid" style="margin-bottom:12px">
+      <div class="stat-card"><div class="stat-label">Sessões</div><div class="stat-val" id="gm-sessions">0</div></div>
+      <div class="stat-card"><div class="stat-label">Sequência</div><div class="stat-val" id="gm-streak">0</div></div>
+      <div class="stat-card"><div class="stat-label">Volume</div><div class="stat-val" id="gm-volume">0</div></div>
+      <div class="stat-card"><div class="stat-label">Nível</div><div class="stat-val" id="gm-level">1</div></div>
+    </div>
+    <div class="card" style="padding:4px 16px;margin-bottom:12px">
+      <div class="section-label" style="padding-top:14px;margin-bottom:0">Dados do Protocolo</div>
+      <div class="info-row"><div class="info-key">Objetivo</div><div class="info-val" id="prof-objetivo">—</div></div>
+      <div class="info-row"><div class="info-key">Nível</div><div class="info-val" id="prof-nivel">—</div></div>
+      <div class="info-row"><div class="info-key">Protocolo</div><div class="info-val" id="prof-protocolo">—</div></div>
+      <div class="info-row"><div class="info-key">Frequência</div><div class="info-val" id="prof-frequencia">—</div></div>
+      <div class="info-row"><div class="info-key">Duração/sessão</div><div class="info-val" id="prof-duracao">—</div></div>
+      <div class="info-row"><div class="info-key">Local</div><div class="info-val" id="prof-local">—</div></div>
+    </div>
+    <div class="card" style="padding:4px 16px;margin-bottom:20px">
+      <div class="section-label" style="padding-top:14px;margin-bottom:0">Plano</div>
+      <div class="info-row"><div class="info-key">Status</div><div class="info-val">TRIAL — 14 dias</div></div>
+      <div class="info-row"><div class="info-key">Expira em</div><div class="info-val" id="prof-expira">—</div></div>
+    </div>
+    <button class="btn-outline" style="margin-bottom:10px" onclick="confirmReset()">Reiniciar Protocolo</button>
+  </div>
+  <div class="bottom-nav">
+    <button class="nav-btn" onclick="navTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nav-label">Home</div></button>
+    <button class="nav-btn" onclick="navTo('training')"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg><div class="nav-label">Treino</div></button>
+    <button class="nav-btn" onclick="navTo('progress')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><div class="nav-label">Progresso</div></button>
+    <button class="nav-btn active" onclick="navTo('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nav-label">Perfil</div></button>
+  </div>
+  <button class="fab" onclick="openChat()"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></button>
+</div>
+
+
+<!-- SCREEN: TREINO (Integrated) -->
+<div class="screen off" id="s-training">
+  <div class="topbar">
+    <div class="logo">CALEB<em>.IA</em></div>
+    <div class="version-pill" id="training-version-badge">v1.1 M.A.X. Core</div>
+  </div>
+
+  <!-- Locked state -->
+  <div id="training-locked" class="training-locked" style="padding:40px 20px;text-align:center;">
+    <div style="font-size:48px;margin-bottom:16px;">🔒</div>
+    <div style="font-size:18px;font-weight:800;margin-bottom:10px;">Protocolo bloqueado</div>
+    <div style="font-size:14px;color:var(--text2);margin-bottom:24px;">Complete o seu perfil no chat para gerar o seu treino personalizado.</div>
+    <button class="btn-primary" onclick="navTo('home')">Voltar ao Início</button>
+  </div>
+
+  <!-- Unlocked state -->
+  <div id="training-unlocked" style="display:none;flex-direction:column;flex:1;overflow:hidden;position:relative;padding-bottom:70px;">
+    <div class="training-tabs" id="training-tabs"></div>
+    <div class="scroll-area" id="training-sessions-wrap" style="padding:16px;"></div>
+    <!-- Botão Fixo Pedir Adaptação -->
+    <div style="position:absolute;bottom:0;left:0;right:0;padding:12px 16px;background:var(--surface);border-top:1px solid var(--border2);z-index:10;">
+      <button class="btn-primary" onclick="openChatWithPrompt('Gostaria de adaptar meu treino atual. ')" style="background:var(--surface2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        Pedir adaptação do treino
+      </button>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="nav-btn" onclick="navTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nav-label">Home</div></button>
+    <button class="nav-btn active" onclick="navTo('training')"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg><div class="nav-label">Treino</div></button>
+    <button class="nav-btn" onclick="navTo('progress')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><div class="nav-label">Progresso</div></button>
+    <button class="nav-btn" onclick="navTo('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nav-label">Perfil</div></button>
+  </div>
+</div>
+
+<!-- SCREEN: FINISH (Workout Conclusion) -->
+<div class="screen off-up" id="s-finish" style="z-index:20;">
+  <div class="status-bar"><span class="status-time" id="t-finish">--:--</span><div class="status-icon"></div></div>
+  <div class="topbar">
+    <div class="logo">Sessão concluída</div>
+  </div>
+  <div class="scroll-area" style="padding:24px 20px;">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="width:64px;height:64px;background:var(--green);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;font-weight:800;margin:0 auto 14px;">✓</div>
+      <div style="font-size:22px;font-weight:800;" id="finish-title">Treino A</div>
+      <div style="font-size:14px;color:var(--text2);margin-top:4px;" id="finish-duration">0 min</div>
+    </div>
+    <div class="card" style="padding:16px;margin-bottom:16px;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px;">Como foi a sessão de hoje?</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">Escala de Borg CR10 — 1 = muito leve · 10 = máximo absoluto</div>
+      <div class="borg-buttons" id="finish-borg" style="display:flex;gap:4px;flex-wrap:wrap">
+          <!-- borg buttons injected via JS -->
+      </div>
+    </div>
+    <div class="card" style="padding:16px;margin-bottom:24px;">
+      <textarea id="finish-obs" placeholder="Observação sobre o treino de hoje (opcional)" style="width:100%;background:none;border:none;outline:none;color:var(--text);font-size:14px;resize:none;font-family:inherit;line-height:1.5;" rows="3"></textarea>
+    </div>
+    <button class="btn-primary" onclick="saveAndFinish()">Salvar e fechar</button>
+  </div>
 </div>
 
 </div><!-- #app -->
 
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
-<!-- ═══════════════════════════════════
-     TELA — TREINO ATUAL
-     ═══════════════════════════════════ -->
-<div class="screen off" id="screen-training">
-  <div class="top-bar">
-    <div class="logo">CALEB<span>.IA</span></div>
-    <div class="badge" id="training-version-badge"><div class="badge-dot"></div>Semana 1 · v1</div>
-  </div>
-
-  <!-- Locked state (before onboarding) -->
-  <div id="training-locked" class="training-locked" style="display:none">
-    <div class="training-locked-icon">🔒</div>
-    <div class="training-locked-text">
-      <strong style="display:block;font-size:17px;font-weight:800;color:var(--text);margin-bottom:8px;">Treino ainda não gerado</strong>
-      Complete o onboarding para que o Caleb monte seu protocolo personalizado.
-    </div>
-    <button class="btn-primary" style="max-width:240px" onclick="navTo('home')">Voltar ao Início</button>
-  </div>
-
-  <!-- Unlocked state -->
-  <div id="training-unlocked" style="display:none;flex-direction:column;flex:1;overflow:hidden">
-    <div class="training-tabs" id="training-tabs"></div>
-    <div class="scroll-content" id="training-sessions-wrap"></div>
-  </div>
-
-  <div class="bottom-nav">
-    <button class="nav-btn" id="nav4-home" onclick="navTo('home')">
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-      <span>Home</span>
-    </button>
-    <button class="nav-btn active" id="nav4-training" onclick="navTo('training')">
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
-      <span>Treino</span>
-    </button>
-    <button class="nav-btn" id="nav4-progress" onclick="navTo('progress')">
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      <span>Progresso</span>
-    </button>
-    <button class="nav-btn" id="nav4-profile" onclick="navTo('profile')">
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span>Perfil</span>
-    </button>
-  </div>
-  <button class="fab" onclick="openChat()" style="bottom:calc(80px + 16px)">
-    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-  </button>
+<!-- TOOLTIP BOX -->
+<div id="tooltip-box" style="position:fixed;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:14px 16px;max-width:280px;font-size:13px;color:var(--text2);line-height:1.6;z-index:500;box-shadow:0 4px 20px rgba(0,0,0,.4);display:none;">
+  <button onclick="document.getElementById('tooltip-box').style.display='none'" style="float:right;background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;margin-left:8px;">×</button>
+  <span id="tooltip-text"></span>
 </div>
+
+<!-- TOAST -->
+<div id="toast" style="position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:8px 16px;font-size:12px;color:var(--text);z-index:1000;display:none;"></div>
+
 
 <script>
 // ══════════════════════════════════════════════════════
@@ -659,7 +801,7 @@ let chatHistory = [];
 let workoutTimer = null;
 let workoutSeconds = 0;
 let chatInitialized = false;
-let prevScreen = 'screen-home';
+let prevScreen = 's-home';
 
 // ══════════════════════════════════════════════════════
 // SYSTEM PROMPT
@@ -741,21 +883,51 @@ P_HISTORICO. Qual é a sua situação atual com o treino?
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    PERGUNTAS DE FORÇA DE REFERÊNCIA
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   P_1RM. Caleb OBRIGATORIAMENTE pede os números com um formulário de uma só vez (NUNCA faça perguntas exercício a exercício).
+
+   Caleb OBRIGATORIAMENTE pede os números com um formulário de uma só vez (NUNCA faça perguntas exercício a exercício).
    Para solicitar, o Caleb envia sua mensagem explicativa e CONCLUI COM A TAG ESPECIAL: [FORM_CARGAS]
-   Exemplo de texto do Caleb: 
-   "Perfeito. Para calibrar as cargas do seu treino, me passa a última carga e o número de repetições que você fez em cada movimento abaixo. Se não treina algum deles, pode deixar em branco.\n[FORM_CARGAS]"
+
+   Exemplo de mensagem do Caleb:
+   "Perfeito. Para calibrar as cargas do seu treino, me passa a última carga
+   e o número de repetições que você fez em cada movimento abaixo.
+   Se não treina algum deles, pode deixar em branco.
+   [FORM_CARGAS]"
+
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    COMO USAR OS DADOS DE 1RM
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
    Após coletar os valores, Caleb deve:
-   1. Calcular o ratio força relativa (1RM ÷ peso corporal) para cada exercício e classificar pelo padrão Nuckols:
-      Agachamento / Terra: < 0.75× = Iniciante | 0.75-1.25× = Novato | 1.25-1.75× = Intermediário | > 1.75× = Avançado.
-      Supino / Desenvolvimento: < 0.5× = Iniciante | 0.5-0.75× = Novato | 0.75-1.0× = Intermediário | > 1.0× = Avançado.
-   2. Usar o 1RM estimado para calibrar as cargas de trabalho do treino. Séries 8-12 reps → usar 67-77% 1RM. Séries 4-6 reps → usar 82-88% 1RM. (Apresentar sugestões de carga no treino).
+
+   1. Calcular o ratio força relativa (1RM ÷ peso corporal) para cada exercício
+      e classificar pelo padrão Nuckols:
+      Agachamento / Terra:
+        < 0.75× = Iniciante | 0.75–1.25× = Novato | 1.25–1.75× = Intermediário
+        1.75–2.25× = Avançado | > 2.25× = Elite
+      Supino / Desenvolvimento:
+        < 0.5× = Iniciante | 0.5–0.75× = Novato | 0.75–1.0× = Intermediário
+        1.0–1.35× = Avançado | > 1.35× = Elite
+
+   2. Usar o 1RM estimado para calibrar as cargas de trabalho do treino:
+      - Séries de 8–12 reps → usar 67–77% do 1RM como ponto de partida
+      - Séries de 4–6 reps → usar 82–88% do 1RM
+      - Apresentar sugestões de carga iniciais junto com o treino
+
    3. Registrar os valores no PERFIL_JSON:
-      "rm_agachamento": "101kg (estimado)", "rm_supino": "85kg (testado)", etc.
-   4. No relatório mensal do ciclo, você vai ser notificado dos recalculados e deve falar das evoluções do 1RM se disponíveis.
+      "rm_agachamento": "101kg (estimado)",
+      "rm_supino": "85kg (testado)",
+      "rm_terra": "",
+      "rm_desenvolvimento": "",
+      "rm_remada": ""
+
+   4. Exibir na aba Progresso uma seção "Força de referência" com:
+      - Tabela: Exercício | 1RM | Ratio × PC | Classificação Nuckols
+      - Botão "Atualizar" para o usuário informar novo valor quando testar de novo
+      - Comparativo visual: onde está em cada exercício na escala Nuckols
+
+   5. No relatório mensal do ciclo, recalcular o 1RM estimado a partir
+      das cargas e repetições registradas nas sessões e mostrar a evolução:
+      "Seu 1RM estimado no supino passou de 85kg para 92kg neste ciclo (+8%)"
 
 → SE "Já treinei mas parei":
    Perguntar: O que fez você parar?
@@ -949,29 +1121,35 @@ esportiva, viagem, lesão leve ou qualquer mudança de contexto — Caleb deve:
 IMPORTANTE: nunca apague o histórico de versões — o usuário pode sempre
 voltar para qualquer versão anterior.
 
-# ANÁLISE DE PROGRESSÃO — COMO CALEB INTERPRETA OS DADOS (FIM DE CICLO)
+# ANÁLISE DE PROGRESSÃO — COMO CALEB INTERPRETA OS DADOS
 
-Quando receber o relatório de um ciclo (geralmente enviado automaticamente
-pelo sistema após 4 semanas), Caleb deve:
+Quando receber o relatório de um ciclo, Caleb deve:
 
-- Identificar discrepâncias relevantes entre exercícios.
-  Ex: supino progrediu 50% mas agachamento só 10% — isso é incomum e merece escrutínio.
+- Identificar discrepâncias relevantes entre exercícios
+  Ex: supino progrediu 50% mas agachamento só 10% — isso é incomum e merece investigação
 
 - Fazer perguntas abertas sobre as discrepâncias — nunca assumir o motivo:
   [Sim, sinto dificuldade com esse exercício | Não, foi só essa fase | Tive medo de aumentar a carga | Outro motivo]
 
-- Investigar se o problema é técnico, psicológico, físico ou de contexto:
+- Investigar se é técnico, psicológico, físico ou de contexto:
   Técnico: nunca aprendeu o movimento direito → oferecer regredir carga e focar na técnica
-  Psicológico: medo de carga heavy → progressão gradual
-  Físico: dor ou desconforto → adaptar exercício
-  Contexto: cansaço, foco → validar expectativa
+  Psicológico: medo de carga pesada → progressão gradual com mais exposição
+  Físico: dor ou desconforto → adaptar exercício ou encaminhar
+  Contexto: trabalho, cansaço, menos sono naquelas semanas → validar e ajustar expectativa
 
-- Fazer as perguntas UMA DE CADA VEZ, sempre usando chips horizontais para facilitar.
+- Fazer as perguntas UMA DE CADA VEZ com chips de resposta [opção1 | opção2 | opção3]
 
-- Ao final da investigação: gerar recomendações para o próximo ciclo e
-  atualizar o treino se necessário, utilizando novamente a tag [TREINO_ATUALIZADO].
+- Ao final da análise: gerar recomendações para o próximo ciclo e
+  atualizar o treino se necessário (terminar com [TREINO_ATUALIZADO])
 
-- Tom: investigativo, encorajador e sem julgamento. Seu objetivo é entender e facilitar o seu atleta.
+- Tom: investigativo e sem julgamento — o objetivo é entender, não cobrar
+
+Exemplo de abertura do Caleb após receber o relatório:
+"Fechamos o primeiro ciclo. Você completou X de Y sessões — isso já é [valorização honesta].
+Tenho algumas observações sobre a progressão. No supino você evoluiu bem.
+No agachamento a carga ficou praticamente estável. Quero entender melhor isso:
+quando você agacha com cargas mais pesadas, como você se sente?
+[Confortável e controlado | Um pouco inseguro | Sinto dificuldade técnica | Evito aumentar por precaução]"
 `;
 
 // ══════════════════════════════════════════════════════
@@ -1122,9 +1300,9 @@ function init() {
     try { userProfile = JSON.parse(profileStr); } catch { userProfile = defaultProfile(); }
     try { if (chatStr) chatHistory = JSON.parse(chatStr); } catch { chatHistory = []; }
     applyProfile();
-    showOnly('screen-home');
+    showOnly('s-home');
   } else {
-    showOnly('screen-splash');
+    showOnly('s-splash');
   }
 
   updateChart('supino');
@@ -1147,7 +1325,7 @@ function showOnly(id) {
     if (s.id === id) {
       s.classList.remove('off','off-up','off-left');
     } else {
-      if (s.id === 'screen-chat' || s.id === 'screen-faq') {
+      if (s.id === 's-chat' || s.id === 's-faq' || s.id === 's-finish') {
         if (!s.classList.contains('off-up')) s.classList.add('off-up');
         s.classList.remove('off','off-left');
       } else {
@@ -1171,30 +1349,24 @@ function hideScreen(id) {
 
 function navTo(section) {
   const map = {
-    home: 'screen-home',
-    training: 'screen-training',
-    progress: 'screen-progress',
-    profile: 'screen-profile'
+    home: 's-home',
+    training: 's-training',
+    progress: 's-progress',
+    profile: 's-profile'
   };
   const target = map[section];
   if (!target) return;
 
-  ['screen-home','screen-training','screen-progress','screen-profile'].forEach(id => {
-    document.getElementById(id).classList.add('off');
+  ['s-home','s-training','s-progress','s-profile'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('off');
   });
   document.getElementById(target).classList.remove('off');
 
-  // sync nav buttons on all four screens
-  [
-    ['nav-home', 'nav-training', 'nav-progress', 'nav-profile'],
-    ['nav2-home','nav2-training','nav2-progress','nav2-profile'],
-    ['nav3-home','nav3-training','nav3-progress','nav3-profile'],
-    ['nav4-home','nav4-training','nav4-progress','nav4-profile']
-  ].forEach(set => {
-    ['home','training','progress','profile'].forEach((s,i) => {
-      const btn = document.getElementById(set[i]);
-      if (btn) btn.classList.toggle('active', s === section);
-    });
+  // Sync nav buttons: Find all nav-btns across all screens and toggle active
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    const onclick = btn.getAttribute('onclick') || '';
+    btn.classList.toggle('active', onclick.includes(`navTo('${section}')`));
   });
 
   if (section === 'profile')  applyProfileScreen();
@@ -1395,7 +1567,7 @@ function showToast(msg) {
 
 // ── Home workout-ready banner ───────────────────────
 function showWorkoutReadyBanner() {
-  const home = document.getElementById('screen-home');
+  const home = document.getElementById('s-home');
   if (!home) return;
   if (document.getElementById('workout-ready-banner')) return; // already shown
   const scroll = home.querySelector('.scroll-content');
@@ -1418,7 +1590,7 @@ function showWorkoutReadyBanner() {
 // SPLASH → ONBOARDING
 // ══════════════════════════════════════════════════════
 function goToOnboarding() {
-  showOnly('screen-onboarding');
+  showOnly('s-onboarding');
   startOnboarding();
 }
 
@@ -1479,7 +1651,7 @@ async function sendOnboarding() {
       setTimeout(() => {
         applyProfile();
         updateCycleBadge();
-        showOnly('screen-home');
+        showOnly('s-home');
       }, 2200);
     } else {
       appendBubble('ob-messages','caleb', reply);
@@ -1562,17 +1734,17 @@ function applyProfileScreen() {
 // CHAT FLUTUANTE
 // ══════════════════════════════════════════════════════
 function openChat() {
-  showScreen('screen-chat');
+  showScreen('s-chat');
   if (!chatInitialized) { chatInitialized = true; initChat(); }
 }
 
 function closeChat() {
-  hideScreen('screen-chat');
+  hideScreen('s-chat');
 }
 
 function showFaq() {
-  showScreen('screen-faq');
-  document.getElementById('screen-faq').classList.remove('off');
+  showScreen('s-faq');
+  document.getElementById('s-faq').classList.remove('off');
 }
 
 function initChat() {
@@ -1716,7 +1888,7 @@ function showWorkout() {
     content.appendChild(card);
   });
 
-  showOnly('screen-workout');
+  showOnly('s-workout');
 
   workoutSeconds = 0;
   clearInterval(workoutTimer);
@@ -1743,7 +1915,7 @@ function selectBorg(exIdx, val, btn) {
 
 function cancelWorkout() {
   clearInterval(workoutTimer);
-  showOnly('screen-home');
+  showOnly('s-home');
 }
 
 function finishWorkout() {
@@ -1862,22 +2034,54 @@ function finishWorkout() {
   localStorage.setItem('caleb_session_logs', JSON.stringify(sessLogs));
   // ----------------------------------------------------------------
 
-  showOnly('screen-home');
+  // ── Feedback visual antes da tela de conclusão ───────
+  const mins = Math.floor(workoutSeconds/60);
+  document.getElementById('finish-title').textContent = wk.title;
+  document.getElementById('finish-duration').textContent = `${mins} min`;
+  document.getElementById('finish-obs').value = '';
+  renderFinishBorg();
+
+  showScreen('s-finish');
+}
+
+function renderFinishBorg() {
+  const container = document.getElementById('finish-borg');
+  if (!container) return;
+  container.innerHTML = '';
+  [1,2,3,4,5,6,7,8,9,10].forEach(n => {
+    const btn = document.createElement('button');
+    btn.className = 'borg-btn';
+    btn.textContent = n;
+    btn.onclick = () => {
+      container.querySelectorAll('.borg-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    };
+    container.appendChild(btn);
+  });
+}
+
+function saveAndFinish() {
+  const borgBtn = document.querySelector('#finish-borg .borg-btn.selected');
+  const sessionBorg = borgBtn ? parseInt(borgBtn.dataset.val || borgBtn.textContent) : null;
+  const obs = document.getElementById('finish-obs').value.trim();
+
+  // Opcional: injetar observação geral no último log se necessário,
+  // ou apenas fechar e dar o feedback final.
+
+  hideScreen('s-finish');
+  showOnly('s-home');
   updateMetrics();
   updateCycleBadge();
   updateNextWorkoutCard();
-  
-  // --- NOVO: Verificação de Ciclo e Geração de Relatório ---
+
   checkAndGenerateCycleReport();
 
-  // ── Feedback ao usuário ──────────────────────────────
-  const mins = Math.floor(workoutSeconds/60);
-  let msg = `Sessão concluída! 🎉\nDuração: ${mins} min`;
-  if (avgBorg !== null) msg += `\nBorg médio: ${avgBorg}`;
-  if (needsDeload) msg += `\n\n⚠️ Borg médio alto nas últimas sessões. O Caleb recomenda uma semana de deload (-40% volume).`;
-  
-  setTimeout(() => alert(msg), 100);
+  const needsDeload = checkDeload();
+  let msg = `Sessão concluída com sucesso! 🎉`;
+  if (needsDeload) msg += `\n\n⚠️ Borg médio alto recentemente. O Caleb recomenda uma semana de deload no próximo ciclo.`;
+  showToast(msg);
 }
+
 
 function checkAndGenerateCycleReport() {
   const logs = safeParseJSON('caleb_session_logs', []);
@@ -2389,7 +2593,7 @@ function resetAll() {
   if (cm) cm.innerHTML = '';
   const banner = document.getElementById('workout-ready-banner');
   if (banner) banner.remove();
-  showOnly('screen-splash');
+  showOnly('s-splash');
 }
 
 // ══════════════════════════════════════════════════════
@@ -2405,41 +2609,21 @@ function buildFormCargas() {
   ];
 
   const rows = exercises.map(ex => `
-    <div style="display:grid;grid-template-columns:1fr 70px 28px 52px 28px;
-                align-items:center;gap:8px;padding:6px 0;
-                border-bottom:1px solid var(--border);">
-      <span style="font-size:13px;font-weight:600;color:var(--text)">${ex.label}</span>
-      <input type="number" min="0" step="0.5" placeholder="kg"
-             id="fc-kg-${ex.id}"
-             style="background:var(--surface2);border:1px solid var(--border2);
-                    border-radius:8px;padding:7px 8px;color:var(--text);
-                    font-size:13px;text-align:center;outline:none;width:100%;
-                    font-family:inherit;"
-             onfocus="this.style.borderColor='var(--orange)'"
-             onblur="this.style.borderColor='var(--border2)'"/>
-      <span style="font-size:11px;color:var(--text3)">kg</span>
-      <input type="number" min="0" max="50" step="1" placeholder="reps"
-             id="fc-reps-${ex.id}"
-             style="background:var(--surface2);border:1px solid var(--border2);
-                    border-radius:8px;padding:7px 8px;color:var(--text);
-                    font-size:13px;text-align:center;outline:none;width:100%;
-                    font-family:inherit;"
-             onfocus="this.style.borderColor='var(--orange)'"
-             onblur="this.style.borderColor='var(--border2)'"/>
-      <span style="font-size:11px;color:var(--text3)">reps</span>
+    <div class="form-cargas-row">
+      <span class="form-cargas-label">${ex.label}</span>
+      <input type="number" min="0" step="0.5" placeholder="kg" id="fc-kg-${ex.id}" class="form-cargas-input"/>
+      <span class="form-cargas-unit">kg</span>
+      <input type="number" min="0" max="50" step="1" placeholder="reps" id="fc-reps-${ex.id}" class="form-cargas-input"/>
+      <span class="form-cargas-unit">reps</span>
     </div>`).join('');
 
   return `
-    <div style="margin-top:12px;">
-      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;
-                  text-transform:uppercase;letter-spacing:.06em;">
+    <div class="form-cargas">
+      <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;">
         Exercícios básicos
       </div>
       ${rows}
-      <button onclick="confirmCargasForm(event)"
-              style="width:100%;margin-top:14px;background:var(--orange);
-                     border:none;border-radius:10px;padding:13px;font-size:14px;
-                     font-weight:700;color:#fff;cursor:pointer;font-family:inherit;">
+      <button class="form-cargas-btn" onclick="confirmCargasForm(event)">
         Confirmar cargas
       </button>
     </div>`;
@@ -2490,7 +2674,7 @@ function confirmCargasForm(event) {
   const msg = lines.join('\n');
   
   setTimeout(() => {
-    const isOnboarding = document.getElementById('screen-onboarding').classList.contains('off') === false;
+    const isOnboarding = document.getElementById('s-onboarding').classList.contains('off') === false;
     
     if (isOnboarding) {
        const inp = document.getElementById('ob-input');
