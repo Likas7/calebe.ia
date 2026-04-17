@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CALEB.IA">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <title>CALEB.IA</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -187,8 +188,25 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
 .version-btn{font-size:11px;font-weight:600;padding:5px 10px;border-radius:7px;border:1px solid var(--border2);background:none;color:var(--text2);cursor:pointer;font-family:var(--font);transition:all .15s}
 .version-btn:active{background:var(--orange-dark);border-color:var(--orange);color:var(--orange)}
 .version-current{font-size:10px;font-weight:700;color:var(--orange);background:var(--orange-dark);border-radius:5px;padding:2px 7px}
+
+/* Tooltips */
+.tech-term { text-decoration: underline dashed var(--orange); text-underline-offset: 3px; cursor: pointer; color: inherit; position: relative; }
+.tooltip-bubble { position: fixed; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; max-width: 280px; font-size: 13px; color: var(--text2); z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.6); display: none; }
+.tooltip-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.tooltip-title { font-weight: 700; color: var(--orange); font-size: 14px; }
+.tooltip-close { font-size: 20px; color: var(--text3); cursor: pointer; border: none; background: none; line-height: 1; padding: 0; }
+
+/* Collapsed Cards */
+.exercise-card { transition: height 0.3s ease, padding 0.3s ease; position: relative; overflow: hidden; }
+.exercise-card.collapsed { height: 56px; padding: 0 20px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+.exercise-card.collapsed > :not(.collapsed-view) { opacity: 0; pointer-events: none; position: absolute; }
+.collapsed-view { display: none; align-items: center; justify-content: space-between; font-weight: 700; width: 100%; font-size: 15px; color: var(--text); }
+.exercise-card.collapsed .collapsed-view { display: flex; position: static; opacity: 1; pointer-events: auto; }
+.collapsed-check { width: 24px; height: 24px; border-radius: 50%; background: var(--green); color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-left: 10px; font-size: 14px; }
+
 /* Toast */
 .toast{position:fixed;bottom:calc(80px + 16px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--orange);border-radius:12px;padding:10px 18px;font-size:13px;font-weight:600;color:var(--text);z-index:300;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap}
+
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 /* Home workout-ready banner */
 .workout-ready-banner{background:var(--orange-dark);border:1px solid rgba(232,93,47,.4);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:12px;cursor:pointer}
@@ -227,7 +245,7 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
     <div style="text-align:center;margin-bottom:24px;">
       <div style="width:72px;height:72px;background:var(--orange);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:800;color:#fff;margin:0 auto 16px;">C</div>
       <h1 style="font-size:26px;font-weight:800;line-height:1.25;margin-bottom:10px;">Seu personal trainer<br>com <span style="color:var(--orange)">I.A.</span></h1>
-      <p style="font-size:14px;color:var(--text2);line-height:1.65;">Protocolo construído sobre evidência publicada — periodização, progressão de carga e controle de volume, sem fila, sem horário fixo.</p>
+      <p style="font-size:14px;color:var(--text2);line-height:1.65;">Treinamento de força com base científica real. Você tem o protocolo certo, no momento certo, sem depender de agenda.</p>
     </div>
 
     <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
@@ -235,7 +253,7 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
         <div style="width:42px;height:42px;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
           <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--orange)" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
         </div>
-        <div><div style="font-size:14px;font-weight:700;">Protocolo personalizado</div><div style="font-size:12px;color:var(--text2);">Montado para o seu nível e objetivo exatos</div></div>
+        <div><div style="font-size:14px;font-weight:700;">Protocolo personalizado</div><div style="font-size:12px;color:var(--text2);">Feito para onde você está agora e onde quer chegar</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:14px;">
         <div style="width:42px;height:42px;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
@@ -247,12 +265,12 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
         <div style="width:42px;height:42px;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
           <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--orange)" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
         </div>
-        <div><div style="font-size:14px;font-weight:700;">Evolução semana a semana</div><div style="font-size:12px;color:var(--text2);">Progressão de carga e volume automatizados</div></div>
+        <div><div style="font-size:14px;font-weight:700;">Evolução semana a semana</div><div style="font-size:12px;color:var(--text2);">Carga e volume ajustados conforme você avança</div></div>
       </div>
     </div>
 
     <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:20px;">
-      <p style="font-size:13px;color:var(--text2);line-height:1.65;font-style:italic;">"Não é um gerador genérico. É um protocolo construído sobre evidência publicada — sem invencionismo, sem atalhos."</p>
+      <p style="font-size:13px;color:var(--text2);line-height:1.65;font-style:italic;">"A maioria dos apps te dá um treino qualquer. Aqui cada exercício tem um motivo e cada série tem um propósito."</p>
     </div>
 
     <div style="text-align:center;margin-bottom:18px;">
@@ -551,15 +569,20 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
       <div style="font-size:20px;font-weight:800;margin-top:12px;" id="profile-name">Atleta</div>
       <div style="font-size:13px;color:var(--text2);margin-top:2px;">Atleta Caleb.IA</div>
       <div style="margin-top:10px;">
-        <span style="background:var(--orange-dark);border:1px solid rgba(232,93,47,.4);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--orange);font-weight:700;">⚡ TRIAL — 14 dias</span>
+        <span style="background:var(--orange-dark);border:1px solid rgba(232,93,47,.4);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--orange);font-weight:700;">⚡ TRIAL | 14 dias</span>
       </div>
     </div>
 
+    <div class="metric-grid" style="margin-bottom:20px;" id="profile-gamification-grid">
+      <div class="metric-card"><div class="metric-val" id="prof-metric-sessions">—</div><div class="metric-label">Sessões totais</div></div>
+      <div class="metric-card"><div class="metric-val" id="prof-metric-streak" style="color:var(--green);">—</div><div class="metric-label">Sequência (dias)</div></div>
+      <div class="metric-card"><div class="metric-val" id="prof-metric-volume">—</div><div class="metric-label">Volume total (kg)</div></div>
+      <div class="metric-card"><div class="metric-val" id="prof-metric-level" style="font-size:16px;">—</div><div class="metric-label">Nível Nuckols</div></div>
+    </div>
+
     <div class="card" style="margin-bottom:12px;">
-      <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em;">Dados do Protocolo</div>
+      <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em;">Configuração</div>
       <div class="data-row"><span class="data-row-label">Objetivo</span><span class="data-row-value" id="prof-objetivo">—</span></div>
-      <div class="data-row"><span class="data-row-label">Nível</span><span class="data-row-value" id="prof-nivel">—</span></div>
-      <div class="data-row"><span class="data-row-label">Protocolo</span><span class="data-row-value" id="prof-protocolo">—</span></div>
       <div class="data-row"><span class="data-row-label">Frequência</span><span class="data-row-value" id="prof-frequencia">—</span></div>
       <div class="data-row"><span class="data-row-label">Duração/sessão</span><span class="data-row-value" id="prof-duracao">—</span></div>
       <div class="data-row"><span class="data-row-label">Local</span><span class="data-row-value" id="prof-local">—</span></div>
@@ -602,6 +625,41 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
 <div class="toast" id="toast"></div>
 
 <!-- ═══════════════════════════════════
+     TELA — CONCLUSÃO DO TREINO
+     ═══════════════════════════════════ -->
+<div class="screen off-up" id="screen-workout-finish" style="z-index: 20;">
+  <div style="height:56px;display:flex;align-items:center;padding:0 20px;border-bottom:1px solid var(--border);flex-shrink:0;">
+    <span style="font-size:16px;font-weight:700;">Conclusão</span>
+  </div>
+  <div class="scroll-content" style="padding: 24px; display:flex; flex-direction:column;">
+    <h2 style="font-size: 26px; font-weight: 800; text-align: center; margin-bottom: 8px;">Sessão concluída</h2>
+    <div style="font-size: 15px; color: var(--text2); text-align: center; margin-bottom: 30px;">
+      Duração: <strong id="finish-duration" style="color:var(--text);">--</strong>
+    </div>
+
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:20px;">
+      <div style="font-size:13px; font-weight:600; text-align:center; margin-bottom:12px;">Como foi a sessão de hoje no geral? (Escala de Borg)</div>
+      <div class="borg-wrap" id="finish-borg">
+        <button class="borg-btn" data-val="1" onclick="selectFinishBorg(1,this)">1</button>
+        <button class="borg-btn" data-val="2" onclick="selectFinishBorg(2,this)">2</button>
+        <button class="borg-btn" data-val="3" onclick="selectFinishBorg(3,this)">3</button>
+        <button class="borg-btn" data-val="4" onclick="selectFinishBorg(4,this)">4</button>
+        <button class="borg-btn" data-val="5" onclick="selectFinishBorg(5,this)">5</button>
+        <button class="borg-btn" data-val="6" onclick="selectFinishBorg(6,this)">6</button>
+        <button class="borg-btn" data-val="7" onclick="selectFinishBorg(7,this)">7</button>
+        <button class="borg-btn" data-val="8" onclick="selectFinishBorg(8,this)">8</button>
+        <button class="borg-btn" data-val="9" onclick="selectFinishBorg(9,this)">9</button>
+        <button class="borg-btn" data-val="10" onclick="selectFinishBorg(10,this)">10</button>
+      </div>
+    </div>
+
+    <textarea id="finish-obs" placeholder="Algo que queira registrar? (Opcional)" style="background:var(--surface2); border:1px solid var(--border2); border-radius:10px; padding:12px; font-size:14px; color:var(--text); font-family:var(--font); outline:none; resize:none; min-height:80px; margin-bottom:30px;"></textarea>
+
+    <button class="btn-primary" onclick="saveAndCloseWorkout()">Salvar e voltar</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
      TELA — TREINO ATUAL
      ═══════════════════════════════════ -->
 <div class="screen off" id="screen-training">
@@ -623,7 +681,18 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
   <!-- Unlocked state -->
   <div id="training-unlocked" style="display:none;flex-direction:column;flex:1;overflow:hidden">
     <div class="training-tabs" id="training-tabs"></div>
-    <div class="scroll-content" id="training-sessions-wrap"></div>
+    <div class="scroll-content" id="training-scroll-area">
+      <div id="training-sessions-wrap"></div>
+      <details class="why-workout-card" style="margin: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px;">
+        <summary style="padding: 14px 16px; font-size: 14px; font-weight: 700; cursor: pointer; outline: none; list-style: none; display: flex; justify-content: space-between; color: var(--text);">
+          Por que meu treino foi assim
+          <span class="why-arrow" style="transition: transform 0.2s;">▼</span>
+        </summary>
+        <div style="padding: 0 16px 16px; font-size: 13px; color: var(--text2); line-height: 1.6;" id="why-workout-content">
+        </div>
+      </details>
+      <style>details.why-workout-card summary::-webkit-details-marker { display: none; } details.why-workout-card[open] .why-arrow { transform: rotate(180deg); }</style>
+    </div>
   </div>
 
   <div class="bottom-nav">
@@ -667,10 +736,11 @@ let prevScreen = 'screen-home';
 const SYSTEM = `
 # IDENTIDADE
 Você é Caleb, assistente especializado em treinamento de força, hipertrofia e nutrição esportiva.
-Seu nome vem da figura bíblica de Caleb (Números 14:24) — aquele que seguiu completamente, sem hesitar.
+Seu nome vem da figura bíblica de Caleb (Números 14:24), aquele que seguiu completamente, sem hesitar.
 Você é o braço direito de Lucas, personal trainer especialista em treinamento de força.
 TOM: Técnico e direto. Especialista confiável, não animador de torcida.
 Sempre que usar jargão técnico, explique entre parênteses.
+REGRA IMPORTANTE: Use sempre "Hipertrofia" em vez de "Ganhar músculo" em todo o onboarding e nas respostas.
 IDIOMA: Sempre em português brasileiro.
 
 # BASE CIENTÍFICA
@@ -693,7 +763,7 @@ O melhor treino é o que o usuário vai realmente fazer.
 JAMAIS mais de 1 pergunta por mensagem. Espere a resposta. NUNCA listas de perguntas.
 
 # ONBOARDING — uma pergunta por vez:
-P1. Objetivo [Ganhar músculo | Perder gordura | Força | Saúde | Condicionamento]
+P1. Objetivo [Hipertrofia | Perder gordura | Força | Saúde | Condicionamento]
 P2. Experiência [Nunca treinei | <6 meses | 6m–2 anos | 2+ anos | Voltando]
 P3. Dias/semana [2x|3x|4x|5x|6x+]
 P3B. SE 3x: quais dias? (alternados=A/B/FB | consecutivos=ABC)
@@ -794,7 +864,7 @@ P12. Sexo biológico
 P13. Peso e altura? (opcional)
 Ao final: confirme o perfil e gere o treino completo.
 Inclua ao final: [ONBOARDING_COMPLETO]
-[PERFIL_JSON]{"nome":"","objetivo":"","nivel":"","protocolo":"001","frequencia":"4x","duracao":"60min","local":"Academia","limitacoes":"Nenhuma","peso":"","altura":"","esporte_extra":"","trabalho_tipo":"","sono":"","estresse":"","historico_treino":"","relacao_treino":"","expectativa":"","rm_agachamento":"","rm_supino":"","rm_terra":"","rm_desenvolvimento":"","rm_remada":""}[/PERFIL_JSON]
+[PERFIL_JSON]{"nome":"","objetivo":"Hipertrofia","nivel":"","protocolo":"001","frequencia":"4x","duracao":"60min","local":"Academia","limitacoes":"Nenhuma","peso":"","altura":"","esporte_extra":"","trabalho_tipo":"","sono":"","estresse":"","historico_treino":"","relacao_treino":"","expectativa":"","rm_agachamento":"","rm_supino":"","rm_terra":"","rm_desenvolvimento":"","rm_remada":""}[/PERFIL_JSON]
 
 # SELEÇÃO DE PROTOCOLO
 Hipertrofia: Novato/Iniciante(0-12m)=001 | Intermediário(6m-2a)=002 | Avançado(2a+)=003
@@ -857,7 +927,7 @@ Zonas: Iniciante 5–7 | Intermediário 7–8 | Avançado 8–9 | Deload 3–5
 
 2. NUNCA anunciar o nome ou número do protocolo.
    Proibido: "Protocolo 001", "Protocolo 003", "Protocolo Avançado para Hipertrofia".
-   O protocolo é uma decisão interna — o usuário não precisa saber o número.
+   O protocolo é uma decisão interna, o usuário não precisa ver nem saber o número. Proibido mencionar o número do protocolo em qualquer resposta ao usuário.
 
 3. SEMPRE apresentar o plano como conclusão natural da conversa.
    Tom obrigatório: "Com base no que você me contou..."
@@ -1063,6 +1133,88 @@ function nuckolsLevel(ratio) {
 function safeParseJSON(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key)) || fallback; }
   catch { return fallback; }
+}
+
+const TOOLTIPS = {
+  'RIR': 'RIR significa Repetições em Reserva. É quantas repetições você ainda conseguiria fazer antes de falhar. RIR 2 = parou 2 antes do limite.',
+  'Borg': 'A Escala de Borg mede sua percepção de esforço de 1 a 10. 1 é muito leve. 10 é o seu máximo absoluto. Use para registrar como o treino foi para o seu corpo.',
+  'Drop-set': 'Técnica em que você reduz a carga imediatamente após a última série e continua fazendo mais repetições sem descanso.',
+  'Rest-pause': 'Técnica em que você faz uma mini-pausa de 10 a 20 segundos dentro da própria série para conseguir mais repetições com a mesma carga.',
+  'Myo-reps': 'Método de alta eficiência: uma série de ativação até perto da falha, seguida de várias mini-séries curtas com poucos segundos de descanso entre elas.',
+  'MEV': 'São os limites de volume por músculo por semana. MEV é o mínimo para ter resultado. MAV é o ideal. MRV é o máximo que o corpo aguenta recuperar.',
+  'MAV': 'São os limites de volume por músculo por semana. MEV é o mínimo para ter resultado. MAV é o ideal. MRV é o máximo que o corpo aguenta recuperar.',
+  'MRV': 'São os limites de volume por músculo por semana. MEV é o mínimo para ter resultado. MAV é o ideal. MRV é o máximo que o corpo aguenta recuperar.'
+};
+
+function formatTooltips(text) {
+  if (!text) return '';
+  let res = text;
+  Object.keys(TOOLTIPS).forEach(term => {
+    const regex = new RegExp(`\\b(${term})\\b`, 'g');
+    res = res.replace(regex, `<span class="tech-term" onclick="showTooltip(event, '${term}')">$1</span>`);
+  });
+  return res;
+}
+
+function showTooltip(e, term) {
+  e.stopPropagation();
+  let bubble = document.getElementById('tech-tooltip');
+  if (!bubble) {
+    bubble = document.createElement('div');
+    bubble.id = 'tech-tooltip';
+    bubble.className = 'tooltip-bubble';
+    document.body.appendChild(bubble);
+    document.addEventListener('click', (ev) => {
+      if (bubble.style.display !== 'none' && !bubble.contains(ev.target)) {
+        bubble.style.display = 'none';
+      }
+    });
+  }
+  bubble.innerHTML = `
+    <div class="tooltip-header">
+      <span class="tooltip-title">${term}</span>
+      <button class="tooltip-close" onclick="document.getElementById('tech-tooltip').style.display='none'">×</button>
+    </div>
+    <div>${TOOLTIPS[term]}</div>
+  `;
+  bubble.style.display = 'block';
+  
+  const rect = e.target.getBoundingClientRect();
+  let top = rect.top - bubble.offsetHeight - 10;
+  if (top < 10) top = rect.bottom + 10;
+  let left = rect.left + rect.width / 2 - bubble.offsetWidth / 2;
+  if (left < 10) left = 10;
+  if (left + bubble.offsetWidth > window.innerWidth - 10) left = window.innerWidth - bubble.offsetWidth - 10;
+  
+  bubble.style.top = top + 'px';
+  bubble.style.left = left + 'px';
+}
+
+function getWorkoutRationale() {
+   if (!userProfile) return '';
+   const exp = userProfile.nivel || 'Iniciante';
+   const freq = userProfile.frequencia || '3x';
+   const obj = userProfile.objetivo || 'Hipertrofia';
+   
+   let text = '';
+   text += `Você tem treinado em um estágio ${exp} focado em ${obj}. `;
+   text += `Uma frequência de ${freq} permite estímulos suficientes para sinalização de síntese proteica sem sobrecarregar a recuperação. `;
+   
+   if (freq === '4x' || freq === '5x' || freq === '6x+') {
+       text += `Cada músculo recebe estímulo duas vezes por semana, que é o intervalo com melhor resposta segundo Schoenfeld et al. (2016). `;
+   } else {
+       text += `Distribuir em ${freq} otimiza o volume por sessão. `;
+   }
+   
+   if (exp === 'Avançado') {
+       text += `O volume total fica entre o MEV (Mínimo Efetivo) e MRV (Volume Máximo Recuperável) descritos por Israetel, utilizando técnicas de intensidade para maximizar o recrutamento de unidades motoras.`;
+   } else if (exp === 'Intermediário') {
+       text += `O volume fica próximo ao MAV (Volume Máximo Adaptativo), ideal para estímulo constante com recuperação garantida.`;
+   } else {
+       text += `O volume é mantido próximo ao MEV para garantir ganhos consistentes com máxima segurança técnica, seguindo princípios de sobrecarga progressiva.`;
+   }
+   
+   return formatTooltips(text);
 }
 
 // ── Sistema de ciclos e semanas ──────────────────────
@@ -1280,56 +1432,69 @@ function renderTrainingContent(version) {
   }
 
   sessions.forEach((session, i) => {
-    const letter = String.fromCharCode(65 + i); // A, B, C, D
+    const letter = String.fromCharCode(65 + i); 
     const titleMatch = session.match(/TREINO\s+([A-Z])\s*[—\u2013-]\s*([^\n]+)/i);
     const tabLabel   = titleMatch ? titleMatch[1] : letter;
     const subtitle   = titleMatch ? titleMatch[2].trim() : `Treino ${letter}`;
 
-    // Tab button
     const tab = document.createElement('button');
     tab.className = 'training-tab' + (i === 0 ? ' active' : '');
     tab.textContent = `Treino ${tabLabel}`;
     tab.onclick = () => switchTrainingTab(i);
     tabsEl.appendChild(tab);
 
-    // Session content
     const sessionDiv = document.createElement('div');
     sessionDiv.className = 'training-session' + (i === 0 ? ' active' : '');
+    sessionDiv.id = `training-card-to-capture-${i}`;
 
-    // Header
-    sessionDiv.innerHTML = `<div style="margin-bottom:12px"><div style="font-size:20px;font-weight:800">Treino ${tabLabel}</div><div style="font-size:13px;color:var(--text2);margin-top:2px">${subtitle}</div></div>`;
+    sessionDiv.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px">
+        <div>
+          <div style="font-size:20px;font-weight:800">Treino ${tabLabel}</div>
+          <div style="font-size:13px;color:var(--text2);margin-top:2px">${subtitle}</div>
+        </div>
+        <button class="btn-outline" style="width:auto; padding:0 12px; height:32px; font-size:12px; margin:0; cursor:pointer;" onclick="downloadWorkoutImage('training-card-to-capture-${i}')">📷 Salvar Imagem</button>
+      </div>
+    `;
 
-    // Parse exercises
     const exBlocks = session.match(/\d+\.\s[\s\S]*?(?=(?:\d+\.|$|\u2501{3,}))/g) || [];
     if (exBlocks.length === 0) {
       sessionDiv.innerHTML += `<div style="font-size:13px;color:var(--text2);white-space:pre-wrap">${esc(session.trim())}</div>`;
     } else {
+      const weightsHist = safeParseJSON('caleb_weights', {});
       exBlocks.forEach(block => {
         const lines = block.trim().split('\n').filter(Boolean);
         const name = lines[0].replace(/^\d+\.\s*/, '').trim();
         const spec = lines.find(l => /x|min|RIR/i.test(l) && !l.startsWith('📝'))?.trim() || '';
         const note = lines.find(l => l.includes('📝'))?.replace('📝','').trim() || '';
+        
+        let lastLoadStr = '';
+        if (weightsHist && weightsHist[name] && weightsHist[name].length > 0) {
+            const maxW = weightsHist[name][weightsHist[name].length-1].max;
+            lastLoadStr = ` <span style="font-size:11px; color:var(--green); font-weight:600; display:inline-block; margin-left:8px; border:1px solid var(--border); padding:2px 8px; border-radius:8px;">Última: ${maxW}kg</span>`;
+        }
+
         const card = document.createElement('div');
         card.className = 'training-ex-card';
         card.innerHTML = `
-          <div class="training-ex-name">${esc(name)}</div>
-          ${spec ? `<div class="training-ex-spec">${esc(spec)}</div>` : ''}
-          ${note ? `<div class="training-ex-note">${esc(note)}</div>` : ''}
+          <div class="training-ex-name" style="display:flex; justify-content:space-between; align-items:flex-start;"><span>${esc(name)}</span>${lastLoadStr}</div>
+          ${spec ? `<div class="training-ex-spec">${formatTooltips(esc(spec))}</div>` : ''}
+          ${note ? `<div class="training-ex-note">${formatTooltips(esc(note))}</div>` : ''}
         `;
         sessionDiv.appendChild(card);
       });
     }
 
-    // Start workout button
     const startBtn = document.createElement('button');
     startBtn.className = 'btn-primary';
     startBtn.style.marginTop = '8px';
-    startBtn.textContent = 'Iniciar sessão';
-    startBtn.onclick = () => showWorkout();
+    startBtn.textContent = `Iniciar sessão ${tabLabel}`;
+    startBtn.onclick = () => showWorkout(tabLabel);
     sessionDiv.appendChild(startBtn);
 
     sessionsEl.appendChild(sessionDiv);
   });
+
 
   // Version history
   renderVersionHistory(sessionsEl);
@@ -1346,6 +1511,30 @@ function splitIntoSessions(text) {
   // Try split by TREINO X — pattern
   const parts = text.split(/(?=\bTREINO\s+[A-Z]\b)/i);
   return parts.filter(p => p.trim().length > 10);
+}
+
+function downloadWorkoutImage(elementId) {
+  if (typeof html2canvas === 'undefined') {
+    showToast('Carregando biblioteca de imagem. Tente novamente.');
+    return;
+  }
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  const oldB = el.style.backgroundColor;
+  el.style.backgroundColor = getComputedStyle(document.body).backgroundColor;
+  showLoader('Gerando imagem...');
+  html2canvas(el, { scale: 2, useCORS: true }).then(canvas => {
+    hideLoader();
+    el.style.backgroundColor = oldB;
+    const link = document.createElement('a');
+    link.download = `caleb-treino-${new Date().toISOString().split('T')[0]}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }).catch(() => {
+    hideLoader();
+    el.style.backgroundColor = oldB;
+    showToast('Erro ao gerar imagem.');
+  });
 }
 
 function renderVersionHistory(container) {
@@ -1504,7 +1693,7 @@ function obKeydown(e) {
 }
 
 function defaultProfile() {
-  return {nome:'Atleta',objetivo:'Ganhar músculo',nivel:'Iniciante',protocolo:'001',frequencia:'4x',duracao:'60min',local:'Academia',limitacoes:'Nenhuma',peso:'',altura:''};
+  return {nome:'Atleta',objetivo:'Hipertrofia',nivel:'Iniciante',protocolo:'001',frequencia:'4x',duracao:'60min',local:'Academia',limitacoes:'Nenhuma',peso:'',altura:''};
 }
 
 // ══════════════════════════════════════════════════════
@@ -1526,7 +1715,17 @@ function updateNextWorkoutCard() {
   const templates = WK[proto] || WK['001'];
   const sessions = safeParseJSON('caleb_sessions', []);
   const keys = Object.keys(templates);
-  const wk = templates[keys[sessions.length % keys.length]];
+  
+  const sessionsThisWeekCount = sessions.length % keys.length;
+  let doneThisWeek = [];
+  if (sessionsThisWeekCount > 0) {
+     for (let i = sessions.length - sessionsThisWeekCount; i < sessions.length; i++) {
+         doneThisWeek.push(sessions[i].workout.replace('Treino ', '')); 
+     }
+  }
+  
+  const nextKey = keys.find(k => !doneThisWeek.includes(k)) || keys[0];
+  const wk = templates[nextKey];
 
   const titleEl = document.getElementById('next-workout-title');
   const subEl   = document.getElementById('next-workout-sub');
@@ -1538,7 +1737,20 @@ function updateNextWorkoutCard() {
   if (exsEl)   exsEl.textContent   = `${wk.exercises.length} exercícios`;
   if (rirEl)   rirEl.textContent   = wk.rir;
 
-  // Atualizar badge de ciclo na home também
+  const grid = document.getElementById('home-day-grid');
+  if (grid) {
+    grid.innerHTML = keys.map(k => {
+       const isDone = doneThisWeek.includes(k);
+       const isToday = k === nextKey;
+       const cls = isDone ? 'done' : isToday ? 'today' : 'pending';
+       const sub = isDone ? '✓' : isToday ? 'Hoje' : '—';
+       return `<div class="day-cell ${cls}" style="cursor:pointer" onclick="showWorkout('${k}')">
+         <div class="day-cell-label">${k}</div>
+         <div class="day-cell-sub">${sub}</div>
+       </div>`;
+    }).join('');
+  }
+
   updateCycleBadge();
 }
 
@@ -1552,10 +1764,78 @@ function applyProfileScreen() {
   const nm = document.getElementById('profile-name');
   if (nm) nm.textContent = name;
 
-  ['objetivo','nivel','protocolo','frequencia','duracao','local'].forEach(f => {
+  ['objetivo','frequencia','duracao','local'].forEach(f => {
     const el = document.getElementById('prof-'+f);
     if (el && userProfile[f]) el.textContent = userProfile[f];
   });
+  
+  // Gamefication metrics
+  const sessionLogs = safeParseJSON('caleb_session_logs', []);
+  const sessionsTotal = sessionLogs.length;
+  const mtSess = document.getElementById('prof-metric-sessions');
+  if (mtSess) mtSess.textContent = sessionsTotal;
+  
+  // Streak
+  let streak = 0;
+  if (sessionLogs.length > 0) {
+    const today = new Date().toISOString().split('T')[0];
+    const dates = sessionLogs.map(l => l.date?.split('T')[0]).filter(Boolean);
+    const uniqueDates = [...new Set(dates)].sort().reverse(); 
+    
+    const lastDate = new Date(uniqueDates[0]);
+    const dToday = new Date(); dToday.setHours(0,0,0,0); lastDate.setHours(0,0,0,0);
+    const diffDaysFirst = Math.floor((dToday - lastDate) / (1000*60*60*24));
+    
+    if (diffDaysFirst <= 1) {
+      streak = 1;
+      for (let i = 1; i < uniqueDates.length; i++) {
+        const d1 = new Date(uniqueDates[i-1]); d1.setHours(0,0,0,0);
+        const d2 = new Date(uniqueDates[i]); d2.setHours(0,0,0,0);
+        if (Math.floor((d1 - d2) / (1000*60*60*24)) === 1) streak++;
+        else break;
+      }
+    }
+  }
+  const mtStreak = document.getElementById('prof-metric-streak');
+  if (mtStreak) mtStreak.textContent = streak;
+
+  // Volume Total
+  let volumeTot = 0;
+  sessionLogs.forEach(l => {
+    if(!l.exercises) return;
+    l.exercises.forEach(ex => {
+      if(!ex.sets) return;
+      ex.sets.forEach(s => {
+        if (s.completed && s.weightKg > 0) {
+           volumeTot += s.weightKg; 
+        }
+      });
+    });
+  });
+  const mtVol = document.getElementById('prof-metric-volume');
+  if (mtVol) mtVol.innerHTML = volumeTot > 1000 ? (volumeTot/1000).toFixed(1) + '<small style="font-size:12px;">ton</small>' : volumeTot + '<small style="font-size:12px;">kg</small>';
+
+  // Nível Nuckols global
+  const rmData = safeParseJSON('caleb_rm_data', {});
+  const bWeight = parseFloat(userProfile?.peso) || 75;
+  let bestGlobalPct = 0;
+  let bestLabel = 'Iniciante';
+  
+  Object.keys(rmData).forEach(k => {
+     if (rmData[k] && rmData[k].carga) {
+        const r = rmData[k].carga / bWeight;
+        let p = 0; let n = '';
+        if (k.includes('agachamento') || k.includes('terra')) {
+           if (r < 0.75) { p=1; n='Iniciante'; } else if (r < 1.25) { p=2; n='Novato'; } else if (r < 1.75) { p=3; n='Inter.'; } else { p=4; n='Avançado'; }
+        } else {
+           if (r < 0.5) { p=1; n='Iniciante'; } else if (r < 0.75) { p=2; n='Novato'; } else if (r < 1.0) { p=3; n='Inter.'; } else { p=4; n='Avançado'; }
+        }
+        if (p > bestGlobalPct) { bestGlobalPct = p; bestLabel = n; }
+     }
+  });
+  
+  const mtLevel = document.getElementById('prof-metric-level');
+  if (mtLevel) mtLevel.textContent = bestGlobalPct > 0 ? bestLabel : (userProfile?.nivel || 'Iniciante');
 }
 
 // ══════════════════════════════════════════════════════
@@ -1670,13 +1950,30 @@ function chatKeydown(e) {
 // ══════════════════════════════════════════════════════
 // WORKOUT
 // ══════════════════════════════════════════════════════
-function showWorkout() {
+function showWorkout(overrideKey) {
   const proto = (userProfile && ['001','002','003'].includes(userProfile.protocolo))
     ? userProfile.protocolo : '001';
   const templates = WK[proto] || WK['001'];
   const sessions  = safeParseJSON('caleb_sessions', []);
   const keys      = Object.keys(templates);
-  const wk        = templates[keys[sessions.length % keys.length]];
+  
+  let targetKey = overrideKey;
+  if (!targetKey) {
+    const sessionsThisWeekCount = sessions.length % keys.length;
+    let doneThisWeek = [];
+    if (sessionsThisWeekCount > 0) {
+       for (let i = sessions.length - sessionsThisWeekCount; i < sessions.length; i++) {
+           doneThisWeek.push(sessions[i].workout.replace('Treino ', '')); 
+       }
+    }
+    targetKey = keys.find(k => !doneThisWeek.includes(k)) || keys[0];
+  }
+  const wk = templates[targetKey];
+  window.currentWorkoutTargetKey = targetKey;
+
+  const rmData = safeParseJSON('caleb_rm_data', {});
+  const weightsHist = safeParseJSON('caleb_weights', {});
+  const baseMap = {'agachamento livre':'agachamento', 'supino reto com barra':'supino', 'levantamento terra romeno':'terra', 'desenvolvimento com halteres':'desenvolvimento', 'remada curvada com barra':'remada'};
 
   document.getElementById('workout-title').textContent = wk.title;
 
@@ -1687,12 +1984,29 @@ function showWorkout() {
     const card = document.createElement('div');
     card.className = 'exercise-card';
 
+    const mapNameForRM = baseMap[ex.name.toLowerCase()];
+    let suggested = '';
+    
+    if (weightsHist[ex.name] && weightsHist[ex.name].length > 0) {
+        const lastSessionInfo = weightsHist[ex.name][weightsHist[ex.name].length - 1];
+        suggested = `~${lastSessionInfo.max}kg anterior`;
+    } else if (mapNameForRM && rmData[mapNameForRM] && rmData[mapNameForRM].rm1) {
+        const rm1 = rmData[mapNameForRM].rm1;
+        let pctMid = 0.72; 
+        if (ex.spec.includes('8–10') || ex.spec.includes('8–12') || ex.spec.includes('10–12')) pctMid = 0.72;
+        if (ex.spec.includes('6–8')) pctMid = 0.82;
+        if (ex.spec.includes('12–15') || ex.spec.includes('15–20')) pctMid = 0.63;
+        
+        const load = Math.round(rm1 * pctMid);
+        suggested = `~${load}kg sugerido`;
+    }
+
     let setsHtml = '';
     for (let s=1; s<=ex.sets; s++) {
       setsHtml += `
         <div class="set-row">
           <div class="set-label">S${s}</div>
-          <input class="set-input" type="number" placeholder="kg" min="0" step="0.5">
+          <input class="set-input" type="number" placeholder="${suggested || 'kg'}" min="0" step="0.5">
           <div class="set-check" data-ex="${i}" data-s="${s}" onclick="toggleSet(this)">
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
@@ -1700,18 +2014,15 @@ function showWorkout() {
     }
 
     card.innerHTML = `
+      <div class="collapsed-view" onclick="this.closest('.exercise-card').classList.remove('collapsed')">
+         <span>${ex.name}</span><div class="collapsed-check">✓</div>
+      </div>
       <div style="font-size:11px;color:var(--text3);font-weight:600;margin-bottom:4px;">Exercício ${i+1} de ${wk.exercises.length}</div>
       <div style="font-size:18px;font-weight:800;margin-bottom:4px;">${ex.name}</div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:10px;">${ex.spec}</div>
-      <div style="border-left:3px solid var(--orange);padding-left:12px;font-size:12px;color:var(--text2);font-style:italic;margin-bottom:14px;">${ex.note}</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:10px;">${formatTooltips(esc(ex.spec))}</div>
+      <div style="border-left:3px solid var(--orange);padding-left:12px;font-size:12px;color:var(--text2);font-style:italic;margin-bottom:14px;">${formatTooltips(esc(ex.note))}</div>
       ${setsHtml}
-      <div style="margin-top:14px;">
-        <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">Como foi? (Escala de Borg CR10 — percepção de esforço de 1 a 10)</div>
-        <div class="borg-wrap" id="borg-${i}">
-          ${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="borg-btn" data-val="${n}" onclick="selectBorg(${i},${n},this)">${n}</button>`).join('')}
-        </div>
-        <textarea class="ex-obs-input" placeholder="Observação (opcional)" style="width:100%;margin-top:10px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;resize:none;outline:none;font-family:var(--font);" rows="2"></textarea>
-      </div>`;
+    `;
 
     content.appendChild(card);
   });
@@ -1733,11 +2044,22 @@ function toggleSet(el) {
   el.classList.toggle('done');
   const svg = el.querySelector('svg');
   svg.setAttribute('stroke', el.classList.contains('done') ? 'var(--orange)' : 'currentColor');
+  
+  const card = el.closest('.exercise-card');
+  const allChecks = card.querySelectorAll('.set-check');
+  const allDone = Array.from(allChecks).every(c => c.classList.contains('done'));
+  
+  if (allDone) {
+    setTimeout(() => {
+      card.classList.add('collapsed');
+    }, 400); 
+  } else {
+    card.classList.remove('collapsed');
+  }
 }
 
-function selectBorg(exIdx, val, btn) {
-  document.getElementById(`borg-${exIdx}`)
-    .querySelectorAll('.borg-btn').forEach(b => b.classList.remove('selected'));
+function selectFinishBorg(val, btn) {
+  document.getElementById('finish-borg').querySelectorAll('.borg-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
 }
 
@@ -1748,24 +2070,26 @@ function cancelWorkout() {
 
 function finishWorkout() {
   clearInterval(workoutTimer);
+  const mins = Math.floor(workoutSeconds/60);
+  document.getElementById('finish-duration').textContent = `${mins} min`;
+  document.getElementById('screen-workout-finish').classList.remove('off-up');
+}
 
-  // ── Coletar Borg de cada exercício ──────────────────
-  const borgVals = [];
-  document.querySelectorAll('.borg-btn.selected').forEach(b => {
-    borgVals.push(parseInt(b.dataset.val));
-  });
-  const avgBorg = borgVals.length
-    ? parseFloat((borgVals.reduce((a,b)=>a+b,0)/borgVals.length).toFixed(1))
-    : null;
+function saveAndCloseWorkout() {
+  document.getElementById('screen-workout-finish').classList.add('off-up');
+
+  // Borg consolidado
+  const borgBtn = document.getElementById('finish-borg').querySelector('.borg-btn.selected');
+  const avgBorg = borgBtn ? parseInt(borgBtn.dataset.val) : null;
+  const finishObs = document.getElementById('finish-obs').value.trim();
 
   // ── Coletar pesos registrados por exercício ──────────
   const exerciseData = [];
   const proto = (userProfile && ['001','002','003'].includes(userProfile.protocolo))
     ? userProfile.protocolo : '001';
   const templates = WK[proto] || WK['001'];
-  const sessions0 = safeParseJSON('caleb_sessions', []);
-  const keys = Object.keys(templates);
-  const wk = templates[keys[sessions0.length % keys.length]];
+  const targetKey = window.currentWorkoutTargetKey || Object.keys(templates)[0];
+  const wk = templates[targetKey];
 
   document.querySelectorAll('.exercise-card').forEach((card, i) => {
     const exName = wk.exercises[i]?.name || `Exercício ${i+1}`;
@@ -1835,16 +2159,11 @@ function finishWorkout() {
       });
     });
     
-    const borgBtn = document.getElementById(`borg-${i}`).querySelector('.borg-btn.selected');
-    const borgScore = borgBtn ? parseInt(borgBtn.dataset.val) : null;
-    
-    const obs = card.querySelector('.ex-obs-input')?.value.trim() || '';
-    
     detailedExercises.push({
       name: exName,
       sets: sets,
-      borgScore: borgScore,
-      observation: obs
+      borgScore: avgBorg, // salvando o borg global
+      observation: ''
     });
   });
 
@@ -1854,7 +2173,8 @@ function finishWorkout() {
     session: sessionTarget,
     exercises: detailedExercises,
     sessionBorgAvg: avgBorg,
-    durationSeconds: workoutSeconds
+    durationSeconds: workoutSeconds,
+    globalObservation: finishObs
   };
 
   const sessLogs = safeParseJSON('caleb_session_logs', []);
@@ -2278,12 +2598,19 @@ function formatCalebMsg(text, containerId) {
       const opts = inner.split('|').map(o => o.trim()).filter(Boolean);
       const isOnboarding = containerId.includes('ob-') || containerId.includes('onboarding');
       const fn = isOnboarding ? 'sendObChip' : 'sendChatChip';
+
+      let tipHtml = '';
+      if (isOnboarding && !window.chipsDisplayedOnboarding) {
+        window.chipsDisplayedOnboarding = true;
+        tipHtml = '<div style="font-size: 11px; color: var(--text3); text-align: center; margin-top: 6px;">Escolha uma opção ou escreva livremente — o Caleb entende os dois jeitos.</div>';
+      }
+
       result += '<div class="option-chips">' +
         opts.map(opt => {
           const safe = opt.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
           return `<button class="option-chip" onclick="${fn}(this,'${safe}')">${opt}</button>`;
         }).join('') +
-        '</div>';
+        '</div>' + tipHtml;
     } else {
       result += part
         .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
