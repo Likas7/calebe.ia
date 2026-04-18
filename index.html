@@ -36,6 +36,10 @@ textarea{resize:none}
 .screen.off-up{transform:translateY(100%);opacity:0;pointer-events:none}
 .screen.off-left{transform:translateX(-20%);opacity:0;pointer-events:none}
 
+/* CHAT FIX: Prioridade Máxima sobre qualquer tela */
+#s-chat { z-index: 9999; }
+#s-faq { z-index: 10000; }
+
 /* STATUS BAR */
 .status-bar{height:var(--status-h);display:flex;align-items:center;
   justify-content:space-between;padding:0 24px;flex-shrink:0}
@@ -173,7 +177,7 @@ textarea{resize:none}
 /* WEEK ROW */
 .week-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
 .day-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
-  padding:10px 6px;text-align:center}
+  padding:10px 6px;text-align:center;transition:all 0.2s}
 .day-card.done{border-color:#1a4a2a;background:#0a1f10}
 .day-card.today{border-color:var(--orange);background:var(--orange-dim)}
 .day-letter{font-size:17px;font-weight:800;color:var(--text2);margin-bottom:2px}
@@ -190,7 +194,7 @@ textarea{resize:none}
 .borg-num{font-size:20px;font-weight:800;color:var(--text)}
 .borg-sub{font-size:11px;color:var(--green);font-weight:500}
 .borg-track{flex:1;height:6px;background:var(--border2);border-radius:3px;overflow:hidden}
-.borg-fill{height:100%;border-radius:3px;background:var(--orange)}
+.borg-fill{height:100%;border-radius:3px;background:var(--orange);transition:width 0.5s ease;}
 
 /* CYCLE PILL */
 .cycle-pill{display:inline-flex;align-items:center;gap:8px;background:var(--surface);
@@ -296,21 +300,20 @@ textarea{resize:none}
 .set-check svg{width:12px;height:12px;stroke:var(--orange);fill:none;stroke-width:2.5;
   stroke-linecap:round;stroke-linejoin:round;display:none}
 .set-check.done svg{display:block}
-.borg-section{margin-top:4px}
-.borg-title-sm{font-size:12px;color:var(--text3);margin-bottom:8px}
+
+/* BORG REMOVIDO DOS CARDS -> Apenas no final agora */
 .borg-buttons{display:flex;gap:4px}
 .borg-btn{flex:1;padding:7px 0;border-radius:7px;border:1px solid var(--border);
   background:var(--surface2);font-size:12px;font-weight:600;color:var(--text3);transition:all .15s}
-.borg-btn.sel{background:var(--orange-dim);border-color:var(--orange);color:var(--orange)}
+.borg-btn.selected{background:var(--orange-dim);border-color:var(--orange);color:var(--orange)}
+
 .option-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;margin-bottom:4px}
 .tooltip-term{border-bottom:1px dotted var(--orange);cursor:pointer}
-.chips-hint{font-size:11px;color:var(--text3);text-align:center;margin-top:6px;display:block}
 .option-chip{background:var(--surface2);border:1.5px solid var(--orange);border-radius:20px;padding:8px 16px;font-size:13px;color:var(--orange);font-weight:600;cursor:pointer;transition:all .18s;font-family:inherit;letter-spacing:.01em}
 .option-chip:hover{background:var(--orange);color:#fff;transform:scale(1.02)}
 .option-chip:active{transform:scale(.97)}
 .option-chip.chosen{background:var(--orange);color:#fff;opacity:.85;cursor:default}
 .option-chip:disabled{cursor:default}
-.chips-hint{font-size:11px;color:var(--text3);text-align:center;margin-top:6px;display:block}
 
 /* REPORT */
 .report-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
@@ -333,47 +336,42 @@ textarea{resize:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loader-text{font-size:14px;color:var(--text2)}
 
-/* 1RM TABLE (Added for compatibility with local logic) */
+/* 1RM TABLE */
 .rm-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
 .rm-table th { text-align: left; font-size: 11px; color: var(--text3); padding: 8px 4px; border-bottom: 1px solid var(--border); }
 .rm-table td { font-size: 13px; padding: 10px 4px; border-bottom: 1px solid var(--border); }
 .rm-table td:last-child { color: var(--orange); font-weight: 600; text-align: right; }
 
 .form-cargas { margin-top: 12px; display: flex; flex-direction: column; gap: 10px; }
-.form-cargas-row {
-  display: grid;
-  grid-template-columns: 1fr 72px 36px 56px 36px;
-  align-items: center;
-  gap: 8px;
-}
+.form-cargas-row { display: grid; grid-template-columns: 1fr 72px 36px 56px 36px; align-items: center; gap: 8px; }
 .form-cargas-label { font-size: 13px; font-weight: 600; color: var(--text); }
-.form-cargas-input {
-  background: var(--surface2);
-  border: 1px solid var(--border2);
-  border-radius: 8px;
-  padding: 7px 10px;
-  color: var(--text);
-  font-size: 14px;
-  outline: none;
-  text-align: center;
-  width: 100%;
-  font-family: inherit;
-}
+.form-cargas-input { background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; padding: 7px 10px; color: var(--text); font-size: 14px; outline: none; text-align: center; width: 100%; font-family: inherit; }
 .form-cargas-input:focus { border-color: var(--orange); }
 .form-cargas-unit { font-size: 11px; color: var(--text3); }
-.form-cargas-btn {
-  width: 100%;
-  margin-top: 12px;
-  background: var(--orange);
-  border: none;
-  border-radius: 10px;
-  padding: 12px;
-  font-size: 14px;
-  font-weight: 700;
-  color: #fff;
-  cursor: pointer;
-  font-family: inherit;
+.form-cargas-btn { width: 100%; margin-top: 12px; background: var(--orange); border: none; border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 700; color: #fff; cursor: pointer; font-family: inherit; }
+
+/* TABS DE TREINO E IMPRESSÃO (PDF) */
+.training-tabs { display:flex; overflow-x:auto; gap:8px; margin-bottom:16px; padding:0 16px; scrollbar-width:none; }
+.training-tabs::-webkit-scrollbar { display:none; }
+.training-tab { background:var(--surface); border:1px solid var(--border); color:var(--text2); padding:8px 16px; border-radius:20px; font-size:13px; font-weight:600; white-space:nowrap; }
+.training-tab.active { background:var(--orange-dim); border-color:var(--orange); color:var(--orange); }
+.training-session { display:none; }
+.training-session.active { display:block; animation:fadeIn 0.3s; }
+.training-ex-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; margin-bottom:10px; }
+.training-ex-name { font-size:16px; font-weight:700; margin-bottom:4px; }
+.training-ex-spec { font-size:13px; color:var(--text2); margin-bottom:6px; }
+.training-ex-note { font-size:12px; color:var(--text3); font-style:italic; border-left:2px solid var(--orange); padding-left:8px; }
+
+@media print {
+  .bottom-nav, .topbar, .fab, button, .version-history, #s-chat, #s-faq { display: none !important; }
+  #app, .screen, .scroll-area { position: static !important; overflow: visible !important; height: auto !important; background: white !important; color: black !important; }
+  .training-session { display: block !important; page-break-inside: avoid; }
+  .training-tabs { display: none !important; }
+  .training-ex-card { border: 1px solid #ccc !important; break-inside: avoid; margin-bottom: 10px; padding: 10px; }
+  body { background: white !important; }
+  * { color: black !important; }
 }
+
 </style>
 </head>
 <body>
@@ -383,7 +381,6 @@ textarea{resize:none}
   <div class="loader-spinner"></div>
   <div class="loader-text" id="loader-text">Caleb está pensando...</div>
 </div>
-
 
 <div class="screen" id="s-splash">
   <div class="topbar">
@@ -448,13 +445,12 @@ textarea{resize:none}
   </div>
   <div class="scroll-area" style="padding:18px 16px">
     <div style="margin-bottom:16px">
-      <div style="font-size:13px;color:var(--text3);margin-bottom:3px">Bom dia,</div>
       <div style="font-size:22px;font-weight:800" id="home-greeting">Atleta 👋</div>
     </div>
     <div class="cycle-pill">
       <div class="cycle-pill-dot"></div>
       <div class="cycle-pill-text">Ciclo 1 —</div>
-      <div class="cycle-pill-week" id="home-cycle">Semana 1 de 4</div>
+      <div class="cycle-pill-week" id="home-cycle-badge">Semana 1 de 4</div>
     </div>
     <div class="next-workout-card">
       <div class="pill-label"><div class="dot"></div>Próximo treino</div>
@@ -518,18 +514,17 @@ textarea{resize:none}
     </div>
     <button class="faq-btn" onclick="showScreen('s-faq')">!</button>
   </div>
-  <div class="scroll-area" id="chat-msgs" style="padding:16px;display:flex;flex-direction:column;gap:2px"></div>
+  <div class="scroll-area" id="chat-messages" style="padding:16px;display:flex;flex-direction:column;gap:2px"></div>
   <div class="input-area">
     <div class="input-row">
       <textarea class="chat-input" id="chat-input" placeholder="Ou descreva o que precisa..." rows="1"
-        oninput="autoResize(this)" onkeydown="handleKey(event,'chat')"></textarea>
+        oninput="autoResize(this)" onkeydown="chatKeydown(event)"></textarea>
       <button class="send-btn" onclick="sendChat()">
         <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
       </button>
     </div>
   </div>
 </div>
-
 
 <div class="screen off" id="s-faq">
   <div class="chat-header">
@@ -553,7 +548,6 @@ textarea{resize:none}
   </div>
 </div>
 
-
 <div class="screen off" id="s-workout">
   <div class="chat-header">
     <button class="icon-btn" onclick="cancelWorkout()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
@@ -569,17 +563,16 @@ textarea{resize:none}
   </div>
 </div>
 
-
 <div class="screen off" id="s-progress">
   <div class="topbar"><div class="logo">CALEB<em>.IA</em></div><div class="version-pill">v1.1 M.A.X. Core <div class="live-dot"></div></div></div>
   <div class="scroll-area" style="padding:18px 16px 40px">
     <div style="font-size:22px;font-weight:800;text-align:center;margin-bottom:6px">Seu Progresso</div>
     <div style="font-size:13px;color:var(--text2);text-align:center;margin-bottom:20px">Acompanhe sua evolução ao longo do tempo.</div>
     <div class="card" style="padding:16px;margin-bottom:12px">
-      <div class="section-label">Ciclo atual — <span id="home-cycle-text">Semana 1 de 4</span></div>
-      <div class="prog-bar"><div class="prog-fill" id="prog-bar-fill" style="width:25%"></div></div>
+      <div class="section-label">Ciclo atual — <span id="prog-cycle-label">Semana 1 de 4</span></div>
+      <div class="prog-bar"><div class="prog-fill progress-bar-fill" style="width:25%"></div></div>
       <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-top:6px">
-        <span id="prog-started">Iniciado em --/--</span><span id="prog-pct">25% concluído</span>
+        <span id="prog-started">Iniciado em --/--</span><span id="prog-cycle-pct">25%</span>
       </div>
     </div>
     <div class="stat-grid">
@@ -638,26 +631,13 @@ textarea{resize:none}
     </div>
   </div>
   <div class="bottom-nav">
-    <button class="nav-btn" onclick="navTo('home')">
-      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      <div class="nav-label">Home</div>
-    </button>
-    <button class="nav-btn" onclick="navTo('training')">
-      <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
-      <div class="nav-label">Treino</div>
-    </button>
-    <button class="nav-btn active" onclick="navTo('progress')">
-      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      <div class="nav-label">Progresso</div>
-    </button>
-    <button class="nav-btn" onclick="navTo('profile')">
-      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <div class="nav-label">Perfil</div>
-    </button>
+    <button class="nav-btn" onclick="navTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nav-label">Home</div></button>
+    <button class="nav-btn" onclick="navTo('training')"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg><div class="nav-label">Treino</div></button>
+    <button class="nav-btn active" onclick="navTo('progress')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><div class="nav-label">Progresso</div></button>
+    <button class="nav-btn" onclick="navTo('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nav-label">Perfil</div></button>
   </div>
   <button class="fab" onclick="openChat()"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></button>
 </div>
-
 
 <div class="screen off" id="s-profile">
   <div class="topbar"><div class="logo">CALEB<em>.IA</em></div><div class="version-pill">v1.1 M.A.X. Core <div class="live-dot"></div></div></div>
@@ -697,14 +677,16 @@ textarea{resize:none}
   <button class="fab" onclick="openChat()"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></button>
 </div>
 
-
 <div class="screen off" id="s-training">
   <div class="topbar">
     <div class="logo">CALEB<em>.IA</em></div>
-    <div class="version-pill" id="training-version-badge">v1.1 M.A.X. Core</div>
+    <div style="display:flex; gap:8px;">
+        <button class="btn-outline" style="padding:6px 12px;font-size:12px;width:auto;" onclick="printTraining()">📄 Salvar PDF</button>
+        <div class="version-pill" id="training-version-badge">v1.1 M.A.X. Core</div>
+    </div>
   </div>
 
-  <div id="training-locked" class="training-locked" style="padding:40px 20px;text-align:center;">
+  <div id="training-locked" class="training-locked" style="display:flex; flex-direction:column; padding:40px 20px;text-align:center;">
     <div style="font-size:48px;margin-bottom:16px;">🔒</div>
     <div style="font-size:18px;font-weight:800;margin-bottom:10px;">Protocolo bloqueado</div>
     <div style="font-size:14px;color:var(--text2);margin-bottom:24px;">Complete o seu perfil no chat para gerar o seu treino personalizado.</div>
@@ -712,7 +694,7 @@ textarea{resize:none}
   </div>
 
   <div id="training-unlocked" style="display:none;flex-direction:column;flex:1;overflow:hidden;position:relative;padding-bottom:70px;">
-    <div class="training-tabs" id="training-tabs"></div>
+    <div class="training-tabs" id="training-tabs" style="margin-top:16px;"></div>
     <div class="scroll-area" id="training-sessions-wrap" style="padding:16px;"></div>
     <div style="position:absolute;bottom:0;left:0;right:0;padding:12px 16px;background:var(--surface);border-top:1px solid var(--border2);z-index:10;">
       <button class="btn-primary" onclick="openChatWithPrompt('Gostaria de adaptar meu treino atual. ')" style="background:var(--surface2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;">
@@ -747,9 +729,9 @@ textarea{resize:none}
           </div>
     </div>
     <div class="card" style="padding:16px;margin-bottom:24px;">
-      <textarea id="finish-obs" placeholder="Observação sobre o treino de hoje (opcional)" style="width:100%;background:none;border:none;outline:none;color:var(--text);font-size:14px;resize:none;font-family:inherit;line-height:1.5;" rows="3"></textarea>
+      <textarea id="finish-obs" placeholder="Observação geral sobre o treino de hoje (opcional)" style="width:100%;background:none;border:none;outline:none;color:var(--text);font-size:14px;resize:none;font-family:inherit;line-height:1.5;" rows="3"></textarea>
     </div>
-    <button class="btn-primary" onclick="saveAndFinish()">Salvar e fechar</button>
+    <button class="btn-primary" onclick="saveAndFinish()">Salvar Sessão e Fechar</button>
   </div>
 </div>
 
@@ -918,7 +900,7 @@ P_RELACAO. Como você se sente em relação ao treino?
 → Nunca treinou: tom didático, explicar o porquê de cada escolha
 
 P_EXPECTATIVA. Em quanto tempo você espera ver resultados visíveis?
-[Em semanas — quero resultado rápido | Em 2 a 3 meses | Em 6 meses ou mais | Não tenho pressa, quero para sempre]
+[Em semanas — quero resultado rápido | Em 2 a 3 meses | Em 6 meses ou mais | Não tenho pressa, quero para para sempre]
 → Espera resultado rápido: calibrar honestamente — “Em 4 semanas você sente diferença. No espelho leva 3 meses.”
 → Expectativa realista: validar e avançar
 → Sem pressa: perfil de alta aderência, protocolo mais completo
@@ -972,15 +954,6 @@ Proteína: 2,0–2,2g/kg/dia
 
 # PROTOCOLO 005 — FORÇA MÁXIMA
 Novato: Rippetoe 3x5 | Intermediário: Texas Method | Avançado: 5/3/1 Wendler
-
-# VOLUME LANDMARKS — ISRAETEL
-Quadríceps: MEV 8 / MAV 12–18 / MRV 22
-Posteriores: 6 / 10–16 / 20
-Costas: 10 / 14–20 / 25
-Peito: 10 / 12–20 / 22
-Deltoide lateral: 8 / 16–22 / 26
-Tríceps: 6 / 10–14 / 18
-Bíceps: 8 / 14–20 / 26
 
 # EXERCÍCIOS — REGRAS
 - Rosca inclinada > rosca em pé (bíceps)
@@ -1068,21 +1041,6 @@ C2: Quanto tempo/sessão?
 C3: Disposição [Ótima|Regular|Ruim|Péssima]
 Adaptar: menos dias→mudar método | menos tempo→remover isoladores | ruim→-30% volume | péssima→deload
 
-# NUTRIÇÃO
-Proteína: Hipertrofia 1,6–2,0g/kg/dia | Déficit 2,0–2,2g/kg/dia | Recomposição 2,0–2,2g/kg/dia
-Creatina monoidratada 5g/dia — para todos
-Whey — apenas se não bater proteína pela dieta
-BCAA, glutamina, gainers, termogênicos — NÃO recomendar
-
-# REGRAS ABSOLUTAS
-NUNCA diagnostica lesões ou condições médicas
-NUNCA prescreve falha absoluta para iniciantes (Protocolo 001)
-NUNCA ignora limitação física reportada
-NUNCA ultrapassa MRV de nenhum grupo muscular
-NUNCA gera treino da semana sem o check-in semanal
-NUNCA faz mais de 1 pergunta por mensagem
-NUNCA nega ser uma IA quando perguntado diretamente
-
 # QUANDO O USUÁRIO PEDIR ADAPTAÇÃO DO TREINO
 
 Quando o usuário mencionar: menos dias, menos tempo, cansáço, nova atividade
@@ -1142,7 +1100,7 @@ quando você agacha com cargas mais pesadas, como você se sente?
 `;
 
 // ══════════════════════════════════════════════════════
-// WORKOUT TEMPLATES
+// WORKOUT TEMPLATES BASE
 // ══════════════════════════════════════════════════════
 const WK = {
   '001': {
@@ -1207,7 +1165,7 @@ const WK = {
   }
 };
 
-// Chart data
+// Chart data (Mock fallback)
 const CHART_DATA = {
   supino:         {vals:[60,65,70,75],   unit:'kg'},
   agachamento:    {vals:[80,85,90,100],  unit:'kg'},
@@ -1235,8 +1193,6 @@ function safeParseJSON(key, fallback) {
 // ── Sistema de ciclos e semanas ──────────────────────
 function getCurrentCycle() {
   const sessions = safeParseJSON('caleb_sessions', []);
-  // Cada ciclo tem 4 semanas, cada semana tem (freq) sessões
-  // Simplificado: 1 sessão = 1 treino do dia corrente
   const weeksCompleted = Math.floor(sessions.length / 4);
   const currentWeek    = (sessions.length % 16 < 12)
     ? Math.floor((sessions.length % 16) / 4) + 1
@@ -1266,7 +1222,6 @@ function updateCycleBadge() {
   if (fill) fill.style.width = `${pct}%`;
 }
 
-// ── Verificar necessidade de deload ──────────────────
 function checkDeload() {
   const sessions = safeParseJSON('caleb_sessions', []);
   if (sessions.length < 3) return false;
@@ -1298,7 +1253,6 @@ function init() {
   updateMetrics();
   updateCycleBadge();
 
-  // Limpar interval anterior e evitar memory leak
   if (_timeInterval) clearInterval(_timeInterval);
   window.addEventListener('beforeunload', () => {
     if (_timeInterval) clearInterval(_timeInterval);
@@ -1352,7 +1306,6 @@ function navTo(section) {
   });
   document.getElementById(target).classList.remove('off');
 
-  // Sync nav buttons: Find all nav-btns across all screens and toggle active
   document.querySelectorAll('.nav-btn').forEach(btn => {
     const onclick = btn.getAttribute('onclick') || '';
     btn.classList.toggle('active', onclick.includes(`navTo('${section}')`));
@@ -1368,7 +1321,6 @@ function navTo(section) {
 // ══════════════════════════════════════════════════════
 function saveWorkoutVersion(content, reason) {
   const versions = safeParseJSON('caleb_workout_versions', []);
-  // Mark all previous as not current
   versions.forEach(v => v.isCurrent = false);
   versions.push({
     version: versions.length + 1,
@@ -1399,16 +1351,36 @@ function containsWorkout(text) {
   return /━{3,}|^TREINO\s+[A-Z]/m.test(text);
 }
 
+// ── IMPRESSÃO (PDF) ──────────────────────────────
+function printTraining() {
+  window.print();
+}
+
 // ── Renderizar aba Treino ──────────────────────────
 function loadTrainingScreen() {
   const locked   = document.getElementById('training-locked');
   const unlocked = document.getElementById('training-unlocked');
-  const current  = getCurrentWorkout();
+  let current  = getCurrentWorkout();
 
+  // Se não houver treino customizado gerado, cria um a partir do protocolo base do perfil
   if (!current) {
-    locked.style.display   = 'flex';
-    unlocked.style.display = 'none';
-    return;
+    if (userProfile && userProfile.protocolo) {
+      const proto = ['001','002','003'].includes(userProfile.protocolo) ? userProfile.protocolo : '001';
+      const templates = WK[proto];
+      let mockContent = '';
+      Object.keys(templates).forEach(k => {
+        const t = templates[k];
+        mockContent += `\n━━━━━━━━━━━━━━━━━━━━\nTREINO ${k} — ${t.sub}\n━━━━━━━━━━━━━━━━━━━━\n`;
+        t.exercises.forEach((ex, i) => {
+          mockContent += `${i+1}. ${ex.name}\n   ${ex.spec}\n   📝 ${ex.note}\n\n`;
+        });
+      });
+      current = { version: 0, content: mockContent, reason: 'Protocolo Base' };
+    } else {
+      locked.style.display   = 'flex';
+      unlocked.style.display = 'none';
+      return;
+    }
   }
 
   locked.style.display   = 'none';
@@ -1422,12 +1394,8 @@ function renderTrainingContent(version) {
   const sessionsEl = document.getElementById('training-sessions-wrap');
   const badgeEl   = document.getElementById('training-version-badge');
   const c = getCurrentCycle();
-  if (badgeEl) badgeEl.innerHTML = `<div class="badge-dot"></div>Semana ${c.week} · v${version.version}`;
+  if (badgeEl) badgeEl.innerHTML = `<div class="badge-dot"></div>Semana ${c.week} · v${version.version > 0 ? version.version : 'Base'}`;
 
-  // Parse sessions from workout text: detect blocks starting with TREINO
-  const blocks = version.content.split(/(?=\u2501{3,})/g).filter(b => /TREINO\s+[A-Z\u2014\u2013-]/i.test(b) || /^\d+\.\s+/m.test(b));
-
-  // Build session groups by ━ separator lines
   const rawSessions = version.content.split(/\n(?=\u2501{3,}.*\nTREINO)/i);
   const sessions = rawSessions.length > 1 ? rawSessions : splitIntoSessions(version.content);
 
@@ -1435,10 +1403,11 @@ function renderTrainingContent(version) {
   sessionsEl.innerHTML = '';
 
   if (sessions.length === 0) {
-    // Fallback: show raw text
     sessionsEl.innerHTML = `<div style="padding:20px;font-size:14px;color:var(--text2);white-space:pre-wrap;line-height:1.6">${esc(version.content.replace(/\[TREINO_ATUALIZADO\]/g,'').trim())}</div>`;
     return;
   }
+
+  const weightsHist = safeParseJSON('caleb_weights', {});
 
   sessions.forEach((session, i) => {
     const letter = String.fromCharCode(65 + i); // A, B, C, D
@@ -1446,21 +1415,16 @@ function renderTrainingContent(version) {
     const tabLabel   = titleMatch ? titleMatch[1] : letter;
     const subtitle   = titleMatch ? titleMatch[2].trim() : `Treino ${letter}`;
 
-    // Tab button
     const tab = document.createElement('button');
     tab.className = 'training-tab' + (i === 0 ? ' active' : '');
     tab.textContent = `Treino ${tabLabel}`;
     tab.onclick = () => switchTrainingTab(i);
     tabsEl.appendChild(tab);
 
-    // Session content
     const sessionDiv = document.createElement('div');
     sessionDiv.className = 'training-session' + (i === 0 ? ' active' : '');
-
-    // Header
     sessionDiv.innerHTML = `<div style="margin-bottom:12px"><div style="font-size:20px;font-weight:800">Treino ${tabLabel}</div><div style="font-size:13px;color:var(--text2);margin-top:2px">${subtitle}</div></div>`;
 
-    // Parse exercises
     const exBlocks = session.match(/\d+\.\s[\s\S]*?(?=(?:\d+\.|$|\u2501{3,}))/g) || [];
     const parsedExercises = [];
     
@@ -1473,25 +1437,32 @@ function renderTrainingContent(version) {
         const spec = lines.find(l => /x|min|RIR/i.test(l) && !l.startsWith('📝'))?.trim() || '';
         const note = lines.find(l => l.includes('📝'))?.replace('📝','').trim() || '';
         
+        // Puxar última carga do histórico para injetar na ficha
+        let lastLoadHtml = '';
+        const hist = weightsHist[name];
+        if (hist && hist.length > 0) {
+          const last = hist[hist.length-1].max;
+          lastLoadHtml = `<div style="font-size:12px; color:var(--green); margin-top:8px; font-weight:600;">⚡ Última carga: ${last}kg</div>`;
+        }
+        
         const card = document.createElement('div');
         card.className = 'training-ex-card';
         card.innerHTML = `
           <div class="training-ex-name">${esc(name)}</div>
           ${spec ? `<div class="training-ex-spec">${esc(spec)}</div>` : ''}
           ${note ? `<div class="training-ex-note">${esc(note)}</div>` : ''}
+          ${lastLoadHtml}
         `;
         sessionDiv.appendChild(card);
         
         let numSets = 3;
         const setMatch = spec.match(/(\d+)\s*x/i);
         if (setMatch) numSets = parseInt(setMatch[1]);
-        
         parsedExercises.push({ name, spec, note, sets: numSets });
       });
     }
 
     if (parsedExercises.length > 0) {
-      // Start workout button
       const startBtn = document.createElement('button');
       startBtn.className = 'btn-primary';
       startBtn.style.marginTop = '8px';
@@ -1503,7 +1474,6 @@ function renderTrainingContent(version) {
     sessionsEl.appendChild(sessionDiv);
   });
 
-  // Version history
   renderVersionHistory(sessionsEl);
 }
 
@@ -1515,13 +1485,8 @@ function switchTrainingTab(index) {
 }
 
 function splitIntoSessions(text) {
-  // Ajuste do divisor: Tenta capturar qualquer variação de 'TREINO X' isolado
-  // O divisor procura a palavra TREINO, com ou sem formatação Markdown ao redor (como **)
   const parts = text.split(/(?=^(?:#+\s*|\*\*.*)?TREINO\s+[A-Z]\b)/im);
-  if (parts.length <= 1) {
-    // Fallback absoluto: tenta achar apenas "TREINO A", sem start-of-line
-    return text.split(/(?=\bTREINO\s+[A-Z]\b)/i).filter(p => p.trim().length > 10);
-  }
+  if (parts.length <= 1) return text.split(/(?=\bTREINO\s+[A-Z]\b)/i).filter(p => p.trim().length > 10);
   return parts.filter(p => p.trim().length > 10);
 }
 
@@ -1539,13 +1504,15 @@ function renderVersionHistory(container) {
     const item = document.createElement('div');
     item.className = 'version-item';
     item.innerHTML = `
-      <div class="version-info">
-        <div class="version-label">v${v.version} — ${v.reason} ${v.isCurrent ? '<span class="version-current">atual</span>' : ''}</div>
-        <div class="version-date">${date}</div>
-      </div>
-      <div class="version-actions">
-        <button class="version-btn" onclick="previewVersion(${realIdx})">Ver</button>
-        ${!v.isCurrent ? `<button class="version-btn" onclick="restoreWorkoutVersion(${realIdx})">Restaurar</button>` : ''}
+      <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border);">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text);">v${v.version} — ${v.reason} ${v.isCurrent ? '<span style="color:var(--orange)">[atual]</span>' : ''}</div>
+          <div style="font-size:11px;color:var(--text3);">${date}</div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn-outline" style="padding:4px 8px;font-size:11px;width:auto;height:auto;" onclick="previewVersion(${realIdx})">Ver</button>
+          ${!v.isCurrent ? `<button class="btn-outline" style="padding:4px 8px;font-size:11px;width:auto;height:auto;border-color:var(--orange);color:var(--orange);" onclick="restoreWorkoutVersion(${realIdx})">Restaurar</button>` : ''}
+        </div>
       </div>`;
     section.appendChild(item);
   });
@@ -1570,43 +1537,37 @@ function showToast(msg) {
   _toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
 }
 
-// ── Home workout-ready banner ───────────────────────
 function showWorkoutReadyBanner() {
   const home = document.getElementById('s-home');
   if (!home) return;
-  if (document.getElementById('workout-ready-banner')) return; // already shown
-  const scroll = home.querySelector('.scroll-content');
+  if (document.getElementById('workout-ready-banner')) return;
+  const scroll = home.querySelector('.scroll-area');
   if (!scroll) return;
   const banner = document.createElement('div');
   banner.id = 'workout-ready-banner';
-  banner.className = 'workout-ready-banner';
+  banner.style = "background:var(--surface);border:1px solid var(--orange);border-radius:var(--radius-sm);padding:14px;margin-bottom:16px;display:flex;align-items:center;gap:14px;cursor:pointer;";
   banner.innerHTML = `
     <div style="font-size:24px">📄</div>
-    <div class="workout-ready-banner-text">
-      <strong>Seu treino está pronto!</strong>
-      Veja na aba Treino
+    <div style="flex:1">
+      <div style="font-size:14px;font-weight:700;color:var(--text);">Seu treino está pronto!</div>
+      <div style="font-size:12px;color:var(--text2);">Veja na aba Treino</div>
     </div>
-    <div style="font-size:18px;color:var(--orange)">›</div>`;
+    <div style="font-size:18px;color:var(--orange);font-weight:700;">›</div>`;
   banner.onclick = () => navTo('training');
   scroll.insertBefore(banner, scroll.firstChild);
 }
 
 // ══════════════════════════════════════════════════════
-// SPLASH → ONBOARDING
+// ONBOARDING
 // ══════════════════════════════════════════════════════
 function goToOnboarding() {
   showOnly('s-onboarding');
   startOnboarding();
 }
 
-// ══════════════════════════════════════════════════════
-// ONBOARDING
-// ══════════════════════════════════════════════════════
 async function startOnboarding() {
   document.getElementById('ob-messages').innerHTML = '';
   onboardingHistory = [];
-
-  // First message from Caleb (no API call needed for opener)
   const first = 'Olá! Sou o Caleb. Vou montar o seu protocolo personalizado agora.\n\nPrimeiro, como posso te chamar?';
   appendBubble('ob-messages', 'caleb', first);
   onboardingHistory.push({role:'assistant', content:first});
@@ -1637,19 +1598,13 @@ async function sendOnboarding() {
       } else {
         userProfile = defaultProfile();
       }
-
-      // Registrar data de início do protocolo
       userProfile.startedAt = new Date().toISOString();
 
-      const clean = reply
-        .replace('[ONBOARDING_COMPLETO]','')
-        .replace(/\[PERFIL_JSON\][\s\S]*?\[\/PERFIL_JSON\]/,'')
-        .trim();
+      const clean = reply.replace('[ONBOARDING_COMPLETO]','').replace(/\[PERFIL_JSON\][\s\S]*?\[\/PERFIL_JSON\]/,'').trim();
 
       appendBubble('ob-messages','caleb', clean || 'Protocolo montado! Levando você para o painel...');
       onboardingHistory.push({role:'assistant', content:reply});
       localStorage.setItem('caleb_conversation', JSON.stringify(onboardingHistory));
-
       localStorage.setItem('caleb_profile', JSON.stringify(userProfile));
       localStorage.setItem('caleb_onboarded', '1');
 
@@ -1663,7 +1618,6 @@ async function sendOnboarding() {
       onboardingHistory.push({role:'assistant', content:reply});
     }
 
-    // ── Detectar e salvar treino gerado no onboarding ─────────────
     if (!reply.includes('[ONBOARDING_COMPLETO]') && containsWorkout(reply)) {
       saveWorkoutVersion(reply, 'Treino inicial');
     }
@@ -1671,8 +1625,7 @@ async function sendOnboarding() {
     scrollToBottom('ob-messages');
   } catch(e) {
     hideLoader();
-    appendBubble('ob-messages','caleb',
-      `Erro de conexão: ${e.message}\nVerifique sua internet e tente novamente.`);
+    appendBubble('ob-messages','caleb', `Erro de conexão: ${e.message}\nVerifique sua internet e tente novamente.`);
   }
 }
 
@@ -1685,7 +1638,7 @@ function defaultProfile() {
 }
 
 // ══════════════════════════════════════════════════════
-// PROFILE
+// PROFILE & HOME CARDS
 // ══════════════════════════════════════════════════════
 function applyProfile() {
   if (!userProfile) return;
@@ -1697,13 +1650,12 @@ function applyProfile() {
   updateNextWorkoutCard();
 }
 
-function updateNextWorkoutCard() {
+// PERMITE TROCAR LIVREMENTE OS TREINOS NA HOME
+function showWorkoutByKey(key) {
   if (!userProfile) return;
   const proto = ['001','002','003'].includes(userProfile.protocolo) ? userProfile.protocolo : '001';
-  const templates = WK[proto] || WK['001'];
-  const sessions = safeParseJSON('caleb_sessions', []);
-  const keys = Object.keys(templates);
-  const wk = templates[keys[sessions.length % keys.length]];
+  const wk = WK[proto][key];
+  if (!wk) return;
 
   const titleEl = document.getElementById('home-title');
   const subEl   = document.getElementById('home-sub');
@@ -1720,17 +1672,32 @@ function updateNextWorkoutCard() {
     btnIniciar.onclick = () => showWorkout(wk.title, wk.exercises);
   }
 
-  // Atualizar badge de ciclo na home também
+  // Atualizar visual do botão de dia selecionado
+  document.querySelectorAll('.week-row .day-card').forEach(card => {
+    card.classList.remove('today');
+    if (card.querySelector('.day-letter').textContent === key) {
+      card.classList.add('today');
+    }
+  });
+}
+
+function updateNextWorkoutCard() {
+  if (!userProfile) return;
+  const proto = ['001','002','003'].includes(userProfile.protocolo) ? userProfile.protocolo : '001';
+  const templates = WK[proto] || WK['001'];
+  const sessions = safeParseJSON('caleb_sessions', []);
+  const keys = Object.keys(templates);
+  const nextKey = keys[sessions.length % keys.length];
+  
+  showWorkoutByKey(nextKey);
   updateCycleBadge();
 }
 
 function applyProfileScreen() {
   if (!userProfile) return;
   const name = userProfile.nome || 'Atleta';
-
   const av = document.getElementById('profile-avatar');
   if (av) av.textContent = name.charAt(0).toUpperCase();
-
   const nm = document.getElementById('profile-name');
   if (nm) nm.textContent = name;
 
@@ -1754,11 +1721,10 @@ function closeChat() {
 
 function showFaq() {
   showScreen('s-faq');
-  document.getElementById('s-faq').classList.remove('off');
 }
 
 function initChat() {
-  const container = document.getElementById('chat-messages');
+  const container = document.getElementById('chat-messages'); // ID corrigido
 
   if (chatHistory.length > 0) {
     chatHistory.forEach(m => {
@@ -1785,8 +1751,8 @@ function buildQuickActions(container) {
   ];
   actions.forEach(a => {
     const btn = document.createElement('button');
-    btn.className = 'quick-action';
-    btn.innerHTML = `<div class="quick-action-icon">${a.icon}</div><span>${a.text}</span>`;
+    btn.className = 'quick-btn';
+    btn.innerHTML = `<div class="quick-icon">${a.icon}</div><span>${a.text}</span>`;
     btn.onclick = () => { document.getElementById('quick-actions')?.remove(); sendChatMsg(a.text); };
     qa.appendChild(btn);
   });
@@ -1809,10 +1775,8 @@ async function sendChatMsg(text) {
 
   let sys = SYSTEM;
   if (userProfile) {
-    sys += '\n\n# PERFIL DO USUÁRIO ATUAL\n' +
-      Object.entries(userProfile).map(([k,v])=>`${k}: ${v}`).join('\n');
+    sys += '\n\n# PERFIL DO USUÁRIO ATUAL\n' + Object.entries(userProfile).map(([k,v])=>`${k}: ${v}`).join('\n');
   }
-  // Injetar treino atual no contexto quando existe
   const currentWk = getCurrentWorkout();
   if (currentWk) {
     sys += '\n\n# TREINO ATUAL DO USUÁRIO\n' + currentWk.content;
@@ -1827,14 +1791,12 @@ async function sendChatMsg(text) {
     localStorage.setItem('caleb_conversation', JSON.stringify(chatHistory));
     scrollToBottom('chat-messages');
 
-    // ── Detectar treino atualizado via chat ─────────────────────
     if (reply.includes('[TREINO_ATUALIZADO]')) {
       const clean = reply.replace('[TREINO_ATUALIZADO]','').trim();
       saveWorkoutVersion(clean, 'Adaptado via chat');
       showToast('✅ Treino atualizado na aba Treino');
       showWorkoutReadyBanner();
     } else if (containsWorkout(reply) && !getCurrentWorkout()) {
-      // Salvar automaticamente se ainda não tinha treino salvo
       saveWorkoutVersion(reply, 'Treino inicial via chat');
       showToast('📄 Treino salvo na aba Treino');
       showWorkoutReadyBanner();
@@ -1850,16 +1812,15 @@ function chatKeydown(e) {
 }
 
 // ══════════════════════════════════════════════════════
-// WORKOUT
+// WORKOUT EXECUTION
 // ══════════════════════════════════════════════════════
 function showWorkout(title, exercises) {
   if (!exercises || exercises.length === 0) {
-    showToast("Nenhum exercício estruturado encontrado para renderizar.");
+    showToast("Nenhum exercício estruturado encontrado.");
     return;
   }
 
   document.getElementById('wk-title').textContent = title;
-
   const content = document.getElementById('workout-content');
   content.innerHTML = '';
 
@@ -1879,18 +1840,15 @@ function showWorkout(title, exercises) {
         </div>`;
     }
 
+    // INTERFACE LIMPA: Borg retirado do exercício individual. Fica apenas o textarea para observações.
     card.innerHTML = `
       <div style="font-size:11px;color:var(--text3);font-weight:600;margin-bottom:4px;">Exercício ${i+1} de ${exercises.length}</div>
-      <div style="font-size:18px;font-weight:800;margin-bottom:4px;">${ex.name}</div>
+      <div class="ex-name" style="font-size:18px;font-weight:800;margin-bottom:4px;">${ex.name}</div>
       <div style="font-size:13px;color:var(--text2);margin-bottom:10px;">${ex.spec}</div>
       <div style="border-left:3px solid var(--orange);padding-left:12px;font-size:12px;color:var(--text2);font-style:italic;margin-bottom:14px;">${ex.note}</div>
       ${setsHtml}
       <div style="margin-top:14px;">
-        <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">Como foi? (Escala de Borg CR10 — percepção de esforço de 1 a 10)</div>
-        <div class="borg-wrap" id="borg-${i}">
-          ${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="borg-btn" data-val="${n}" onclick="selectBorg(${i},${n},this)">${n}</button>`).join('')}
-        </div>
-        <textarea class="ex-obs-input" placeholder="Observação (opcional)" style="width:100%;margin-top:10px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;resize:none;outline:none;font-family:var(--font);" rows="2"></textarea>
+        <textarea class="ex-obs-input" placeholder="Anotação para este exercício (opcional)" style="width:100%;margin-top:4px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;resize:none;outline:none;font-family:inherit;" rows="2"></textarea>
       </div>`;
 
     content.appendChild(card);
@@ -1915,144 +1873,20 @@ function toggleSet(el) {
   svg.setAttribute('stroke', el.classList.contains('done') ? 'var(--orange)' : 'currentColor');
 }
 
-function selectBorg(exIdx, val, btn) {
-  document.getElementById(`borg-${exIdx}`)
-    .querySelectorAll('.borg-btn').forEach(b => b.classList.remove('sel'));
-  btn.classList.add('sel');
-  // Add selected class as well for finishWorkout parsing
-  document.getElementById(`borg-${exIdx}`)
-    .querySelectorAll('.borg-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-}
-
 function cancelWorkout() {
   clearInterval(workoutTimer);
   showOnly('s-home');
 }
 
+// Botão de concluir a sessão agora apenas abre o modal de fechamento (onde coletaremos o Borg Global)
 function finishWorkout() {
   clearInterval(workoutTimer);
-
-  // ── Coletar Borg de cada exercício ──────────────────
-  const borgVals = [];
-  document.querySelectorAll('.borg-btn.selected').forEach(b => {
-    borgVals.push(parseInt(b.dataset.val));
-  });
-  const avgBorg = borgVals.length
-    ? parseFloat((borgVals.reduce((a,b)=>a+b,0)/borgVals.length).toFixed(1))
-    : null;
-
-  // ── Coletar pesos registrados por exercício ──────────
-  const exerciseData = [];
-  const proto = (userProfile && ['001','002','003'].includes(userProfile.protocolo))
-    ? userProfile.protocolo : '001';
-  const templates = WK[proto] || WK['001'];
-  const sessions0 = safeParseJSON('caleb_sessions', []);
-  const keys = Object.keys(templates);
-  const wk = templates[keys[sessions0.length % keys.length]];
-
-  document.querySelectorAll('.ex-card').forEach((card, i) => {
-    const exName = wk.exercises[i]?.name || `Exercício ${i+1}`;
-    const setWeights = [];
-    card.querySelectorAll('.set-input').forEach(inp => {
-      const v = parseFloat(inp.value);
-      if (!isNaN(v) && v > 0) setWeights.push(v);
-    });
-    if (setWeights.length > 0) {
-      exerciseData.push({ name: exName, weights: setWeights });
-    }
-  });
-
-  // ── Salvar sessão com dados completos ────────────────
-  const sessions = safeParseJSON('caleb_sessions', []);
-  sessions.push({
-    date: new Date().toISOString(),
-    avgBorg,
-    duration: workoutSeconds,
-    workout: wk.title,
-    exercises: exerciseData
-  });
-  localStorage.setItem('caleb_sessions', JSON.stringify(sessions));
-
-  // ── Salvar histórico de pesos por exercício ──────────
-  if (exerciseData.length > 0) {
-    const weights = safeParseJSON('caleb_weights', {});
-    const dateKey = new Date().toISOString().split('T')[0];
-    exerciseData.forEach(ex => {
-      if (!weights[ex.name]) weights[ex.name] = [];
-      const maxW = Math.max(...ex.weights);
-      weights[ex.name].push({ date: dateKey, max: maxW, all: ex.weights });
-      // Manter apenas as últimas 12 entradas
-      if (weights[ex.name].length > 12) weights[ex.name] = weights[ex.name].slice(-12);
-    });
-    localStorage.setItem('caleb_weights', JSON.stringify(weights));
-  }
-
-  // ── Atualizar Borg na home ───────────────────────────
-  if (avgBorg !== null) {
-    const el = document.getElementById('home-borg');
-    if (el) el.textContent = avgBorg;
-    const bar = document.getElementById('home-borg-fill');
-    if (bar) bar.style.width = `${(avgBorg/10)*100}%`;
-  }
-
-  // ── Verificar necessidade de deload ─────────────────
-  const needsDeload = checkDeload();
-
-  // --- NOVO: PARTE 1 - REGISTRO COMPLETO (caleb_session_logs) ---
-  const currentWk = getCurrentWorkout();
-  const currentVersion = currentWk ? currentWk.version : 1;
-  const sessionTarget = wk.title.replace('Treino ', ''); // 'A', 'B'...
-
-  const detailedExercises = [];
-  document.querySelectorAll('.ex-card').forEach((card, i) => {
-    const exName = wk.exercises[i]?.name || `Exercício ${i+1}`;
-    const setsNodes = card.querySelectorAll('.set-row');
-    const sets = [];
-    setsNodes.forEach((row, sIdx) => {
-      const inp = row.querySelector('.set-input');
-      const check = row.querySelector('.set-check');
-      sets.push({
-        setNumber: sIdx + 1,
-        weightKg: parseFloat(inp.value) || 0,
-        completed: check.classList.contains('done')
-      });
-    });
-    
-    const borgBtn = document.getElementById(`borg-${i}`).querySelector('.borg-btn.selected');
-    const borgScore = borgBtn ? parseInt(borgBtn.dataset.val) : null;
-    
-    const obs = card.querySelector('.ex-obs-input')?.value.trim() || '';
-    
-    detailedExercises.push({
-      name: exName,
-      sets: sets,
-      borgScore: borgScore,
-      observation: obs
-    });
-  });
-
-  const sessionLog = {
-    date: new Date().toISOString(),
-    workoutVersion: currentVersion,
-    session: sessionTarget,
-    exercises: detailedExercises,
-    sessionBorgAvg: avgBorg,
-    durationSeconds: workoutSeconds
-  };
-
-  const sessLogs = safeParseJSON('caleb_session_logs', []);
-  sessLogs.push(sessionLog);
-  localStorage.setItem('caleb_session_logs', JSON.stringify(sessLogs));
-  // ----------------------------------------------------------------
-
-  // ── Feedback visual antes da tela de conclusão ───────
+  const title = document.getElementById('wk-title').textContent;
   const mins = Math.floor(workoutSeconds/60);
-  document.getElementById('finish-title').textContent = wk.title;
+  document.getElementById('finish-title').textContent = title;
   document.getElementById('finish-duration').textContent = `${mins} min`;
   document.getElementById('finish-obs').value = '';
   renderFinishBorg();
-
   showScreen('s-finish');
 }
 
@@ -2063,61 +1897,135 @@ function renderFinishBorg() {
   [1,2,3,4,5,6,7,8,9,10].forEach(n => {
     const btn = document.createElement('button');
     btn.className = 'borg-btn';
+    btn.dataset.val = n;
     btn.textContent = n;
     btn.onclick = () => {
-      container.querySelectorAll('.borg-btn').forEach(b => b.classList.remove('selected', 'sel'));
-      btn.classList.add('selected', 'sel');
+      container.querySelectorAll('.borg-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
     };
     container.appendChild(btn);
   });
 }
 
 function saveAndFinish() {
+  // Coletar Borg Global da Tela Final
   const borgBtn = document.querySelector('#finish-borg .borg-btn.selected');
-  const sessionBorg = borgBtn ? parseInt(borgBtn.dataset.val || borgBtn.textContent) : null;
+  const avgBorg = borgBtn ? parseInt(borgBtn.dataset.val) : null;
   const obs = document.getElementById('finish-obs').value.trim();
 
-  // Opcional: injetar observação geral no último log se necessário,
-  // ou apenas fechar e dar o feedback final.
+  // Coletar Pesos e Infos dos Exercícios
+  const title = document.getElementById('wk-title').textContent;
+  const sessionTarget = title.replace('Treino ', '');
+  const exerciseData = [];
+  const detailedExercises = [];
 
+  document.querySelectorAll('.ex-card').forEach((card, i) => {
+    const exName = card.querySelector('.ex-name').textContent;
+    const setWeights = [];
+    const sets = [];
+    
+    card.querySelectorAll('.set-row').forEach((row, sIdx) => {
+      const inp = row.querySelector('.set-input');
+      const check = row.querySelector('.set-check');
+      const w = parseFloat(inp.value) || 0;
+      if (w > 0) setWeights.push(w);
+      sets.push({
+        setNumber: sIdx + 1,
+        weightKg: w,
+        completed: check.classList.contains('done')
+      });
+    });
+
+    if (setWeights.length > 0) {
+      exerciseData.push({ name: exName, weights: setWeights });
+    }
+    
+    const exObs = card.querySelector('.ex-obs-input')?.value.trim() || '';
+    
+    detailedExercises.push({
+      name: exName,
+      sets: sets,
+      borgScore: null, // Borg agora é só global
+      observation: exObs
+    });
+  });
+
+  // Salvar sessão (Métricas)
+  const sessions = safeParseJSON('caleb_sessions', []);
+  sessions.push({
+    date: new Date().toISOString(),
+    avgBorg,
+    duration: workoutSeconds,
+    workout: title,
+    exercises: exerciseData
+  });
+  localStorage.setItem('caleb_sessions', JSON.stringify(sessions));
+
+  // Salvar histórico de cargas (`caleb_weights`)
+  if (exerciseData.length > 0) {
+    const weights = safeParseJSON('caleb_weights', {});
+    const dateKey = new Date().toISOString().split('T')[0];
+    exerciseData.forEach(ex => {
+      if (!weights[ex.name]) weights[ex.name] = [];
+      const maxW = Math.max(...ex.weights);
+      weights[ex.name].push({ date: dateKey, max: maxW, all: ex.weights });
+      if (weights[ex.name].length > 12) weights[ex.name] = weights[ex.name].slice(-12);
+    });
+    localStorage.setItem('caleb_weights', JSON.stringify(weights));
+  }
+
+  // Log detalhado
+  const currentWk = getCurrentWorkout();
+  const currentVersion = currentWk ? currentWk.version : 0;
+  const sessLogs = safeParseJSON('caleb_session_logs', []);
+  sessLogs.push({
+    date: new Date().toISOString(),
+    workoutVersion: currentVersion,
+    session: sessionTarget,
+    exercises: detailedExercises,
+    sessionBorgAvg: avgBorg,
+    durationSeconds: workoutSeconds,
+    globalObservation: obs
+  });
+  localStorage.setItem('caleb_session_logs', JSON.stringify(sessLogs));
+
+  // Fechar e atualizar tudo
   hideScreen('s-finish');
   showOnly('s-home');
   updateMetrics();
   updateCycleBadge();
   updateNextWorkoutCard();
-
   checkAndGenerateCycleReport();
 
   const needsDeload = checkDeload();
   let msg = `Sessão concluída com sucesso! 🎉`;
-  if (needsDeload) msg += `\n\n⚠️ Borg médio alto recentemente. O Caleb recomenda uma semana de deload no próximo ciclo.`;
+  if (needsDeload) msg += `\n\n⚠️ Borg médio alto recentemente. O Caleb recomenda deload em breve.`;
   showToast(msg);
 }
 
-
+// ══════════════════════════════════════════════════════
+// PROGRESS & REPORTS
+// ══════════════════════════════════════════════════════
 function checkAndGenerateCycleReport() {
   const logs = safeParseJSON('caleb_session_logs', []);
   if (logs.length === 0) return;
   
   const SESSIONS_PER_CYCLE = 16;
-  
-  // Se acabamos de concluir um múltiplo exato de sessões do ciclo (ex: 16, 32...)
   if (logs.length % SESSIONS_PER_CYCLE === 0) {
     const cycleNumber = logs.length / SESSIONS_PER_CYCLE;
     const cycleLogs = logs.slice(-SESSIONS_PER_CYCLE);
     
-    // Agrupar dados por exercício
     const exStats = {};
     const allObservations = [];
     
     cycleLogs.forEach(log => {
       log.exercises.forEach(ex => {
-        if (!exStats[ex.name]) exStats[ex.name] = { loads: [], borgs: [] };
+        if (!exStats[ex.name]) exStats[ex.name] = { loads: [] };
         const maxSetW = Math.max(...ex.sets.filter(s => s.completed).map(s => s.weightKg), 0);
         if (maxSetW > 0) exStats[ex.name].loads.push(maxSetW);
-        if (ex.borgScore) exStats[ex.name].borgs.push(ex.borgScore);
         if (ex.observation) allObservations.push(`- ${ex.name} (Sessão ${log.session}): ${ex.observation}`);
       });
+      if (log.globalObservation) allObservations.push(`- Geral (Sessão ${log.session}): ${log.globalObservation}`);
     });
     
     const finalExercises = [];
@@ -2127,7 +2035,6 @@ function checkAndGenerateCycleReport() {
       const initialLoad = d.loads[0];
       const finalLoad = d.loads[d.loads.length - 1];
       const progression = initialLoad > 0 ? ((finalLoad - initialLoad) / initialLoad) * 100 : 0;
-      const borgAvg = d.borgs.length ? +(d.borgs.reduce((a,b)=>a+b,0)/d.borgs.length).toFixed(1) : 0;
       
       let status = '';
       if (progression >= 15) status = 'Evoluiu bem ✅';
@@ -2135,51 +2042,7 @@ function checkAndGenerateCycleReport() {
       else if (progression > 0 && progression < 5) status = 'Estagnado ⚠️';
       else status = 'Regrediu 📉';
       
-      if (borgAvg >= 8.5) status += ' | 🔥 Possível sobrecarga';
-      if (borgAvg > 0 && borgAvg <= 5) status += ' | 💤 Carga abaixo do ideal';
-      
-      // Recalcular 1RM estimado se for exercício básico
-      let estimated1RMText = '';
-      const baseMap = {'agachamento livre':'rm_agachamento', 'supino reto com barra':'rm_supino', 'levantamento terra romeno':'rm_terra', 'desenvolvimento com halteres':'rm_desenvolvimento', 'remada curvada com barra':'rm_remada'};
-      const pKey = baseMap[name.toLowerCase()];
-      if (pKey) {
-         const initialW = initialLoad;
-         const finalW = finalLoad;
-         // Estimativa simples baseada na última sessão vs a primeira do ciclo
-         // Pra ser exato teríamos que pegar as reps, mas temos carga.
-         // Se a função rodar todo fim, pegamos a fórmula. Vamos pegar o log.exercises
-         const findSetForLog = (logs, targetName) => {
-           for (let i=logs.length-1; i>=0; i--) {
-             let ex = logs[i].exercises.find(e => e.name === targetName);
-             if (ex && ex.sets.some(s=>s.completed && s.weightKg > 0)) {
-               return ex.sets.filter(s=>s.completed && s.weightKg > 0).reduce((prev, current) => (prev.weightKg > current.weightKg) ? prev : current);
-             }
-           }
-         };
-         
-         const bestFirst = cycleLogs[0]?.exercises.find(e => e.name === name)?.sets.reduce((p, c) => (p.weightKg > c.weightKg && p.completed) ? p : c, {weightKg:0});
-         const bestLast = findSetForLog(cycleLogs, name);
-         
-         if (bestFirst && bestLast && bestFirst.weightKg > 0 && bestLast.weightKg > 0) {
-            // assumindo que a repetição não temos guardado, assumiremos um padrão de 8 reps pra estimativa da carga? Não, O usuário pediu pra usar "cargas e repetições registradas".
-            // Nós não guardamos o número de repetições por set no caleb_session_logs! Apenas "completed: true". As templates fixas ditam reps (ex 8-10).
-            // Vamos adotar 8 reps se `completed` for true.
-            const calc1RM = (w) => w * (1 + 8/30);
-            const estPrimeiro = calc1RM(bestFirst.weightKg);
-            const estUltimo = calc1RM(bestLast.weightKg);
-            if (estUltimo > estPrimeiro) {
-               const evolRM = ((estUltimo - estPrimeiro) / estPrimeiro) * 100;
-               estimated1RMText = ` | Seu 1RM estimado passou de ${estPrimeiro.toFixed(0)}kg para ${estUltimo.toFixed(0)}kg (+${evolRM.toFixed(1)}%)`;
-               
-               // Opcional: Atualizar silenciosamente o PERFIL
-               if (userProfile && !userProfile[pKey]) userProfile[pKey] = `${estUltimo.toFixed(0)}kg (estimado ciclo ${cycleNumber})`;
-            }
-         }
-      }
-      
-      finalExercises.push({
-        name, initialLoad, finalLoad, progression, borgAvg, status: status + estimated1RMText
-      });
+      finalExercises.push({ name, initialLoad, finalLoad, progression, status });
     });
     
     const report = {
@@ -2196,7 +2059,7 @@ function checkAndGenerateCycleReport() {
     reports.push(report);
     localStorage.setItem('caleb_cycle_reports', JSON.stringify(reports));
     
-    const chatContextMsg = `\n# RELATÓRIO DO CICLO ${cycleNumber}\nSessões completadas: ${report.sessionsCompleted} de ${report.sessionsPlanned} planejadas\nAderência: ${Math.round(report.sessionsCompleted/report.sessionsPlanned*100)}%\n\nEXERCÍCIOS:\n${finalExercises.map(e => `- ${e.name}: ${e.initialLoad}kg → ${e.finalLoad}kg (${e.progression > 0 ? '+' : ''}${e.progression.toFixed(1)}%) | Borg médio: ${e.borgAvg} | Status: ${e.status}`).join('\n')}\n\nObservações registradas pelo usuário durante as sessões:\n${allObservations.join('\n')}`;
+    const chatContextMsg = `\n# RELATÓRIO DO CICLO ${cycleNumber}\nSessões completadas: ${report.sessionsCompleted} de ${report.sessionsPlanned}\n\nEXERCÍCIOS:\n${finalExercises.map(e => `- ${e.name}: ${e.initialLoad}kg → ${e.finalLoad}kg (${e.progression > 0 ? '+' : ''}${e.progression.toFixed(1)}%) | Status: ${e.status}`).join('\n')}\n\nObservações registradas:\n${allObservations.join('\n')}`;
     
     setTimeout(() => {
       openChat();
@@ -2213,82 +2076,59 @@ async function sendChatMsgHidden(triggerPrompt) {
   const currentWk = getCurrentWorkout();
   if (currentWk) sys += '\n\n# TREINO ATUAL DO USUÁRIO\n' + currentWk.content;
   
-  showLoader('Caleb está analisando seu ciclo...');
   try {
     const reply = await callCaleb(chatHistory, sys);
-    hideLoader();
     appendBubble('chat-messages','caleb', reply);
     chatHistory.push({role:'assistant', content:reply});
     localStorage.setItem('caleb_conversation', JSON.stringify(chatHistory));
     scrollToBottom('chat-messages');
   } catch(e) {
-    hideLoader();
     appendBubble('chat-messages','caleb', `Erro na análise do ciclo: ${e.message}`);
   }
 }
 
-// ══════════════════════════════════════════════════════
-// PROGRESS
-// ══════════════════════════════════════════════════════
 function updateChart(exercise) {
-  const mockData = CHART_DATA[exercise];
-  if (!mockData) return;
-
   const container = document.getElementById('chart-bars');
   if (!container) return;
 
-  // Tentar usar pesos reais salvos
   const weights = safeParseJSON('caleb_weights', {});
-  // Mapear key do select para nomes de exercícios usados nos treinos
-  const nameMap = {
-    supino: 'Supino Inclinado com Halteres',
-    agachamento: 'Agachamento Livre',
-    terra: 'Levantamento Terra Romeno',
-    rosca: 'Rosca Inclinada com Halteres',
-    desenvolvimento: 'Desenvolvimento com Halteres'
-  };
+  const nameMap = { supino: 'Supino Inclinado com Halteres', agachamento: 'Agachamento Livre', terra: 'Levantamento Terra Romeno', rosca: 'Rosca Inclinada com Halteres', desenvolvimento: 'Desenvolvimento com Halteres' };
   const exName = nameMap[exercise];
   
-  // BUSCAR NO caleb_session_logs DIRETAMENTE COMO PEDIDO NA PARTE 2
   const sessLogs = safeParseJSON('caleb_session_logs', []);
   const sessionHist = [];
   sessLogs.forEach(log => {
     const ex = log.exercises.find(e => e.name === exName);
     if (ex) {
       const maxW = Math.max(...ex.sets.filter(s => s.completed).map(s => s.weightKg), 0);
-      if (maxW > 0) sessionHist.push({ max: maxW, borg: ex.borgScore });
+      if (maxW > 0) sessionHist.push({ max: maxW });
     }
   });
 
-  // Usar dados reais do session_logs ou o weights legado ou mock
-  let vals = [], borgs = [], unit = 'kg';
+  let vals = [];
   if (sessionHist.length > 0) {
     const last4 = sessionHist.slice(-4);
     vals = last4.map(e => e.max);
-    borgs = last4.map(e => e.borg || '-');
-    while (vals.length < 4) { vals.unshift(vals[0]); borgs.unshift('-'); }
+    while (vals.length < 4) vals.unshift(vals[0]);
   } else {
     const realHist = exName && weights[exName] ? weights[exName] : null;
     if (realHist && realHist.length > 0) {
       const last4 = realHist.slice(-4);
       vals = last4.map(e => e.max);
-      borgs = ['-','-','-','-'];
       while (vals.length < 4) vals.unshift(vals[0]);
     } else {
-      vals = mockData.vals;
-      borgs = ['-','-','-','-'];
+      const mockData = CHART_DATA[exercise];
+      if (mockData) vals = mockData.vals;
     }
   }
 
-  const maxVal = Math.max(...vals);
+  const maxVal = Math.max(...vals, 1);
   container.innerHTML = vals.map((v,i) => `
     <div class="chart-bar-wrap" style="position:relative;">
       <span class="chart-val">${v}</span>
       <div class="chart-bar ${i===vals.length-1?'current':''}" style="height:${Math.max(6,Math.round((v/maxVal)*80))}px;"></div>
-      ${borgs[i]!=='-' ? `<div style="position:absolute; bottom:-18px; font-size:9px; color:var(--orange);">B-${borgs[i]}</div>` : ''}
     </div>`).join('');
     
-  // Se usamos sessionHist real, adicionar cálculo de progresso percentual abaixo do gráfico
   let progressEl = document.getElementById('chart-progress-info');
   if (!progressEl) {
     progressEl = document.createElement('div');
@@ -2322,48 +2162,35 @@ function updateChart(exercise) {
 
 function updateMetrics() {
   const sessions = safeParseJSON('caleb_sessions', []);
-  const total    = sessions.length;
-
   const el = (id, v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
 
-  el('metric-sessions', total || '0');
+  el('metric-sessions', sessions.length || '0');
 
-  // Aderência real: sessões concluídas vs esperadas no ciclo atual
   const c = getCurrentCycle();
   const sessionsDoneCycle = (c.sessionCount % 16) || sessions.length;
-  const expectedPerCycle  = 16;
-  const adh = sessionsDoneCycle > 0
-    ? Math.min(100, Math.round((sessionsDoneCycle / expectedPerCycle) * 100)) + '%'
-    : '—';
+  const adh = sessionsDoneCycle > 0 ? Math.min(100, Math.round((sessionsDoneCycle / 16) * 100)) + '%' : '—';
   el('metric-adherence', adh);
 
   const borgList = sessions.filter(s => s.avgBorg != null).map(s => parseFloat(s.avgBorg));
-  const avgBorg  = borgList.length
-    ? (borgList.reduce((a,b) => a+b, 0) / borgList.length).toFixed(1)
-    : '—';
+  const avgBorg  = borgList.length ? (borgList.reduce((a,b) => a+b, 0) / borgList.length).toFixed(1) : '—';
   el('metric-borg', avgBorg);
 
-  // Progressões reais: comparar pesos salvos entre primeira e última sessão com o exercício
   const weights = safeParseJSON('caleb_weights', {});
   let progressions = 0;
   Object.values(weights).forEach(hist => {
-    if (hist.length >= 2) {
-      const first = hist[0].max;
-      const last  = hist[hist.length-1].max;
-      if (last > first) progressions++;
-    }
+    if (hist.length >= 2 && hist[hist.length-1].max > hist[0].max) progressions++;
   });
-  el('metric-progressions', progressions > 0 ? progressions : (total >= 2 ? '—' : '—'));
+  el('metric-progressions', progressions > 0 ? progressions : (sessions.length >= 2 ? '—' : '—'));
 
-  // Home borg
   if (avgBorg !== '—') {
     const hb = document.getElementById('home-borg');
     if (hb) hb.textContent = avgBorg;
-    const hbb = document.getElementById('home-borg-bar');
+    const hbb = document.getElementById('home-borg-fill'); // ID CORRIGIDO AQUI!
     if (hbb) hbb.style.width = `${(parseFloat(avgBorg)/10)*100}%`;
+    const hbs = document.getElementById('home-borg-sub');
+    if (hbs) hbs.textContent = 'Percepção de esforço'; // TEXTO ATUALIZADO AQUI!
   }
   
-  // Renderizar a tabela 1RM Força Referência
   render1RMTable();
 }
 
@@ -2373,50 +2200,28 @@ function render1RMTable() {
   
   const bWeight = parseFloat(userProfile.peso) || 75;
   const metrics = [
-    { key: 'rm_agachamento', name: 'Agachamento Livre' },
-    { key: 'rm_supino', name: 'Supino Reto' },
-    { key: 'rm_terra', name: 'Lev. Terra' },
-    { key: 'rm_desenvolvimento', name: 'Desenvolvimento' },
-    { key: 'rm_remada', name: 'Remada Curvada' }
+    { key: 'rm_agachamento', name: 'Agachamento Livre' }, { key: 'rm_supino', name: 'Supino Reto' }, { key: 'rm_terra', name: 'Lev. Terra' }, { key: 'rm_desenvolvimento', name: 'Desenvolvimento' }, { key: 'rm_remada', name: 'Remada Curvada' }
   ];
   
   let html = '';
   metrics.forEach(m => {
     let raw = userProfile[m.key] || '';
     if (!raw) return;
-    
-    // extrai o número de "100kg (estimado)"
     const numMatch = raw.match(/(\d+\.?\d*)/);
-    let nuck = '—';
-    let ratioStr = '—';
+    let nuck = '—', ratioStr = '—';
     if (numMatch && numMatch[1]) {
-      const kg = parseFloat(numMatch[1]);
-      const ratio = kg / bWeight;
+      const ratio = parseFloat(numMatch[1]) / bWeight;
       ratioStr = ratio.toFixed(2) + '×';
-      
       if (m.key.includes('agachamento') || m.key.includes('terra')) {
-        if (ratio < 0.75) nuck = 'Iniciante';
-        else if (ratio < 1.25) nuck = 'Novato';
-        else if (ratio < 1.75) nuck = 'Intermediário';
-        else nuck = 'Avançado/Elite';
+        if (ratio < 0.75) nuck = 'Iniciante'; else if (ratio < 1.25) nuck = 'Novato'; else if (ratio < 1.75) nuck = 'Intermediário'; else nuck = 'Avançado/Elite';
       } else {
-        if (ratio < 0.5) nuck = 'Iniciante';
-        else if (ratio < 0.75) nuck = 'Novato';
-        else if (ratio < 1.0) nuck = 'Intermediário';
-        else nuck = 'Avançado/Elite';
+        if (ratio < 0.5) nuck = 'Iniciante'; else if (ratio < 0.75) nuck = 'Novato'; else if (ratio < 1.0) nuck = 'Intermediário'; else nuck = 'Avançado/Elite';
       }
     }
-    
-    html += `<tr>
-      <td style="padding:8px 4px; border-bottom:1px solid rgba(255,255,255,0.05);">${m.name}</td>
-      <td style="padding:8px 4px; border-bottom:1px solid rgba(255,255,255,0.05);">${raw}</td>
-      <td style="padding:8px 4px; border-bottom:1px solid rgba(255,255,255,0.05); color:var(--orange);">${ratioStr} / ${nuck}</td>
-    </tr>`;
+    html += `<tr><td style="padding:8px 4px; border-bottom:1px solid rgba(255,255,255,0.05);">${m.name}</td><td style="padding:8px 4px; border-bottom:1px solid rgba(255,255,255,0.05);">${raw}</td><td style="padding:8px 4px; border-bottom:1px solid rgba(255,255,255,0.05); color:var(--orange);">${ratioStr} / ${nuck}</td></tr>`;
   });
   
-  if (!html) {
-    html = `<tr><td colspan="3" style="padding:12px; text-align:center; color:var(--text3); font-style:italic;">Nenhum dado de Força de Referência (RM) salvo no perfil.</td></tr>`;
-  }
+  if (!html) html = `<tr><td colspan="3" style="padding:12px; text-align:center; color:var(--text3); font-style:italic;">Nenhum dado de Força de Referência (RM) salvo.</td></tr>`;
   tbody.innerHTML = html;
 }
 
@@ -2426,20 +2231,20 @@ function openChatWithPrompt(promptStr) {
     const input = document.getElementById('chat-input');
     if (input) {
       input.value = promptStr;
-      setTimeout(() => sendChatMsg(), 500);
+      setTimeout(() => sendChatMsg(promptStr), 500);
     }
   }, 100);
 }
 
 // ══════════════════════════════════════════════════════
-// API — com retry e botões disabled durante loading
+// API & CHIPS
 // ══════════════════════════════════════════════════════
 function setInputsDisabled(disabled) {
   ['ob-input','chat-input'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.disabled = disabled;
   });
-  document.querySelectorAll('.chat-send-btn').forEach(btn => {
+  document.querySelectorAll('.send-btn').forEach(btn => {
     btn.disabled = disabled;
     btn.style.opacity = disabled ? '0.5' : '';
   });
@@ -2454,14 +2259,11 @@ async function callCaleb(messages, system, attempt = 1) {
       body: JSON.stringify({messages, system})
     });
     if (!res.ok) {
-      const err = await res.json().catch(() => ({error:`HTTP ${res.status}`}));
-      // Retry automático em 429/5xx
       if ((res.status === 429 || res.status >= 500) && attempt < MAX_RETRIES) {
-        const delay = 1000 * attempt;
-        await new Promise(r => setTimeout(r, delay));
+        await new Promise(r => setTimeout(r, 1000 * attempt));
         return callCaleb(messages, system, attempt + 1);
       }
-      throw new Error(err.error || `HTTP ${res.status}`);
+      throw new Error(`HTTP ${res.status}`);
     }
     const data = await res.json();
     return data.text;
@@ -2474,45 +2276,24 @@ async function callCaleb(messages, system, attempt = 1) {
   }
 }
 
-// ══════════════════════════════════════════════════════
-// BUBBLES + CHIPS
-// ══════════════════════════════════════════════════════
 function formatCalebMsg(text, containerId) {
-  text = text
-    .replace(/\[ONBOARDING_COMPLETO\]/g, '')
-    .replace(/\[PERFIL_JSON\][\s\S]*?\[\/PERFIL_JSON\]/g, '')
-    .trim();
-
-  // Detectar padrão [Opção A | Opção B | ...] e renderizar como chips
+  text = text.replace(/\[ONBOARDING_COMPLETO\]/g, '').replace(/\[PERFIL_JSON\][\s\S]*?\[\/PERFIL_JSON\]/g, '').trim();
   const parts = text.split(/(\[[^\]]+\|[^\]]+\])/g);
   let result = '';
-
   parts.forEach((part, i) => {
     if (i % 2 === 1 && /\|/.test(part)) {
-      // Grupo de opções
-      const inner = part.slice(1, -1);
-      const opts = inner.split('|').map(o => o.trim()).filter(Boolean);
-      const isOnboarding = containerId.includes('ob-') || containerId.includes('onboarding');
-      const fn = isOnboarding ? 'sendObChip' : 'sendChatChip';
-      result += '<div class="option-chips">' +
-        opts.map(opt => {
-          const safe = opt.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-          return `<button class="option-chip" onclick="${fn}(this,'${safe}')">${opt}</button>`;
-        }).join('') +
-        '</div>';
+      const opts = part.slice(1, -1).split('|').map(o => o.trim()).filter(Boolean);
+      const fn = (containerId.includes('ob-') || containerId.includes('onboarding')) ? 'sendObChip' : 'sendChatChip';
+      result += '<div class="option-chips">' + opts.map(opt => `<button class="option-chip" onclick="${fn}(this,'${opt.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')">${opt}</button>`).join('') + '</div>';
     } else {
-      result += part
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\n/g, '<br>');
+      result += part.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
     }
   });
   return result;
 }
 
 function sendObChip(btn, text) {
-  btn.closest('.option-chips').querySelectorAll('.option-chip')
-    .forEach(b => { b.disabled = true; });
+  btn.closest('.option-chips').querySelectorAll('.option-chip').forEach(b => { b.disabled = true; });
   btn.classList.add('chosen');
   setTimeout(() => {
     const inp = document.getElementById('ob-input');
@@ -2522,8 +2303,7 @@ function sendObChip(btn, text) {
 }
 
 function sendChatChip(btn, text) {
-  btn.closest('.option-chips').querySelectorAll('.option-chip')
-    .forEach(b => { b.disabled = true; });
+  btn.closest('.option-chips').querySelectorAll('.option-chip').forEach(b => { b.disabled = true; });
   btn.classList.add('chosen');
   setTimeout(() => {
     if (typeof sendChatMsg === 'function') sendChatMsg(text);
@@ -2534,77 +2314,31 @@ function appendBubble(containerId, role, text) {
   const c = document.getElementById(containerId);
   if (!c) return;
   const wrap = document.createElement('div');
-  wrap.className = 'bubble-wrap' + (role === 'user' ? ' user' : '');
-  
+  wrap.className = 'msg-row' + (role === 'user' ? ' user' : '');
   if (role === 'user') {
     wrap.innerHTML = `<div class="bubble user">${esc(text)}</div>`;
   } else {
     const hasForm = text.includes('[FORM_CARGAS]');
-    if (hasForm) {
-      const textPart = text.replace(/\[FORM_CARGAS\]/g, '').trim();
-      const textHtml = formatCalebMsg(textPart, containerId); // escapa normalmente
-      const formHtml = buildFormCargas(); // HTML puro, não escapar
-      // Montar a bolha com os dois juntos
-      wrap.innerHTML = `<div class="avatar-c">C</div><div class="bubble caleb">${textHtml}${formHtml}</div>`;
-    } else {
-      const formatted = formatCalebMsg(text, containerId);
-      wrap.innerHTML = `<div class="avatar-c">C</div><div class="bubble caleb">${formatted}</div>`;
-    }
+    const cleanText = text.replace(/\[FORM_CARGAS\]/g, '').trim();
+    const formatted = formatCalebMsg(cleanText, containerId);
+    wrap.innerHTML = `<div class="msg-av">C</div><div class="bubble caleb">${formatted}${hasForm ? buildFormCargas() : ''}</div>`;
   }
-  
   c.appendChild(wrap);
   scrollToBottom(containerId);
 }
 
-function esc(t) {
-  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-          .replace(/\n/g,'<br>');
-}
-
-function scrollToBottom(id) {
-  const el = document.getElementById(id);
-  if (el) setTimeout(() => { el.scrollTop = el.scrollHeight; }, 40);
-}
-
-// ══════════════════════════════════════════════════════
-// LOADER
-// ══════════════════════════════════════════════════════
-function showLoader(text) {
-  const el = document.getElementById('loader');
-  const tx = document.getElementById('loader-text');
-  if (tx) tx.textContent = text || 'Caleb está pensando...';
-  if (el) el.classList.add('visible');
-  setInputsDisabled(true);
-}
-function hideLoader() {
-  const el = document.getElementById('loader');
-  if (el) el.classList.remove('visible');
-  setInputsDisabled(false);
-}
-
-// ══════════════════════════════════════════════════════
-// UTILS
-// ══════════════════════════════════════════════════════
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
-}
-
-function confirmReset() {
-  if (confirm('Tem certeza? Todo o progresso e protocolo serão perdidos.')) resetAll();
-}
+function esc(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'); }
+function scrollToBottom(id) { const el = document.getElementById(id); if (el) setTimeout(() => { el.scrollTop = el.scrollHeight; }, 40); }
+function showLoader(text) { const tx = document.getElementById('loader-text'); if(tx) tx.textContent=text; document.getElementById('loader').classList.add('visible'); setInputsDisabled(true); }
+function hideLoader() { document.getElementById('loader').classList.remove('visible'); setInputsDisabled(false); }
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
+function confirmReset() { if (confirm('Tem certeza? Todo o progresso e protocolo serão perdidos.')) resetAll(); }
 
 function resetAll() {
-  ['caleb_profile','caleb_onboarded','caleb_conversation','caleb_sessions','caleb_weights','caleb_workout_versions']
-    .forEach(k => localStorage.removeItem(k));
-  userProfile = null;
-  chatHistory = [];
-  onboardingHistory = [];
-  chatInitialized = false;
-  const cm = document.getElementById('chat-messages');
-  if (cm) cm.innerHTML = '';
-  const banner = document.getElementById('workout-ready-banner');
-  if (banner) banner.remove();
+  ['caleb_profile','caleb_onboarded','caleb_conversation','caleb_sessions','caleb_weights','caleb_workout_versions', 'caleb_session_logs', 'caleb_cycle_reports'].forEach(k => localStorage.removeItem(k));
+  userProfile = null; chatHistory = []; onboardingHistory = []; chatInitialized = false;
+  document.getElementById('chat-messages').innerHTML = '';
+  document.getElementById('workout-ready-banner')?.remove();
   showOnly('s-splash');
 }
 
@@ -2612,96 +2346,27 @@ function resetAll() {
 // FORMULARIO DE CARGAS (1RM)
 // ══════════════════════════════════════════════════════
 function buildFormCargas() {
-  const exercises = [
-    { id: 'agachamento',    label: 'Agachamento Livre' },
-    { id: 'supino',         label: 'Supino Reto' },
-    { id: 'terra',          label: 'Levantamento Terra' },
-    { id: 'desenvolvimento',label: 'Desenvolvimento (ombros)' },
-    { id: 'remada',         label: 'Remada Curvada' }
-  ];
-
-  const rows = exercises.map(ex => `
-    <div class="form-cargas-row">
-      <span class="form-cargas-label">${ex.label}</span>
-      <input type="number" min="0" step="0.5" placeholder="kg" id="fc-kg-${ex.id}" class="form-cargas-input"/>
-      <span class="form-cargas-unit">kg</span>
-      <input type="number" min="0" max="50" step="1" placeholder="reps" id="fc-reps-${ex.id}" class="form-cargas-input"/>
-      <span class="form-cargas-unit">reps</span>
-    </div>`).join('');
-
-  return `
-    <div class="form-cargas">
-      <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;">
-        Exercícios básicos
-      </div>
-      ${rows}
-      <button class="form-cargas-btn" onclick="confirmCargasForm(event)">
-        Confirmar cargas
-      </button>
-    </div>`;
+  const exercises = [ { id: 'agachamento', label: 'Agachamento Livre' }, { id: 'supino', label: 'Supino Reto' }, { id: 'terra', label: 'Levantamento Terra' }, { id: 'desenvolvimento', label: 'Desenvolvimento (ombros)' }, { id: 'remada', label: 'Remada Curvada' } ];
+  const rows = exercises.map(ex => `<div class="form-cargas-row"><span class="form-cargas-label">${ex.label}</span><input type="number" min="0" step="0.5" placeholder="kg" id="fc-kg-${ex.id}" class="form-cargas-input"/><span class="form-cargas-unit">kg</span><input type="number" min="0" max="50" step="1" placeholder="reps" id="fc-reps-${ex.id}" class="form-cargas-input"/><span class="form-cargas-unit">reps</span></div>`).join('');
+  return `<div class="form-cargas"><div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;">Exercícios básicos</div>${rows}<button class="form-cargas-btn" onclick="confirmCargasForm(event)">Confirmar cargas</button></div>`;
 }
 
 function confirmCargasForm(event) {
-  const exercises = [
-    { id: 'agachamento',    label: 'Agachamento Livre' },
-    { id: 'supino',         label: 'Supino Reto' },
-    { id: 'terra',          label: 'Levantamento Terra' },
-    { id: 'desenvolvimento',label: 'Desenvolvimento (ombros)' },
-    { id: 'remada',         label: 'Remada Curvada' }
-  ];
-
-  const results = {};
-  const lines = [];
-
+  const exercises = [ { id: 'agachamento', label: 'Agachamento Livre' }, { id: 'supino', label: 'Supino Reto' }, { id: 'terra', label: 'Levantamento Terra' }, { id: 'desenvolvimento', label: 'Desenvolvimento' }, { id: 'remada', label: 'Remada Curvada' } ];
+  const results = {}; const lines = [];
   exercises.forEach(ex => {
-    const kgEl = document.getElementById('fc-kg-' + ex.id);
-    const repsEl = document.getElementById('fc-reps-' + ex.id);
-    const kg   = parseFloat(kgEl ? kgEl.value : NaN);
-    const reps = parseInt(repsEl ? repsEl.value : NaN);
-
-    if (kg > 0 && reps > 0) {
-      const rm1 = +(kg * (1 + reps / 30)).toFixed(1);
-      results[ex.id] = { carga: kg, reps, rm1 };
-      lines.push(`${ex.label}: ${kg}kg × ${reps} reps`);
-    } else {
-      results[ex.id] = null;
-      lines.push(`${ex.label}: não informado`);
-    }
+    const kg = parseFloat(document.getElementById('fc-kg-' + ex.id)?.value);
+    const reps = parseInt(document.getElementById('fc-reps-' + ex.id)?.value);
+    if (kg > 0 && reps > 0) { results[ex.id] = { carga: kg, reps, rm1: +(kg * (1 + reps / 30)).toFixed(1) }; lines.push(`${ex.label}: ${kg}kg × ${reps} reps`); }
+    else { results[ex.id] = null; lines.push(`${ex.label}: não informado`); }
   });
-
-  // Salvar no localStorage
   localStorage.setItem('caleb_rm_data', JSON.stringify(results));
-
-  // Desabilitar o botão e os inputs para evitar reenvio
-  document.querySelectorAll('[id^="fc-kg-"], [id^="fc-reps-"]')
-    .forEach(el => { el.disabled = true; el.style.opacity = '0.5'; });
-  
-  if (event && event.target) {
-    event.target.disabled = true;
-    event.target.textContent = 'Enviado ✓';
-    event.target.style.opacity = '0.6';
-  }
-
-  // Enviar como mensagem do usuário
+  document.querySelectorAll('[id^="fc-kg-"], [id^="fc-reps-"]').forEach(el => { el.disabled = true; el.style.opacity = '0.5'; });
+  if (event?.target) { event.target.disabled = true; event.target.textContent = 'Enviado ✓'; event.target.style.opacity = '0.6'; }
   const msg = lines.join('\n');
-  
   setTimeout(() => {
-    const isOnboarding = document.getElementById('s-onboarding').classList.contains('off') === false;
-    
-    if (isOnboarding) {
-       const inp = document.getElementById('ob-input');
-       if (inp) {
-         inp.value = msg;
-         if (typeof sendOnboarding === 'function') sendOnboarding();
-       }
-    } else {
-       const cInp = document.getElementById('chat-input');
-       if (cInp) {
-         cInp.value = msg;
-         if (typeof sendChat === 'function') sendChat();
-         else if (typeof sendChatMsg === 'function') sendChatMsg(msg);
-       }
-    }
+    if (!document.getElementById('s-onboarding').classList.contains('off')) { const inp = document.getElementById('ob-input'); if (inp) { inp.value = msg; sendOnboarding(); } }
+    else { const cInp = document.getElementById('chat-input'); if (cInp) { cInp.value = msg; sendChat(); } }
   }, 200);
 }
 
