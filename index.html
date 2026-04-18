@@ -388,7 +388,7 @@ textarea{resize:none}
 
 <!-- SCREEN: SPLASH -->
 <div class="screen" id="s-splash">
-  <div class="status-bar"><span class="status-time" id="t-splash">--:--</span><div class="status-icon"></div></div>
+  </div>
   <div class="topbar">
     <div class="logo">CALEB<em>.IA</em></div>
     <div class="version-pill">v1.1 M.A.X. Core <div class="live-dot"></div></div>
@@ -429,7 +429,7 @@ textarea{resize:none}
 
 <!-- SCREEN: ONBOARDING CHAT -->
 <div class="screen off" id="s-onboarding">
-  <div class="status-bar"><span class="status-time" id="t-onboarding">--:--</span><div class="status-icon"></div></div>
+  </div>
   <div class="topbar">
     <div class="logo">CALEB<em>.IA</em></div>
     <div style="font-size:12px;color:var(--text3)">Montando seu protocolo</div>
@@ -448,7 +448,7 @@ textarea{resize:none}
 
 <!-- SCREEN: HOME -->
 <div class="screen off" id="s-home">
-  <div class="status-bar"><span class="status-time" id="t-home">--:--</span><div class="status-icon"></div></div>
+  </div>
   <div class="topbar">
     <div class="logo">CALEB<em>.IA</em></div>
     <div class="version-pill">v1.1 M.A.X. Core <div class="live-dot"></div></div>
@@ -516,7 +516,7 @@ textarea{resize:none}
 
 <!-- SCREEN: CHAT FLUTUANTE -->
 <div class="screen off-up" id="s-chat">
-  <div class="status-bar"><span class="status-time" id="t-chat">--:--</span><div class="status-icon"></div></div>
+  </div>
   <div class="chat-header">
     <button class="icon-btn" onclick="hideScreen('s-chat')">
       <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
@@ -542,7 +542,7 @@ textarea{resize:none}
 
 <!-- SCREEN: FAQ -->
 <div class="screen off" id="s-faq">
-  <div class="status-bar"><span class="status-time" id="t-faq">--:--</span><div class="status-icon"></div></div>
+  </div>
   <div class="chat-header">
     <button class="icon-btn" onclick="hideScreen('s-faq')">
       <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
@@ -567,7 +567,7 @@ textarea{resize:none}
 
 <!-- SCREEN: EXECUÇÃO DO TREINO -->
 <div class="screen off" id="s-workout">
-  <div class="status-bar"><span class="status-time" id="t-workout">--:--</span><div class="status-icon"></div></div>
+  </div>
   <div class="chat-header">
     <button class="icon-btn" onclick="cancelWorkout()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div style="flex:1">
@@ -585,7 +585,7 @@ textarea{resize:none}
 
 <!-- SCREEN: PROGRESSO -->
 <div class="screen off" id="s-progress">
-  <div class="status-bar"><span class="status-time" id="t-progress">--:--</span><div class="status-icon"></div></div>
+  </div>
   <div class="topbar"><div class="logo">CALEB<em>.IA</em></div><div class="version-pill">v1.1 M.A.X. Core <div class="live-dot"></div></div></div>
   <div class="scroll-area" style="padding:18px 16px 40px">
     <div style="font-size:22px;font-weight:800;text-align:center;margin-bottom:6px">Seu Progresso</div>
@@ -677,7 +677,7 @@ textarea{resize:none}
 
 <!-- SCREEN: PERFIL -->
 <div class="screen off" id="s-profile">
-  <div class="status-bar"><span class="status-time" id="t-profile">--:--</span><div class="status-icon"></div></div>
+  </div>
   <div class="topbar"><div class="logo">CALEB<em>.IA</em></div><div class="version-pill">v1.1 M.A.X. Core <div class="live-dot"></div></div></div>
   <div class="scroll-area" style="padding:24px 16px 40px">
     <div class="profile-avatar" id="profile-avatar">?</div>
@@ -754,7 +754,7 @@ textarea{resize:none}
 
 <!-- SCREEN: FINISH (Workout Conclusion) -->
 <div class="screen off-up" id="s-finish" style="z-index:20;">
-  <div class="status-bar"><span class="status-time" id="t-finish">--:--</span><div class="status-icon"></div></div>
+  </div>
   <div class="topbar">
     <div class="logo">Sessão concluída</div>
   </div>
@@ -1491,6 +1491,8 @@ function renderTrainingContent(version) {
 
     // Parse exercises
     const exBlocks = session.match(/\d+\.\s[\s\S]*?(?=(?:\d+\.|$|\u2501{3,}))/g) || [];
+    const parsedExercises = [];
+    
     if (exBlocks.length === 0) {
       sessionDiv.innerHTML += `<div style="font-size:13px;color:var(--text2);white-space:pre-wrap">${esc(session.trim())}</div>`;
     } else {
@@ -1499,6 +1501,7 @@ function renderTrainingContent(version) {
         const name = lines[0].replace(/^\d+\.\s*/, '').trim();
         const spec = lines.find(l => /x|min|RIR/i.test(l) && !l.startsWith('📝'))?.trim() || '';
         const note = lines.find(l => l.includes('📝'))?.replace('📝','').trim() || '';
+        
         const card = document.createElement('div');
         card.className = 'training-ex-card';
         card.innerHTML = `
@@ -1507,17 +1510,25 @@ function renderTrainingContent(version) {
           ${note ? `<div class="training-ex-note">${esc(note)}</div>` : ''}
         `;
         sessionDiv.appendChild(card);
+        
+        let numSets = 3;
+        const setMatch = spec.match(/(\d+)\s*x/i);
+        if (setMatch) numSets = parseInt(setMatch[1]);
+        
+        parsedExercises.push({ name, spec, note, sets: numSets });
       });
     }
 
-    // Start workout button
-    const startBtn = document.createElement('button');
-    startBtn.className = 'btn-primary';
-    startBtn.style.marginTop = '8px';
-    startBtn.textContent = 'Iniciar sessão';
-    startBtn.onclick = () => showWorkout();
-    sessionDiv.appendChild(startBtn);
-
+    if (parsedExercises.length > 0) {
+      // Start workout button
+      const startBtn = document.createElement('button');
+      startBtn.className = 'btn-primary';
+      startBtn.style.marginTop = '8px';
+      startBtn.textContent = 'Iniciar sessão';
+      startBtn.onclick = () => showWorkout(`Treino ${tabLabel}`, parsedExercises);
+      sessionDiv.appendChild(startBtn);
+    }
+    
     sessionsEl.appendChild(sessionDiv);
   });
 
@@ -1865,20 +1876,18 @@ function chatKeydown(e) {
 // ══════════════════════════════════════════════════════
 // WORKOUT
 // ══════════════════════════════════════════════════════
-function showWorkout() {
-  const proto = (userProfile && ['001','002','003'].includes(userProfile.protocolo))
-    ? userProfile.protocolo : '001';
-  const templates = WK[proto] || WK['001'];
-  const sessions  = safeParseJSON('caleb_sessions', []);
-  const keys      = Object.keys(templates);
-  const wk        = templates[keys[sessions.length % keys.length]];
+function showWorkout(title, exercises) {
+  if (!exercises || exercises.length === 0) {
+    showToast("Nenhum exercício estruturado encontrado para renderizar.");
+    return;
+  }
 
-  document.getElementById('workout-title').textContent = wk.title;
+  document.getElementById('workout-title').textContent = title;
 
   const content = document.getElementById('workout-content');
   content.innerHTML = '';
 
-  wk.exercises.forEach((ex, i) => {
+  exercises.forEach((ex, i) => {
     const card = document.createElement('div');
     card.className = 'exercise-card';
 
@@ -2723,3 +2732,4 @@ init();
 </script>
 </body>
 </html>
+
