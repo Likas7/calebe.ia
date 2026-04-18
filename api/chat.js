@@ -63,7 +63,7 @@ module.exports = async function handler(req, res) {
     contents: geminiContents,
     generationConfig: {
       temperature: 0.7,
-      maxOutputTokens: 2048,
+      maxOutputTokens: 8192,
       topP: 0.9,
       candidateCount: 1,
     },
