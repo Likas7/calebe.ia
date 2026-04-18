@@ -379,14 +379,12 @@ textarea{resize:none}
 <body>
 <div id="app">
 
-<!-- LOADING -->
 <div class="loader-overlay" id="loader">
   <div class="loader-spinner"></div>
   <div class="loader-text" id="loader-text">Caleb está pensando...</div>
 </div>
 
 
-<!-- SCREEN: SPLASH -->
 <div class="screen" id="s-splash">
   <div class="topbar">
     <div class="logo">CALEB<em>.IA</em></div>
@@ -426,7 +424,6 @@ textarea{resize:none}
   </div>
 </div>
 
-<!-- SCREEN: ONBOARDING CHAT -->
 <div class="screen off" id="s-onboarding">
   <div class="topbar">
     <div class="logo">CALEB<em>.IA</em></div>
@@ -444,7 +441,6 @@ textarea{resize:none}
   </div>
 </div>
 
-<!-- SCREEN: HOME -->
 <div class="screen off" id="s-home">
   <div class="topbar">
     <div class="logo">CALEB<em>.IA</em></div>
@@ -511,7 +507,6 @@ textarea{resize:none}
   </button>
 </div>
 
-<!-- SCREEN: CHAT FLUTUANTE -->
 <div class="screen off-up" id="s-chat">
   <div class="chat-header">
     <button class="icon-btn" onclick="hideScreen('s-chat')">
@@ -536,7 +531,6 @@ textarea{resize:none}
 </div>
 
 
-<!-- SCREEN: FAQ -->
 <div class="screen off" id="s-faq">
   <div class="chat-header">
     <button class="icon-btn" onclick="hideScreen('s-faq')">
@@ -560,7 +554,6 @@ textarea{resize:none}
 </div>
 
 
-<!-- SCREEN: EXECUÇÃO DO TREINO -->
 <div class="screen off" id="s-workout">
   <div class="chat-header">
     <button class="icon-btn" onclick="cancelWorkout()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
@@ -577,7 +570,6 @@ textarea{resize:none}
 </div>
 
 
-<!-- SCREEN: PROGRESSO -->
 <div class="screen off" id="s-progress">
   <div class="topbar"><div class="logo">CALEB<em>.IA</em></div><div class="version-pill">v1.1 M.A.X. Core <div class="live-dot"></div></div></div>
   <div class="scroll-area" style="padding:18px 16px 40px">
@@ -620,7 +612,6 @@ textarea{resize:none}
       </div>
     </div>
 
-    <!-- Força de Referência (Nuckols 1RM) -->
     <div class="card" style="padding:16px;margin-bottom:16px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
         <div class="section-label" style="margin-bottom:0">Força de Referência</div>
@@ -668,7 +659,6 @@ textarea{resize:none}
 </div>
 
 
-<!-- SCREEN: PERFIL -->
 <div class="screen off" id="s-profile">
   <div class="topbar"><div class="logo">CALEB<em>.IA</em></div><div class="version-pill">v1.1 M.A.X. Core <div class="live-dot"></div></div></div>
   <div class="scroll-area" style="padding:24px 16px 40px">
@@ -708,14 +698,12 @@ textarea{resize:none}
 </div>
 
 
-<!-- SCREEN: TREINO (Integrated) -->
 <div class="screen off" id="s-training">
   <div class="topbar">
     <div class="logo">CALEB<em>.IA</em></div>
     <div class="version-pill" id="training-version-badge">v1.1 M.A.X. Core</div>
   </div>
 
-  <!-- Locked state -->
   <div id="training-locked" class="training-locked" style="padding:40px 20px;text-align:center;">
     <div style="font-size:48px;margin-bottom:16px;">🔒</div>
     <div style="font-size:18px;font-weight:800;margin-bottom:10px;">Protocolo bloqueado</div>
@@ -723,11 +711,9 @@ textarea{resize:none}
     <button class="btn-primary" onclick="navTo('home')">Voltar ao Início</button>
   </div>
 
-  <!-- Unlocked state -->
   <div id="training-unlocked" style="display:none;flex-direction:column;flex:1;overflow:hidden;position:relative;padding-bottom:70px;">
     <div class="training-tabs" id="training-tabs"></div>
     <div class="scroll-area" id="training-sessions-wrap" style="padding:16px;"></div>
-    <!-- Botão Fixo Pedir Adaptação -->
     <div style="position:absolute;bottom:0;left:0;right:0;padding:12px 16px;background:var(--surface);border-top:1px solid var(--border2);z-index:10;">
       <button class="btn-primary" onclick="openChatWithPrompt('Gostaria de adaptar meu treino atual. ')" style="background:var(--surface2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;">
         <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
@@ -744,7 +730,6 @@ textarea{resize:none}
   </div>
 </div>
 
-<!-- SCREEN: FINISH (Workout Conclusion) -->
 <div class="screen off-up" id="s-finish" style="z-index:20;">
   <div class="topbar">
     <div class="logo">Sessão concluída</div>
@@ -759,8 +744,7 @@ textarea{resize:none}
       <div style="font-size:13px;font-weight:600;margin-bottom:4px;">Como foi a sessão de hoje?</div>
       <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">Escala de Borg CR10 — 1 = muito leve · 10 = máximo absoluto</div>
       <div class="borg-buttons" id="finish-borg" style="display:flex;gap:4px;flex-wrap:wrap">
-          <!-- borg buttons injected via JS -->
-      </div>
+          </div>
     </div>
     <div class="card" style="padding:16px;margin-bottom:24px;">
       <textarea id="finish-obs" placeholder="Observação sobre o treino de hoje (opcional)" style="width:100%;background:none;border:none;outline:none;color:var(--text);font-size:14px;resize:none;font-family:inherit;line-height:1.5;" rows="3"></textarea>
@@ -769,15 +753,11 @@ textarea{resize:none}
   </div>
 </div>
 
-</div><!-- #app -->
-
-<!-- TOOLTIP BOX -->
-<div id="tooltip-box" style="position:fixed;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:14px 16px;max-width:280px;font-size:13px;color:var(--text2);line-height:1.6;z-index:500;box-shadow:0 4px 20px rgba(0,0,0,.4);display:none;">
+</div><div id="tooltip-box" style="position:fixed;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:14px 16px;max-width:280px;font-size:13px;color:var(--text2);line-height:1.6;z-index:500;box-shadow:0 4px 20px rgba(0,0,0,.4);display:none;">
   <button onclick="document.getElementById('tooltip-box').style.display='none'" style="float:right;background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;margin-left:8px;">×</button>
   <span id="tooltip-text"></span>
 </div>
 
-<!-- TOAST -->
 <div id="toast" style="position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:8px 16px;font-size:12px;color:var(--text);z-index:1000;display:none;"></div>
 
 
@@ -1725,15 +1705,20 @@ function updateNextWorkoutCard() {
   const keys = Object.keys(templates);
   const wk = templates[keys[sessions.length % keys.length]];
 
-  const titleEl = document.getElementById('next-workout-title');
-  const subEl   = document.getElementById('next-workout-sub');
-  const exsEl   = document.getElementById('next-workout-exs');
-  const rirEl   = document.getElementById('next-workout-rir');
+  const titleEl = document.getElementById('home-title');
+  const subEl   = document.getElementById('home-sub');
+  const exsEl   = document.getElementById('home-tag-ex');
+  const rirEl   = document.getElementById('home-tag-rir');
 
   if (titleEl) titleEl.textContent = wk.title;
   if (subEl)   subEl.textContent   = wk.sub;
   if (exsEl)   exsEl.textContent   = `${wk.exercises.length} exercícios`;
   if (rirEl)   rirEl.textContent   = wk.rir;
+
+  const btnIniciar = document.querySelector('.next-workout-card .btn-primary');
+  if (btnIniciar) {
+    btnIniciar.onclick = () => showWorkout(wk.title, wk.exercises);
+  }
 
   // Atualizar badge de ciclo na home também
   updateCycleBadge();
@@ -1873,14 +1858,14 @@ function showWorkout(title, exercises) {
     return;
   }
 
-  document.getElementById('workout-title').textContent = title;
+  document.getElementById('wk-title').textContent = title;
 
   const content = document.getElementById('workout-content');
   content.innerHTML = '';
 
   exercises.forEach((ex, i) => {
     const card = document.createElement('div');
-    card.className = 'exercise-card';
+    card.className = 'ex-card';
 
     let setsHtml = '';
     for (let s=1; s<=ex.sets; s++) {
@@ -1895,7 +1880,7 @@ function showWorkout(title, exercises) {
     }
 
     card.innerHTML = `
-      <div style="font-size:11px;color:var(--text3);font-weight:600;margin-bottom:4px;">Exercício ${i+1} de ${wk.exercises.length}</div>
+      <div style="font-size:11px;color:var(--text3);font-weight:600;margin-bottom:4px;">Exercício ${i+1} de ${exercises.length}</div>
       <div style="font-size:18px;font-weight:800;margin-bottom:4px;">${ex.name}</div>
       <div style="font-size:13px;color:var(--text2);margin-bottom:10px;">${ex.spec}</div>
       <div style="border-left:3px solid var(--orange);padding-left:12px;font-size:12px;color:var(--text2);font-style:italic;margin-bottom:14px;">${ex.note}</div>
@@ -1915,12 +1900,12 @@ function showWorkout(title, exercises) {
 
   workoutSeconds = 0;
   clearInterval(workoutTimer);
-  document.getElementById('workout-timer').textContent = '00:00';
+  document.getElementById('wk-timer').textContent = '00:00';
   workoutTimer = setInterval(() => {
     workoutSeconds++;
     const mm = String(Math.floor(workoutSeconds/60)).padStart(2,'0');
     const ss = String(workoutSeconds%60).padStart(2,'0');
-    document.getElementById('workout-timer').textContent = `${mm}:${ss}`;
+    document.getElementById('wk-timer').textContent = `${mm}:${ss}`;
   }, 1000);
 }
 
@@ -1931,6 +1916,10 @@ function toggleSet(el) {
 }
 
 function selectBorg(exIdx, val, btn) {
+  document.getElementById(`borg-${exIdx}`)
+    .querySelectorAll('.borg-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  // Add selected class as well for finishWorkout parsing
   document.getElementById(`borg-${exIdx}`)
     .querySelectorAll('.borg-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
@@ -1962,7 +1951,7 @@ function finishWorkout() {
   const keys = Object.keys(templates);
   const wk = templates[keys[sessions0.length % keys.length]];
 
-  document.querySelectorAll('.exercise-card').forEach((card, i) => {
+  document.querySelectorAll('.ex-card').forEach((card, i) => {
     const exName = wk.exercises[i]?.name || `Exercício ${i+1}`;
     const setWeights = [];
     card.querySelectorAll('.set-input').forEach(inp => {
@@ -2003,7 +1992,7 @@ function finishWorkout() {
   if (avgBorg !== null) {
     const el = document.getElementById('home-borg');
     if (el) el.textContent = avgBorg;
-    const bar = document.getElementById('home-borg-bar');
+    const bar = document.getElementById('home-borg-fill');
     if (bar) bar.style.width = `${(avgBorg/10)*100}%`;
   }
 
@@ -2016,7 +2005,7 @@ function finishWorkout() {
   const sessionTarget = wk.title.replace('Treino ', ''); // 'A', 'B'...
 
   const detailedExercises = [];
-  document.querySelectorAll('.exercise-card').forEach((card, i) => {
+  document.querySelectorAll('.ex-card').forEach((card, i) => {
     const exName = wk.exercises[i]?.name || `Exercício ${i+1}`;
     const setsNodes = card.querySelectorAll('.set-row');
     const sets = [];
@@ -2076,8 +2065,8 @@ function renderFinishBorg() {
     btn.className = 'borg-btn';
     btn.textContent = n;
     btn.onclick = () => {
-      container.querySelectorAll('.borg-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
+      container.querySelectorAll('.borg-btn').forEach(b => b.classList.remove('selected', 'sel'));
+      btn.classList.add('selected', 'sel');
     };
     container.appendChild(btn);
   });
@@ -2723,5 +2712,3 @@ init();
 </script>
 </body>
 </html>
-
-
