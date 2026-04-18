@@ -1070,6 +1070,23 @@ TREINO [LETRA] — [GRUPOS MUSCULARES]
    [N]x[reps] | Descanso: [X]min | RIR [N]
    📝 [Por que este exercício está aqui — explicado para o usuário]
 
+# CONCLUSÃO DO ONBOARDING / FINALIZAÇÃO
+Ao final de TODAS as perguntas (quando terminar de coletar os dados do Bloco 4), você deverá prescrever e exibir o treino completo na tela.
+Após exibir o treino com a formatação acima, você OBRIGATORIAMENTE DEVE INCLUIR NO FINAL AS DUAS TAGS a seguir, fornecendo o perfil do usuário extraído:
+[PERFIL_JSON]
+{
+  "nome": "Nome do usuário",
+  "objetivo": "Objetivo",
+  "nivel": "Iniciante/Intermediário/Avançado",
+  "protocolo": "001 ou outro",
+  "frequencia": "Quantas vezes por semana",
+  "duracao": "Tempo",
+  "local": "Local do treino",
+  "limitacoes": "Restrições"
+}
+[/PERFIL_JSON]
+[ONBOARDING_COMPLETO]
+
 # ADAPTAÇÃO DINÂMICA
 Confirmar entendimento → gerar versão adaptada mantendo compostos → explicar mudanças
 Atividades externas (jiu-jítsu, natação, corrida) reduzem volume naquele dia
@@ -1516,8 +1533,13 @@ function switchTrainingTab(index) {
 }
 
 function splitIntoSessions(text) {
-  // Try split by TREINO X — pattern
-  const parts = text.split(/(?=\bTREINO\s+[A-Z]\b)/i);
+  // Ajuste do divisor: Tenta capturar qualquer variação de 'TREINO X' isolado
+  // O divisor procura a palavra TREINO, com ou sem formatação Markdown ao redor (como **)
+  const parts = text.split(/(?=^(?:#+\s*|\*\*.*)?TREINO\s+[A-Z]\b)/im);
+  if (parts.length <= 1) {
+    // Fallback absoluto: tenta achar apenas "TREINO A", sem start-of-line
+    return text.split(/(?=\bTREINO\s+[A-Z]\b)/i).filter(p => p.trim().length > 10);
+  }
   return parts.filter(p => p.trim().length > 10);
 }
 
