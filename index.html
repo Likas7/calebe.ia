@@ -1619,7 +1619,14 @@ async function sendOnboarding() {
       onboardingHistory.push({role:'assistant', content:reply});
     }
 
-    if (!reply.includes('[ONBOARDING_COMPLETO]') && containsWorkout(reply)) {
+    if (reply.includes('[ONBOARDING_COMPLETO]') && containsWorkout(reply)) {
+      const workoutContent = reply
+        .replace('[ONBOARDING_COMPLETO]', '')
+        .replace(/\[PERFIL_JSON\][\s\S]*?\[\/PERFIL_JSON\]/g, '')
+        .trim();
+      saveWorkoutVersion(workoutContent, 'Treino inicial');
+      showWorkoutReadyBanner();
+    } else if (!reply.includes('[ONBOARDING_COMPLETO]') && containsWorkout(reply)) {
       saveWorkoutVersion(reply, 'Treino inicial');
     }
 
