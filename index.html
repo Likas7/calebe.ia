@@ -842,18 +842,20 @@ P_HISTORICO. Qual é a sua situação atual com o treino?
      Nunca descarta o histórico do usuário — constrói em cima do que já existe.
      Tom: "Você já tem base. Vamos organizar e potencializar o que você faz."
 
-   SE informou mais de 1 ano de treino consistente, inicie IMEDIATAMENTE este sub-bloco de FORÇA DE REFERÊNCIA, imediatamente após a confirmação:
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   PERGUNTAS DE FORÇA DE REFERÊNCIA
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
+   FORM_CARGAS deve ser enviado para qualquer usuário que já treinou (atual ou pausado).
    Caleb OBRIGATORIAMENTE pede os números com um formulário de uma só vez (NUNCA faça perguntas exercício a exercício).
    Para solicitar, o Caleb envia sua mensagem explicativa e CONCLUI COM A TAG ESPECIAL: [FORM_CARGAS]
 
-   Exemplo de mensagem do Caleb:
-   "Perfeito. Para calibrar as cargas do seu treino, me passa a última carga
+   Para quem treina há mais de 1 ano:
+   "Para calibrar as cargas do seu treino, me passa a última carga
    e o número de repetições que você fez em cada movimento abaixo.
    Se não treina algum deles, pode deixar em branco.
+   [FORM_CARGAS]"
+
+   Para quem treina há menos tempo ou voltou a treinar:
+   "Mesmo que você esteja começando ou voltando, me passa a carga
+   que você usa hoje em cada exercício — pode ser o que você consegue
+   fazer com boa técnica. Se não fizer algum deles ainda, deixa em branco.
    [FORM_CARGAS]"
 
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -896,6 +898,7 @@ P_HISTORICO. Qual é a sua situação atual com o treino?
    Perguntar: O que fez você parar?
    [Falta de tempo | Não via resultado | Me machuquei | Perdi a motivação | Outro motivo]
    → Caleb usa essa informação para antecipar o mesmo obstáculo no novo plano.
+   → Enviar [FORM_CARGAS] após coletar o motivo da pausa.
 
 → SE "Nunca treinei de verdade":
    Tom didático desde o início. Explicar cada escolha do treino de forma simples.
@@ -924,9 +927,19 @@ P_EXPECTATIVA. Em quanto tempo você espera ver resultados visíveis?
 P8. Grupo muscular prioritário? (opcional)
 P9. Exercício que não quer fazer? (opcional)
 P10. Nível de energia habitual
-P11. Idade
-P12. Sexo biológico
-P13. Peso e altura? (opcional)
+[Muito alta | Alta | Regular | Baixa | Muito baixa]
+
+P11. Qual é a sua idade? (obrigatório — afeta recuperação e volume tolerado)
+→ Caleb espera um número. Se o usuário não quiser informar, usar 30 como padrão silencioso.
+
+P12. Sexo biológico (obrigatório — necessário para calcular sua taxa metabólica corretamente)
+[Masculino | Feminino]
+
+P13a. Qual é o seu peso atual em kg? (obrigatório — necessário para calibrar as cargas do treino)
+→ Caleb espera um número. Insistir com gentileza se o usuário não responder.
+
+P13b. Qual é a sua altura em cm? (obrigatório — necessário para calcular sua taxa metabólica)
+→ Caleb espera um número. Insistir com gentileza se o usuário não responder.
 Ao final: confirme o perfil e gere o treino completo.
 Inclua ao final: [ONBOARDING_COMPLETO]
 [PERFIL_JSON]{"nome":"","objetivo":"","nivel":"","protocolo":"001","frequencia":"4x","duracao":"60min","local":"Academia","limitacoes":"Nenhuma","peso":"","altura":"","esporte_extra":"","trabalho_tipo":"","sono":"","estresse":"","historico_treino":"","relacao_treino":"","expectativa":"","rm_agachamento":"","rm_supino":"","rm_terra":"","rm_desenvolvimento":"","rm_remada":""}[/PERFIL_JSON]
@@ -1400,28 +1413,43 @@ function renderTrainingContent(version) {
   const c = getCurrentCycle ? getCurrentCycle() : { week: 1, version: 1 };
   if (badgeEl) badgeEl.innerHTML = `<div class="badge-dot"></div>Semana ${c.week} · v${version.version}`;
 
-  // Parse blocos [TREINO_X] ... [/TREINO_X]
-  const blockRegex = /\[TREINO_([A-Z])\]\s*([^\n]+)\n([\s\S]*?)\[\/TREINO_\1\]/g;
   const sessions = [];
-  let match;
   const content = version.content || '';
 
-  while ((match = blockRegex.exec(content)) !== null) {
-    const letter   = match[1];
-    const subtitle = match[2].trim();
-    const body     = match[3].trim();
+  // Divide o conteúdo em cada marcador [TREINO_X]
+  const parts = content.split(/(?=\[TREINO_[A-Z]\])/);
 
-    const exercises = body.split('\n').map(line => {
-      const parts = line.split('|').map(p => p.trim());
-      return {
-        name:  parts[0] || '',
-        spec:  [parts[1], parts[2], parts[3]].filter(Boolean).join(' | '),
-        sets:  parseInt((parts[1] || '3x').split('x')[0]) || 3
-      };
-    }).filter(ex => ex.name.length > 0);
+  parts.forEach(part => {
+    const headerMatch = part.match(/^\[TREINO_([A-Z])\]\s*([^\n]+)\n/);
+    if (!headerMatch) return;
 
-    sessions.push({ letter, subtitle, exercises });
-  }
+    const letter   = headerMatch[1];
+    const subtitle = headerMatch[2].trim();
+
+    // Pega tudo após a primeira linha até [/TREINO_X], [TREINO_ATUALIZADO] ou fim
+    const bodyRaw = part
+      .replace(/^\[TREINO_[A-Z]\][^\n]*\n/, '')
+      .replace(/\[\/TREINO_[A-Z]\][\s\S]*$/, '')
+      .replace(/\[TREINO_ATUALIZADO\][\s\S]*$/, '')
+      .trim();
+
+    const exercises = bodyRaw.split('\n')
+      .map(line => line.trim())
+      .filter(line => line.length > 0 && line.includes('|'))
+      .map(line => {
+        const partes = line.split('|').map(p => p.trim());
+        return {
+          name: partes[0] || '',
+          spec: [partes[1], partes[2], partes[3]].filter(Boolean).join(' | '),
+          sets: parseInt((partes[1] || '3x').split('x')[0]) || 3
+        };
+      })
+      .filter(ex => ex.name.length > 0);
+
+    if (exercises.length > 0) {
+      sessions.push({ letter, subtitle, exercises });
+    }
+  });
 
   // Fallback: se não encontrou blocos no novo formato, mostra texto bruto
   if (sessions.length === 0) {
@@ -1605,7 +1633,7 @@ async function sendOnboarding() {
 
       appendBubble('ob-messages','caleb', clean || 'Protocolo montado! Levando você para o painel...');
       onboardingHistory.push({role:'assistant', content:reply});
-      localStorage.setItem('caleb_conversation', JSON.stringify(onboardingHistory));
+      localStorage.setItem('caleb_onboarding_history', JSON.stringify(onboardingHistory));
       localStorage.setItem('caleb_profile', JSON.stringify(userProfile));
       localStorage.setItem('caleb_onboarded', '1');
 
@@ -1732,17 +1760,25 @@ function showFaq() {
 }
 
 function initChat() {
-  const container = document.getElementById('chat-messages'); // ID corrigido
+  const container = document.getElementById('chat-messages');
+  if (!container) return;
 
-  if (chatHistory.length > 0) {
-    chatHistory.forEach(m => {
-      appendBubble('chat-messages', m.role==='user'?'user':'caleb', m.content);
-    });
-  } else {
-    const welcome = 'O que você quer fazer hoje? Escolha uma opção ou descreva livremente.';
-    appendBubble('chat-messages','caleb', welcome);
-    chatHistory.push({role:'assistant', content:welcome});
+  // Chat pós-onboarding sempre começa do zero visualmente
+  // O histórico do onboarding é passado como contexto ao Caleb
+  // mas não é exibido na tela
+  if (chatHistory.length === 0) {
+    const nome = (userProfile && userProfile.nome) ? userProfile.nome : '';
+    const saudacao = nome
+      ? `Olá, ${nome}. No que posso te ajudar hoje?`
+      : 'No que posso te ajudar hoje?';
+
+    appendBubble('chat-messages', 'caleb', saudacao);
+    chatHistory.push({ role: 'assistant', content: saudacao });
     buildQuickActions(container);
+  } else {
+    chatHistory.forEach(m => {
+      appendBubble('chat-messages', m.role === 'user' ? 'user' : 'caleb', m.content);
+    });
   }
   scrollToBottom('chat-messages');
 }
@@ -1788,6 +1824,14 @@ async function sendChatMsg(text) {
   const currentWk = getCurrentWorkout();
   if (currentWk) {
     sys += '\n\n# TREINO ATUAL DO USUÁRIO\n' + currentWk.content;
+  }
+  // Injetar histórico do onboarding como memória do Caleb
+  const onboardingCtx = safeParseJSON('caleb_onboarding_history', []);
+  if (onboardingCtx.length > 0) {
+    const onboardingText = onboardingCtx
+      .map(m => `${m.role === 'user' ? 'Usuário' : 'Caleb'}: ${m.content}`)
+      .join('\n');
+    sys += '\n\n# HISTÓRICO DO ONBOARDING (memória — não repetir, apenas usar como contexto)\n' + onboardingText;
   }
 
   showLoader('Caleb está pensando...');
@@ -2343,7 +2387,7 @@ function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(e
 function confirmReset() { if (confirm('Tem certeza? Todo o progresso e protocolo serão perdidos.')) resetAll(); }
 
 function resetAll() {
-  ['caleb_profile','caleb_onboarded','caleb_conversation','caleb_sessions','caleb_weights','caleb_workout_versions', 'caleb_session_logs', 'caleb_cycle_reports'].forEach(k => localStorage.removeItem(k));
+  ['caleb_profile','caleb_onboarded','caleb_conversation','caleb_onboarding_history','caleb_sessions','caleb_weights','caleb_workout_versions', 'caleb_session_logs', 'caleb_cycle_reports'].forEach(k => localStorage.removeItem(k));
   userProfile = null; chatHistory = []; onboardingHistory = []; chatInitialized = false;
   document.getElementById('chat-messages').innerHTML = '';
   document.getElementById('workout-ready-banner')?.remove();
