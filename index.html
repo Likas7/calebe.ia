@@ -3,25 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0a0a0a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="CALEB.IA">
-<title>CALEB.IA</title>
+<meta name="theme-color" content="#0a0a0a">
+<title>Caleb.IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --orange:#e85d2f;--orange-dim:#3a1a0a;--orange-glow:rgba(232,93,47,0.2);
-  --bg:#0a0a0a;--surface:#141414;--surface2:#1c1c1c;
-  --border:#242424;--border2:#2e2e2e;
-  --text:#f0f0f0;--text2:#a0a0a0;--text3:#565656;
-  --green:#3acb7a;--green-dim:#0d2a1a;
+  --orange:#e85d2f;--orange-hi:#ff7547;--orange-lo:#b8431f;
+  --orange-dim:#3a1a0a;--orange-glow:rgba(232,93,47,0.25);
+  --bg:#0a0908;--bg-elev:#0f0e0d;
+  --surface:#141311;--surface2:#1a1815;--surface3:#221f1b;
+  --border:#242220;--border2:#2e2b28;--border-hi:#3a3632;
+  --text:#f4f1ec;--text2:#a39d94;--text3:#5c5750;--text4:#3d3a36;
+  --green:#3acb7a;--green-dim:#0f2a1a;
+  --blue:#7aa2c4;--amber:#d4a04a;--red:#d44a3a;
+  --font-sans:'Inter Tight',ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --ease:cubic-bezier(0.22,1,0.36,1);--dur:220ms;
   --radius:16px;--radius-sm:10px;--radius-xs:8px;
   --nav-h:80px;--header-h:56px;--status-h:44px;
+  --shadow-1:0 1px 0 rgba(255,255,255,0.03) inset,0 1px 2px rgba(0,0,0,0.4);
+  --shadow-2:0 8px 24px rgba(0,0,0,0.5),0 1px 0 rgba(255,255,255,0.04) inset;
+  --shadow-orange:0 0 0 1px rgba(232,93,47,0.3),0 10px 30px -10px rgba(232,93,47,0.5);
 }
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;
-  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  font-family:var(--font-sans);
+  background-image:radial-gradient(800px 400px at 50% -10%,rgba(232,93,47,0.04),transparent 60%);
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;
+  letter-spacing:-0.005em}
 button{font-family:inherit;cursor:pointer}
 input,textarea{font-family:inherit}
 textarea{resize:none}
@@ -36,10 +48,6 @@ textarea{resize:none}
 .screen.off-up{transform:translateY(100%);opacity:0;pointer-events:none}
 .screen.off-left{transform:translateX(-20%);opacity:0;pointer-events:none}
 
-/* CHAT FIX: Prioridade Máxima sobre qualquer tela */
-#s-chat { z-index: 9999; }
-#s-faq { z-index: 10000; }
-
 /* STATUS BAR */
 .status-bar{height:var(--status-h);display:flex;align-items:center;
   justify-content:space-between;padding:0 24px;flex-shrink:0}
@@ -49,7 +57,7 @@ textarea{resize:none}
 /* TOP BAR */
 .topbar{height:var(--header-h);display:flex;align-items:center;
   justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);flex-shrink:0}
-.logo{font-size:19px;font-weight:800;letter-spacing:-.3px;color:var(--text)}
+.logo{font-size:17px;font-weight:700;letter-spacing:-0.03em;color:var(--text)}
 .logo em{font-style:normal;color:var(--orange)}
 .version-pill{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);
   background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 10px}
@@ -64,9 +72,11 @@ textarea{resize:none}
 .icon-btn svg{width:16px;height:16px;stroke:var(--text);fill:none;stroke-width:2;
   stroke-linecap:round;stroke-linejoin:round}
 .caleb-info{flex:1;display:flex;align-items:center;gap:10px}
-.caleb-avatar{width:34px;height:34px;border-radius:10px;background:var(--orange-dim);
-  border:1px solid var(--orange);display:flex;align-items:center;justify-content:center;
-  font-size:14px;font-weight:800;color:var(--orange);flex-shrink:0}
+.caleb-avatar{width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(135deg,var(--orange),var(--orange-lo));
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:700;color:#1a0a04;flex-shrink:0;
+  box-shadow:0 4px 10px -4px rgba(232,93,47,0.5)}
 .caleb-name{font-size:15px;font-weight:600;line-height:1.2}
 .caleb-online{font-size:11px;color:var(--green);font-weight:500}
 .faq-btn{width:36px;height:36px;border-radius:var(--radius-xs);background:var(--surface);
@@ -81,17 +91,25 @@ textarea{resize:none}
 .nav-btn.active{opacity:1}
 .nav-btn.active svg{stroke:var(--orange)}
 .nav-btn.active .nav-label{color:var(--orange)}
+.nav-btn.active::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:16px;height:2px;background:var(--orange);border-radius:0 0 2px 2px}
+.nav-btn{position:relative}
 .nav-btn svg{width:22px;height:22px;stroke:var(--text);fill:none;stroke-width:1.8;
   stroke-linecap:round;stroke-linejoin:round}
 .nav-label{font-size:10px;color:var(--text);font-weight:500}
 
 /* FAB */
-.fab{position:fixed;bottom:calc(var(--nav-h) + 16px);right:20px;width:54px;height:54px;
-  border-radius:27px;background:var(--orange);border:none;display:flex;align-items:center;
-  justify-content:center;z-index:50;box-shadow:0 4px 24px var(--orange-glow);
-  transition:transform .2s}
-.fab:active{transform:scale(.92)}
-.fab svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fab{position:fixed;bottom:calc(var(--nav-h) + 16px);right:20px;width:52px;height:52px;
+  border-radius:50%;background:var(--orange);border:none;display:flex;align-items:center;
+  justify-content:center;z-index:50;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.08) inset,0 10px 30px -8px rgba(232,93,47,0.6),0 4px 12px rgba(0,0,0,0.4);
+  transition:transform var(--dur) var(--ease);color:#1a0a04;position:fixed}
+.fab::after{content:'';position:absolute;inset:-6px;border-radius:50%;
+  background:radial-gradient(circle,var(--orange-glow),transparent 70%);
+  opacity:0.5;z-index:-1;animation:halo 2.4s ease-in-out infinite}
+@keyframes halo{0%,100%{transform:scale(1);opacity:0.4}50%{transform:scale(1.2);opacity:0.2}}
+.fab:hover{transform:scale(1.05)}
+.fab:active{transform:scale(.95)}
+.fab svg{width:22px;height:22px;stroke:#1a0a04;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 /* SCROLL */
 .scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -99,16 +117,24 @@ textarea{resize:none}
 .scroll-area{scrollbar-width:none}
 
 /* CARDS */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow-1);transition:border-color var(--dur) var(--ease)}
+.card-hi{background:linear-gradient(180deg,var(--surface2),var(--surface));border-color:var(--border2)}
+.card-feature{position:relative;overflow:hidden}
+.card-feature::before{content:'';position:absolute;top:0;left:0;width:100%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--orange) 20%,var(--orange) 80%,transparent);opacity:0.6}
 .card-sm{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm)}
 .section-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;
   letter-spacing:.08em;margin-bottom:10px}
 
 /* BUTTONS */
 .btn-primary{width:100%;background:var(--orange);border:none;border-radius:var(--radius-sm);
-  padding:15px;font-size:16px;font-weight:700;color:#fff;letter-spacing:.01em;
-  transition:transform .15s,background .15s}
-.btn-primary:active{transform:scale(.97);background:#d14f22}
+  padding:15px;font-size:15px;font-weight:600;color:#1a0a04;letter-spacing:-0.005em;
+  transition:transform var(--dur) var(--ease),background var(--dur) var(--ease),box-shadow var(--dur) var(--ease);
+  box-shadow:var(--shadow-orange);position:relative;overflow:hidden}
+.btn-primary::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.15),transparent 40%);pointer-events:none}
+.btn-primary:hover{background:var(--orange-hi)}
+.btn-primary:active{transform:scale(.97);background:var(--orange-lo)}
 .btn-outline{width:100%;background:none;border:1px solid var(--border2);border-radius:var(--radius-sm);
   padding:13px;font-size:14px;font-weight:600;color:var(--text2);transition:border-color .2s,color .2s}
 .btn-outline:active{border-color:var(--orange);color:var(--orange)}
@@ -126,9 +152,11 @@ textarea{resize:none}
 .msg-row{display:flex;gap:10px;margin-bottom:14px;animation:fadeUp .25s ease forwards;opacity:0;transform:translateY(6px)}
 .msg-row.user{flex-direction:row-reverse}
 @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
-.msg-av{width:30px;height:30px;border-radius:8px;background:var(--orange-dim);border:1px solid var(--orange);
-  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;
-  color:var(--orange);flex-shrink:0;margin-top:2px}
+.msg-av{width:30px;height:30px;border-radius:8px;
+  background:linear-gradient(135deg,var(--orange),var(--orange-lo));
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;
+  color:#1a0a04;flex-shrink:0;margin-top:2px;
+  box-shadow:0 3px 8px -3px rgba(232,93,47,0.5)}
 .bubble{max-width:78%;padding:12px 14px;border-radius:var(--radius);font-size:14px;line-height:1.6}
 .bubble.caleb{background:var(--surface);border:1px solid var(--border);border-top-left-radius:4px;color:var(--text)}
 .bubble.user{background:var(--orange-dim);border:1px solid rgba(232,93,47,.3);border-top-right-radius:4px;color:#e8a070}
@@ -161,23 +189,25 @@ textarea{resize:none}
 .send-btn svg{width:15px;height:15px;fill:#fff}
 
 /* HOME CARDS */
-.next-workout-card{background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius);padding:20px;margin-bottom:12px;position:relative;overflow:hidden}
-.next-workout-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  background:linear-gradient(90deg,var(--orange),#ff8c5a)}
+.next-workout-card{background:linear-gradient(160deg,rgba(232,93,47,0.1) 0%,var(--surface) 40%,var(--surface) 100%);
+  border:1px solid var(--border2);border-radius:var(--radius);padding:20px;margin-bottom:12px;position:relative;overflow:hidden}
+.next-workout-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--orange),transparent)}
 .pill-label{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;
   color:var(--orange);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px}
 .pill-label .dot{width:5px;height:5px;border-radius:50%;background:var(--orange)}
-.workout-title{font-size:22px;font-weight:800;color:var(--text);margin-bottom:4px}
+.workout-title{font-size:32px;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:-0.03em;line-height:1}
 .workout-subtitle{font-size:13px;color:var(--text2);margin-bottom:14px}
 .workout-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
-.tag{font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border2);color:var(--text2)}
+.tag{font-family:var(--font-mono);font-size:10.5px;padding:3px 8px;border-radius:4px;
+  border:1px solid var(--border);color:var(--text2);background:var(--surface2)}
+.tag.orange{border-color:var(--orange);color:var(--orange-hi);background:var(--orange-dim)}
 .tag.orange{border-color:var(--orange);color:var(--orange);background:var(--orange-dim)}
 
 /* WEEK ROW */
 .week-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
 .day-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
-  padding:10px 6px;text-align:center;transition:all 0.2s}
+  padding:10px 6px;text-align:center}
 .day-card.done{border-color:#1a4a2a;background:#0a1f10}
 .day-card.today{border-color:var(--orange);background:var(--orange-dim)}
 .day-letter{font-size:17px;font-weight:800;color:var(--text2);margin-bottom:2px}
@@ -194,11 +224,12 @@ textarea{resize:none}
 .borg-num{font-size:20px;font-weight:800;color:var(--text)}
 .borg-sub{font-size:11px;color:var(--green);font-weight:500}
 .borg-track{flex:1;height:6px;background:var(--border2);border-radius:3px;overflow:hidden}
-.borg-fill{height:100%;border-radius:3px;background:var(--orange);transition:width 0.5s ease;}
+.borg-fill{height:100%;border-radius:3px;background:var(--orange)}
 
 /* CYCLE PILL */
 .cycle-pill{display:inline-flex;align-items:center;gap:8px;background:var(--surface);
-  border:1px solid var(--border);border-radius:20px;padding:6px 14px;margin-bottom:16px;font-size:12px}
+  border:1px solid var(--border);border-radius:999px;padding:5px 12px;margin-bottom:16px;
+  font-family:var(--font-mono);font-size:11px}
 .cycle-pill-dot{width:6px;height:6px;border-radius:50%;background:var(--orange)}
 .cycle-pill-text{color:var(--text3)}
 .cycle-pill-week{color:var(--text);font-weight:600}
@@ -206,13 +237,15 @@ textarea{resize:none}
 /* STATS */
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px}
-.stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
-.stat-val{font-size:22px;font-weight:800;color:var(--text)}
+.stat-label{font-family:var(--font-mono);font-size:10.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px}
+.stat-val{font-size:22px;font-weight:600;color:var(--text);font-family:var(--font-mono);letter-spacing:-0.02em}
 .stat-sub{font-size:11px;color:var(--text3);margin-top:3px}
 .stat-sub.green{color:var(--green)}
 .stat-sub.orange{color:var(--orange)}
-.prog-bar{height:6px;background:var(--border2);border-radius:3px;overflow:hidden;margin-top:8px}
-.prog-fill{height:100%;border-radius:3px;background:var(--orange)}
+.prog-bar{height:6px;background:var(--surface2);border-radius:999px;overflow:hidden;margin-top:8px}
+.prog-fill{height:100%;border-radius:999px;background:var(--orange);position:relative;transition:width 400ms var(--ease)}
+.prog-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);animation:shimmer 2s linear infinite}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
 
 /* EXERCISE SELECT */
 .ex-select-wrap{position:relative;margin-bottom:10px}
@@ -237,9 +270,11 @@ textarea{resize:none}
 .nuck-tag{display:inline-block;font-size:11px;font-weight:600;padding:3px 8px;border-radius:5px}
 
 /* PROFILE */
-.profile-avatar{width:64px;height:64px;border-radius:20px;background:var(--orange-dim);
-  border:2px solid var(--orange);display:flex;align-items:center;justify-content:center;
-  font-size:28px;font-weight:800;color:var(--orange);margin:0 auto 12px}
+.profile-avatar{width:64px;height:64px;border-radius:20px;
+  background:linear-gradient(135deg,var(--orange),var(--orange-lo));
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;font-weight:700;color:#1a0a04;margin:0 auto 12px;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.08) inset,0 6px 16px -4px rgba(232,93,47,0.5)}
 .profile-name{font-size:20px;font-weight:800;text-align:center;margin-bottom:4px}
 .profile-sub{font-size:13px;color:var(--text2);text-align:center;margin-bottom:20px}
 .info-row{display:flex;justify-content:space-between;align-items:center;
@@ -290,8 +325,9 @@ textarea{resize:none}
 .set-row{display:flex;align-items:center;gap:10px}
 .set-label{font-size:12px;color:var(--text3);width:48px;flex-shrink:0}
 .set-input{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;
-  color:var(--text);font-size:14px;padding:8px 12px;outline:none;text-align:center}
-.set-input:focus{border-color:var(--orange)}
+  color:var(--text);font-size:14px;padding:8px 12px;outline:none;text-align:center;
+  font-family:var(--font-mono);transition:border-color var(--dur) var(--ease),background var(--dur) var(--ease)}
+.set-input:focus{border-color:var(--orange);background:var(--surface)}
 .set-unit{font-size:12px;color:var(--text3);width:24px}
 .set-check{width:28px;height:28px;border-radius:7px;border:1.5px solid var(--border2);
   background:none;display:flex;align-items:center;justify-content:center;flex-shrink:0;
@@ -300,20 +336,27 @@ textarea{resize:none}
 .set-check svg{width:12px;height:12px;stroke:var(--orange);fill:none;stroke-width:2.5;
   stroke-linecap:round;stroke-linejoin:round;display:none}
 .set-check.done svg{display:block}
-
-/* BORG REMOVIDO DOS CARDS -> Apenas no final agora */
+.borg-section{margin-top:4px}
+.borg-title-sm{font-size:12px;color:var(--text3);margin-bottom:8px}
 .borg-buttons{display:flex;gap:4px}
 .borg-btn{flex:1;padding:7px 0;border-radius:7px;border:1px solid var(--border);
   background:var(--surface2);font-size:12px;font-weight:600;color:var(--text3);transition:all .15s}
-.borg-btn.selected{background:var(--orange-dim);border-color:var(--orange);color:var(--orange)}
-
+.borg-btn.sel{background:var(--orange-dim);border-color:var(--orange);color:var(--orange)}
+.eyebrow{font-family:var(--font-mono);font-size:10.5px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3)}
+.eyebrow-accent{color:var(--orange)}
+.mono-num{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
 .option-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;margin-bottom:4px}
 .tooltip-term{border-bottom:1px dotted var(--orange);cursor:pointer}
-.option-chip{background:var(--surface2);border:1.5px solid var(--orange);border-radius:20px;padding:8px 16px;font-size:13px;color:var(--orange);font-weight:600;cursor:pointer;transition:all .18s;font-family:inherit;letter-spacing:.01em}
+.chips-hint{font-size:11px;color:var(--text3);text-align:center;margin-top:6px;display:block}
+.option-chip{background:var(--surface2);border:1px solid var(--border2);border-radius:999px;
+  padding:8px 14px;font-size:12.5px;color:var(--text2);font-weight:500;cursor:pointer;
+  transition:all var(--dur) var(--ease);font-family:var(--font-mono);letter-spacing:0.01em}
+.option-chip:hover{background:var(--orange-dim);border-color:var(--orange);color:var(--orange-hi)}
 .option-chip:hover{background:var(--orange);color:#fff;transform:scale(1.02)}
 .option-chip:active{transform:scale(.97)}
-.option-chip.chosen{background:var(--orange);color:#fff;opacity:.85;cursor:default}
+.option-chip.chosen{background:var(--orange-dim);border-color:var(--orange);color:var(--orange-hi);cursor:default}
 .option-chip:disabled{cursor:default}
+.chips-hint{font-size:11px;color:var(--text3);text-align:center;margin-top:6px;display:block}
 
 /* REPORT */
 .report-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
@@ -329,67 +372,20 @@ textarea{resize:none}
 .report-detail{font-size:12px;color:var(--text2)}
 
 /* LOADING */
-.loader-overlay {
-  position: fixed; inset: 0; background: rgba(10,10,10,.85); z-index: 99999;
-  display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
-}
-/* 👇 Esta é a linha mágica que estava faltando 👇 */
-.loader-overlay.visible { display: flex !important; }
-
-.loader-spinner {
-  width: 36px; height: 36px; border: 3px solid var(--border2); border-top-color: var(--orange);
-  border-radius: 50%; animation: spin .8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg) } }
-.loader-text { font-size: 14px; color: var(--text2); }
-
-/* 1RM TABLE */
-.rm-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-.rm-table th { text-align: left; font-size: 11px; color: var(--text3); padding: 8px 4px; border-bottom: 1px solid var(--border); }
-.rm-table td { font-size: 13px; padding: 10px 4px; border-bottom: 1px solid var(--border); }
-.rm-table td:last-child { color: var(--orange); font-weight: 600; text-align: right; }
-
-.form-cargas { margin-top: 12px; display: flex; flex-direction: column; gap: 10px; }
-.form-cargas-row { display: grid; grid-template-columns: 1fr 72px 36px 56px 36px; align-items: center; gap: 8px; }
-.form-cargas-label { font-size: 13px; font-weight: 600; color: var(--text); }
-.form-cargas-input { background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; padding: 7px 10px; color: var(--text); font-size: 14px; outline: none; text-align: center; width: 100%; font-family: inherit; }
-.form-cargas-input:focus { border-color: var(--orange); }
-.form-cargas-unit { font-size: 11px; color: var(--text3); }
-.form-cargas-btn { width: 100%; margin-top: 12px; background: var(--orange); border: none; border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 700; color: #fff; cursor: pointer; font-family: inherit; }
-
-/* TABS DE TREINO E IMPRESSÃO (PDF) */
-.training-tabs { display:flex; overflow-x:auto; gap:8px; margin-bottom:16px; padding:0 16px; scrollbar-width:none; }
-.training-tabs::-webkit-scrollbar { display:none; }
-.training-tab { background:var(--surface); border:1px solid var(--border); color:var(--text2); padding:8px 16px; border-radius:20px; font-size:13px; font-weight:600; white-space:nowrap; }
-.training-tab.active { background:var(--orange-dim); border-color:var(--orange); color:var(--orange); }
-.training-session { display:none; }
-.training-session.active { display:block; animation:fadeIn 0.3s; }
-.training-ex-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; margin-bottom:10px; }
-.training-ex-name { font-size:16px; font-weight:700; margin-bottom:4px; }
-.training-ex-spec { font-size:13px; color:var(--text2); margin-bottom:6px; }
-.training-ex-note { font-size:12px; color:var(--text3); font-style:italic; border-left:2px solid var(--orange); padding-left:8px; }
-
-@media print {
-  .bottom-nav, .topbar, .fab, button, .version-history, #s-chat, #s-faq { display: none !important; }
-  #app, .screen, .scroll-area { position: static !important; overflow: visible !important; height: auto !important; background: white !important; color: black !important; }
-  .training-session { display: block !important; page-break-inside: avoid; }
-  .training-tabs { display: none !important; }
-  .training-ex-card { border: 1px solid #ccc !important; break-inside: avoid; margin-bottom: 10px; padding: 10px; }
-  body { background: white !important; }
-  * { color: black !important; }
-}
-
+.loader-overlay{position:fixed;inset:0;background:rgba(10,10,10,.85);z-index:200;
+  display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.loader-spinner{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--orange);
+  border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader-text{font-size:14px;color:var(--text2)}
 </style>
 </head>
 <body>
 <div id="app">
 
-<div class="loader-overlay" id="loader">
-  <div class="loader-spinner"></div>
-  <div class="loader-text" id="loader-text">Caleb está pensando...</div>
-</div>
-
+<!-- SCREEN: SPLASH -->
 <div class="screen" id="s-splash">
+  <div class="status-bar"><span class="status-time" id="t-splash">--:--</span><div class="status-icon"></div></div>
   <div class="topbar">
     <div class="logo">CALEB<em>.IA</em></div>
     <div class="version-pill">v1.1 M.A.X. Core <div class="live-dot"></div></div>
@@ -418,26 +414,28 @@ textarea{resize:none}
       </div>
       <div style="display:inline-flex;align-items:center;gap:6px;border:1px solid var(--orange);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;color:var(--orange);margin-bottom:20px">
         <div style="width:5px;height:5px;border-radius:50%;background:var(--orange)"></div>
-        TRIAL · 14 DIAS, ACESSO COMPLETO
+        TRIAL · 14 DIAS — ACESSO COMPLETO
       </div>
     </div>
     <div>
-      <button class="btn-primary" onclick="goToOnboarding()">Montar Meu Protocolo</button>
+      <button class="btn-primary" onclick="startOnboarding()">Montar Meu Protocolo</button>
       <div class="splash-byline">Desenvolvido por Lucas<br>Personal Trainer · Especialista em Hipertrofia e Treinamento de Força</div>
     </div>
   </div>
 </div>
 
+<!-- SCREEN: ONBOARDING CHAT -->
 <div class="screen off" id="s-onboarding">
+  <div class="status-bar"><span class="status-time" id="t-onboarding">--:--</span><div class="status-icon"></div></div>
   <div class="topbar">
     <div class="logo">CALEB<em>.IA</em></div>
     <div style="font-size:12px;color:var(--text3)">Montando seu protocolo</div>
   </div>
-  <div class="scroll-area" id="ob-messages" style="padding:16px;display:flex;flex-direction:column;gap:2px"></div>
+  <div class="scroll-area" id="onboarding-msgs" style="padding:16px;display:flex;flex-direction:column;gap:2px"></div>
   <div class="input-area">
     <div class="input-row">
-      <textarea class="chat-input" id="ob-input" placeholder="Digite sua resposta..." rows="1"
-        oninput="autoResize(this)" onkeydown="obKeydown(event)"></textarea>
+      <textarea class="chat-input" id="onboarding-input" placeholder="Digite sua resposta..." rows="1"
+        oninput="autoResize(this)" onkeydown="handleKey(event,'onboarding')"></textarea>
       <button class="send-btn" onclick="sendOnboarding()">
         <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
       </button>
@@ -445,21 +443,24 @@ textarea{resize:none}
   </div>
 </div>
 
+<!-- SCREEN: HOME -->
 <div class="screen off" id="s-home">
+  <div class="status-bar"><span class="status-time" id="t-home">--:--</span><div class="status-icon"></div></div>
   <div class="topbar">
     <div class="logo">CALEB<em>.IA</em></div>
     <div class="version-pill">v1.1 M.A.X. Core <div class="live-dot"></div></div>
   </div>
   <div class="scroll-area" style="padding:18px 16px">
     <div style="margin-bottom:16px">
-      <div style="font-size:22px;font-weight:800" id="home-greeting">Atleta 👋</div>
+      <div style="font-size:13px;color:var(--text3);margin-bottom:3px">BOM DIA</div>
+      <div style="font-size:26px;font-weight:600;letter-spacing:-0.02em" id="home-greeting">Atleta.</div>
     </div>
     <div class="cycle-pill">
       <div class="cycle-pill-dot"></div>
       <div class="cycle-pill-text">Ciclo 1 —</div>
-      <div class="cycle-pill-week" id="home-cycle-badge">Semana 1 de 4</div>
+      <div class="cycle-pill-week" id="home-cycle">Semana 1 de 4</div>
     </div>
-    <div class="next-workout-card">
+    <div class="next-workout-card card-feature">
       <div class="pill-label"><div class="dot"></div>Próximo treino</div>
       <div class="workout-title" id="home-title">Treino A</div>
       <div class="workout-subtitle" id="home-sub">Peito + Tríceps</div>
@@ -479,7 +480,7 @@ textarea{resize:none}
     </div>
     <div class="borg-card">
       <div class="borg-info">
-        <div class="borg-label" onclick="showTooltip(event,'Borg')" style="cursor:pointer;border-bottom:1px dotted var(--orange)">Borg médio da semana passada</div>
+        <div class="borg-label" onclick="showTooltip(event,'Borg')" style="cursor:pointer;border-bottom:1px dotted var(--orange)">Borg médio — semana passada</div>
         <div class="borg-num" id="home-borg">--</div>
         <div class="borg-sub" id="home-borg-sub">Sem dados ainda</div>
       </div>
@@ -491,10 +492,6 @@ textarea{resize:none}
     <button class="nav-btn active" onclick="navTo('home')">
       <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       <div class="nav-label">Home</div>
-    </button>
-    <button class="nav-btn" onclick="navTo('training')">
-      <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
-      <div class="nav-label">Treino</div>
     </button>
     <button class="nav-btn" onclick="navTo('progress')">
       <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
@@ -510,7 +507,9 @@ textarea{resize:none}
   </button>
 </div>
 
+<!-- SCREEN: CHAT FLUTUANTE -->
 <div class="screen off-up" id="s-chat">
+  <div class="status-bar"><span class="status-time" id="t-chat">--:--</span><div class="status-icon"></div></div>
   <div class="chat-header">
     <button class="icon-btn" onclick="hideScreen('s-chat')">
       <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
@@ -521,11 +520,11 @@ textarea{resize:none}
     </div>
     <button class="faq-btn" onclick="showScreen('s-faq')">!</button>
   </div>
-  <div class="scroll-area" id="chat-messages" style="padding:16px;display:flex;flex-direction:column;gap:2px"></div>
+  <div class="scroll-area" id="chat-msgs" style="padding:16px;display:flex;flex-direction:column;gap:2px"></div>
   <div class="input-area">
     <div class="input-row">
       <textarea class="chat-input" id="chat-input" placeholder="Ou descreva o que precisa..." rows="1"
-        oninput="autoResize(this)" onkeydown="chatKeydown(event)"></textarea>
+        oninput="autoResize(this)" onkeydown="handleKey(event,'chat')"></textarea>
       <button class="send-btn" onclick="sendChat()">
         <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
       </button>
@@ -533,7 +532,9 @@ textarea{resize:none}
   </div>
 </div>
 
+<!-- SCREEN: FAQ -->
 <div class="screen off" id="s-faq">
+  <div class="status-bar"><span class="status-time" id="t-faq">--:--</span><div class="status-icon"></div></div>
   <div class="chat-header">
     <button class="icon-btn" onclick="hideScreen('s-faq')">
       <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
@@ -543,55 +544,63 @@ textarea{resize:none}
   <div class="scroll-area" style="padding:0 16px 40px">
     <div class="faq-section-title" style="margin-top:16px">Adaptar o treino</div>
     <div class="faq-card"><div class="faq-q">Mudar os dias da semana</div><div class="faq-a">Se sua semana mudou, avise o Caleb. Ele reorganiza as sessões mantendo o volume e a progressão de carga.</div><div class="faq-ex">"Essa semana só posso treinar segunda, quarta e sexta"</div></div>
-    <div class="faq-card"><div class="faq-q">Encaixar atividade extra</div><div class="faq-a">Jiu-jítsu, natação, corrida: o Caleb ajusta o treino de força para não colidir com o esforço extra.</div><div class="faq-ex">"Vou começar jiu-jítsu às terças e quintas"</div></div>
+    <div class="faq-card"><div class="faq-q">Encaixar atividade extra</div><div class="faq-a">Jiu-jítsu, natação, corrida — o Caleb ajusta o treino de força para não colidir com o esforço extra.</div><div class="faq-ex">"Vou começar jiu-jítsu às terças e quintas"</div></div>
     <div class="faq-card"><div class="faq-q">Ajustar tempo por sessão</div><div class="faq-a">Com menos tempo, o Caleb remove isoladores (exercícios para músculos específicos) e mantém os compostos principais.</div><div class="faq-ex">"Essa semana tenho só 40 minutos por sessão"</div></div>
-    <div class="faq-card"><div class="faq-q">Reduzir ou aumentar intensidade</div><div class="faq-a">Semana difícil, energia baixa ou recuperação ruim: o Caleb reduz o volume automaticamente sem perder a progressão.</div><div class="faq-ex">"Estou me sentindo bem cansado essa semana"</div></div>
+    <div class="faq-card"><div class="faq-q">Reduzir ou aumentar intensidade</div><div class="faq-a">Semana difícil, energia baixa ou recuperação ruim — o Caleb reduz o volume automaticamente sem perder a progressão.</div><div class="faq-ex">"Estou me sentindo bem cansado essa semana"</div></div>
     <div class="faq-section-title">Exercícios</div>
-    <div class="faq-card"><div class="faq-q">Trocar um exercício</div><div class="faq-a">Sem equipamento, desconforto ou preferência. O Caleb substitui mantendo o grupo muscular e o volume.</div><div class="faq-ex">"Não tenho cabo, o que substitui o fly?"</div></div>
+    <div class="faq-card"><div class="faq-q">Trocar um exercício</div><div class="faq-a">Sem equipamento, desconforto ou preferência. O Caleb substitui mantendo o grupo muscular e o volume.</div><div class="faq-ex">"Não tenho cabo — o que substitui o fly?"</div></div>
     <div class="faq-card"><div class="faq-q">Dúvidas de execução</div><div class="faq-a">Como executar, qual amplitude usar, qual cadência (velocidade do movimento), por que aquele exercício está no treino.</div><div class="faq-ex">"Como faço o agachamento búlgaro corretamente?"</div></div>
-    <div class="faq-section-title" style="color:var(--orange);">O que o Caleb NÃO faz</div>
-    <div class="faq-card"><div class="faq-q">Diagnósticos médicos</div><div class="faq-a">Dor ou lesão? Consulte um profissional de saúde.</div></div>
-    <div class="faq-card"><div class="faq-q">Hormônios e medicamentos</div><div class="faq-a">Nenhuma orientação sobre substâncias controladas.</div></div>
+    <div class="faq-section-title">Nutrição</div>
+    <div class="faq-card"><div class="faq-q">Taxa Metabólica Basal (TMB)</div><div class="faq-a">O Caleb calcula sua TMB pela fórmula de Mifflin-St Jeor e explica o que o número significa na prática. Para cardápio e orientações completas, você precisa de um nutricionista.</div><div class="faq-ex">"Qual é o meu gasto calórico?"</div></div>
+    <div class="faq-card" style="border-color:rgba(232,93,47,.3);"><div class="faq-q">Consultoria Forte e Corajoso</div><div class="faq-a">Para orientações completas de nutrição e cardápio personalizado, acesse a consultoria especializada de Lucas.</div><p style="margin-top:8px;"><a href="https://instagram.com/forteecorajoso" target="_blank" style="color:var(--orange);font-weight:700;text-decoration:none;">→ @forteecorajoso no Instagram</a></p></div>
+    <div class="faq-card"><div class="faq-q">Suplementação</div><div class="faq-a">Recomenda apenas o que tem evidência sólida: creatina monoidratada (para todos) e whey (quando necessário). Não recomenda BCAA nem gainers.</div><div class="faq-ex">"Devo tomar creatina? Como usar?"</div></div>
+    <div class="faq-section-title">O que o Caleb NÃO faz</div>
+    <div class="faq-card"><div class="faq-q">Diagnósticos médicos</div><div class="faq-a">Dor persistente por mais de 2 semanas → encaminhamento ao especialista. Caleb nunca diagnostica lesões ou condições.</div></div>
+    <div class="faq-card"><div class="faq-q">Hormônios e medicamentos</div><div class="faq-a">Qualquer dúvida sobre uso de substâncias médicas está completamente fora do escopo do Caleb.</div></div>
   </div>
 </div>
 
+<!-- SCREEN: EXECUÇÃO DO TREINO -->
 <div class="screen off" id="s-workout">
+  <div class="status-bar"><span class="status-time" id="t-workout">--:--</span><div class="status-icon"></div></div>
   <div class="chat-header">
-    <button class="icon-btn" onclick="cancelWorkout()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <button class="icon-btn" onclick="hideScreen('s-workout')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div style="flex:1">
       <div style="font-size:15px;font-weight:700" id="wk-title">Treino A</div>
       <div style="font-size:11px;color:var(--text3)" id="wk-sub">Iniciando sessão</div>
     </div>
     <div style="font-size:13px;font-weight:600;color:var(--orange)" id="wk-timer">00:00</div>
   </div>
-  <div class="scroll-area" style="padding:14px 14px 40px" id="workout-content"></div>
+  <div class="scroll-area" style="padding:14px 14px 40px" id="workout-exercises"></div>
   <div style="padding:14px;border-top:1px solid var(--border);flex-shrink:0">
     <button class="btn-primary" onclick="finishWorkout()">Concluir Sessão</button>
   </div>
 </div>
 
+<!-- SCREEN: PROGRESSO -->
 <div class="screen off" id="s-progress">
+  <div class="status-bar"><span class="status-time" id="t-progress">--:--</span><div class="status-icon"></div></div>
   <div class="topbar"><div class="logo">CALEB<em>.IA</em></div><div class="version-pill">v1.1 M.A.X. Core <div class="live-dot"></div></div></div>
   <div class="scroll-area" style="padding:18px 16px 40px">
     <div style="font-size:22px;font-weight:800;text-align:center;margin-bottom:6px">Seu Progresso</div>
     <div style="font-size:13px;color:var(--text2);text-align:center;margin-bottom:20px">Acompanhe sua evolução ao longo do tempo.</div>
     <div class="card" style="padding:16px;margin-bottom:12px">
-      <div class="section-label">Ciclo atual: <span id="prog-cycle-label">Semana 1 de 4</span></div>
-      <div class="prog-bar"><div class="prog-fill progress-bar-fill" style="width:25%"></div></div>
+      <div class="section-label">Ciclo atual — <span id="prog-cycle">Semana 1 de 4</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-bar" style="width:25%"></div></div>
       <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-top:6px">
-        <span id="prog-started">Iniciado em --/--</span><span id="prog-cycle-pct">25%</span>
+        <span id="prog-started">Iniciado em --/--</span><span id="prog-pct">25% concluído</span>
       </div>
     </div>
     <div class="stat-grid">
-      <div class="stat-card"><div class="stat-label">Sessões</div><div class="stat-val" id="metric-sessions">0</div><div class="stat-sub">este ciclo</div></div>
-      <div class="stat-card"><div class="stat-label">Aderência</div><div class="stat-val" id="metric-adherence">0%</div><div class="stat-sub" id="metric-adherence-sub">—</div></div>
-      <div class="stat-card"><div class="stat-label">Borg médio</div><div class="stat-val" id="metric-borg">--</div><div class="stat-sub">percepção de esforço</div></div>
-      <div class="stat-card"><div class="stat-label">Progressões</div><div class="stat-val" id="metric-progressions">0</div><div class="stat-sub orange" id="metric-progressions-sub">—</div></div>
+      <div class="stat-card"><div class="stat-label">Sessões</div><div class="stat-val" id="prog-sessions">0/12</div><div class="stat-sub">este ciclo</div></div>
+      <div class="stat-card"><div class="stat-label">Aderência</div><div class="stat-val" id="prog-adh">0%</div><div class="stat-sub" id="prog-adh-sub">—</div></div>
+      <div class="stat-card"><div class="stat-label">Borg médio</div><div class="stat-val" id="prog-borg">--</div><div class="stat-sub">percepção de esforço</div></div>
+      <div class="stat-card"><div class="stat-label">Progressões</div><div class="stat-val" id="prog-prog">0</div><div class="stat-sub orange" id="prog-prog-sub">—</div></div>
     </div>
     <div class="card" style="padding:16px;margin-bottom:12px">
       <div class="section-label" style="margin-bottom:12px">Evolução por exercício</div>
       <div class="ex-select-wrap">
-        <select class="ex-select" id="exercise-select" onchange="updateChart(this.value)">
+        <select class="ex-select" id="prog-select" onchange="updateChart()">
           <option value="supino">Supino Inclinado</option>
           <option value="agachamento">Agachamento Livre</option>
           <option value="terra">Terra Romeno</option>
@@ -600,72 +609,59 @@ textarea{resize:none}
         </select>
         <div class="ex-select-arrow">▼</div>
       </div>
-      <div class="chart-bars" id="chart-bars"></div>
+      <div class="chart-bars" id="prog-chart"></div>
       <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
         <div class="section-label" style="margin-bottom:8px">Classificação Nuckols</div>
         <div class="nuck-labels"><span>Inic.</span><span>Novato</span><span>Inter.</span><span>Avanç.</span><span>Elite</span></div>
-        <div class="nuck-bar"><div class="nuck-fill" id="nuckols-fill" style="width:45%"></div></div>
+        <div class="nuck-bar"><div class="nuck-fill" id="nuck-fill" style="width:45%"></div></div>
         <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
-          <span class="nuck-tag" id="nuckols-tag" style="background:var(--orange-dim);color:var(--orange)">Intermediário</span>
-          <span style="font-size:11px;color:var(--text3)" id="nuckols-ratio">0.94× peso corporal</span>
+          <span class="nuck-tag" id="nuck-tag" style="background:#2a1a08;color:var(--orange)">Intermediário</span>
+          <span style="font-size:11px;color:var(--text3)" id="nuck-ratio">0.94× peso corporal</span>
         </div>
       </div>
     </div>
-
-    <div class="card" style="padding:16px;margin-bottom:16px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <div class="section-label" style="margin-bottom:0">Força de Referência</div>
-        <button class="btn-outline" style="padding:4px 8px;font-size:11px;width:auto;height:auto" onclick="openChatWithPrompt('Testei minhas cargas hoje e quero atualizar minha força de referência.')">Atualizar</button>
-      </div>
-      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Baseado em testes de 1RM ou estimativas validadas pelo Caleb.</div>
-      <table class="rm-table">
-        <thead>
-          <tr>
-            <th>Exercício</th>
-            <th>1RM</th>
-            <th>Ratio / Niv.</th>
-          </tr>
-        </thead>
-        <tbody id="rm-table-body"></tbody>
-      </table>
-    </div>
-
     <div class="report-card">
-      <div class="report-header">Relatório do Ciclo</div>
-      <div id="cycle-report-container">
-          <div style="font-size:13px;color:var(--text3);text-align:center;padding:20px;">Nenhum relatório gerado ainda.</div>
+      <div class="report-header">Relatório — Ciclo anterior</div>
+      <div class="report-row"><div class="report-badge badge-up">📈</div><div class="report-ex">Supino Inclinado</div><div class="report-detail" style="color:var(--green)">60 → 75kg +25%</div></div>
+      <div class="report-row"><div class="report-badge badge-up">📈</div><div class="report-ex">Agachamento Livre</div><div class="report-detail" style="color:var(--green)">80 → 95kg +19%</div></div>
+      <div class="report-row"><div class="report-badge badge-warn">⚠️</div><div class="report-ex">Leg Press</div><div class="report-detail" style="color:#e8a030">Borg abaixo da zona</div></div>
+      <div class="report-row"><div class="report-badge badge-down">📉</div><div class="report-ex">Desenvolvimento</div><div class="report-detail" style="color:#e05050">Estagnado 3 semanas</div></div>
+      <div style="margin-top:12px;padding:12px;background:var(--surface2);border-radius:var(--radius-xs);font-size:12px;color:var(--text2);line-height:1.6">
+        <span style="color:var(--orange);font-weight:600">Recomendação do Caleb:</span> Avançar para Fase de Força (6–8 reps) no próximo ciclo. Aumentar volume de costas de 10 para 12 séries/semana.
       </div>
     </div>
   </div>
   <div class="bottom-nav">
     <button class="nav-btn" onclick="navTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nav-label">Home</div></button>
-    <button class="nav-btn" onclick="navTo('training')"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg><div class="nav-label">Treino</div></button>
     <button class="nav-btn active" onclick="navTo('progress')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><div class="nav-label">Progresso</div></button>
     <button class="nav-btn" onclick="navTo('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nav-label">Perfil</div></button>
   </div>
   <button class="fab" onclick="openChat()"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></button>
 </div>
 
+<!-- SCREEN: PERFIL -->
 <div class="screen off" id="s-profile">
+  <div class="status-bar"><span class="status-time" id="t-profile">--:--</span><div class="status-icon"></div></div>
   <div class="topbar"><div class="logo">CALEB<em>.IA</em></div><div class="version-pill">v1.1 M.A.X. Core <div class="live-dot"></div></div></div>
   <div class="scroll-area" style="padding:24px 16px 40px">
-    <div class="profile-avatar" id="profile-avatar">?</div>
-    <div class="profile-name" id="profile-name">—</div>
+    <div class="profile-avatar" id="prof-av">?</div>
+    <div class="profile-name" id="prof-name">—</div>
     <div class="profile-sub">Atleta Caleb.IA</div>
-    <div style="text-align:center;margin-bottom:20px"><div class="plan-badge">⚡ TRIAL · 14 dias</div></div>
+    <div style="text-align:center;margin-bottom:20px"><div class="plan-badge">⚡ TRIAL — 14 dias</div></div>
     <div class="stat-grid" style="margin-bottom:12px">
-      <div class="stat-card"><div class="stat-label">Sessões</div><div class="stat-val" id="gm-sessions">0</div></div>
-      <div class="stat-card"><div class="stat-label">Sequência</div><div class="stat-val" id="gm-streak">0</div></div>
-      <div class="stat-card"><div class="stat-label">Volume</div><div class="stat-val" id="gm-volume">0</div></div>
-      <div class="stat-card"><div class="stat-label">Nível</div><div class="stat-val" id="gm-level">1</div></div>
+      <div class="stat-card"><div class="stat-label">Sessões</div><div class="stat-val" id="gm-sessions">—</div></div>
+      <div class="stat-card"><div class="stat-label">Sequência</div><div class="stat-val" id="gm-streak">—</div></div>
+      <div class="stat-card"><div class="stat-label">Volume</div><div class="stat-val" id="gm-volume">—</div></div>
+      <div class="stat-card"><div class="stat-label">Nível</div><div class="stat-val" id="gm-level">—</div></div>
     </div>
     <div class="card" style="padding:4px 16px;margin-bottom:12px">
       <div class="section-label" style="padding-top:14px;margin-bottom:0">Dados do Protocolo</div>
-      <div class="info-row"><div class="info-key">Objetivo</div><div class="info-val" id="prof-objetivo">—</div></div>
+      <div class="info-row"><div class="info-key">Objetivo</div><div class="info-val" id="prof-obj">—</div></div>
+      <div class="info-row" style="display:none"><div class="info-key">Protocolo</div><div class="info-val" id="prof-protocolo">—</div></div>
       <div class="info-row"><div class="info-key">Nível</div><div class="info-val" id="prof-nivel">—</div></div>
-      <div class="info-row"><div class="info-key">Protocolo</div><div class="info-val" id="prof-protocolo">—</div></div>
-      <div class="info-row"><div class="info-key">Frequência</div><div class="info-val" id="prof-frequencia">—</div></div>
-      <div class="info-row"><div class="info-key">Duração/sessão</div><div class="info-val" id="prof-duracao">—</div></div>
+      <div class="info-row"><div class="info-key">Protocolo</div><div class="info-val" id="prof-proto">—</div></div>
+      <div class="info-row"><div class="info-key">Frequência</div><div class="info-val" id="prof-freq">—</div></div>
+      <div class="info-row"><div class="info-key">Duração/sessão</div><div class="info-val" id="prof-dur">—</div></div>
       <div class="info-row"><div class="info-key">Local</div><div class="info-val" id="prof-local">—</div></div>
     </div>
     <div class="card" style="padding:4px 16px;margin-bottom:20px">
@@ -673,105 +669,37 @@ textarea{resize:none}
       <div class="info-row"><div class="info-key">Status</div><div class="info-val">TRIAL — 14 dias</div></div>
       <div class="info-row"><div class="info-key">Expira em</div><div class="info-val" id="prof-expira">—</div></div>
     </div>
-    <button class="btn-outline" style="margin-bottom:10px" onclick="confirmReset()">Reiniciar Protocolo</button>
+    <button class="btn-outline" style="margin-bottom:10px" onclick="resetAll()">Reiniciar Protocolo</button>
   </div>
   <div class="bottom-nav">
     <button class="nav-btn" onclick="navTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nav-label">Home</div></button>
-    <button class="nav-btn" onclick="navTo('training')"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg><div class="nav-label">Treino</div></button>
     <button class="nav-btn" onclick="navTo('progress')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><div class="nav-label">Progresso</div></button>
     <button class="nav-btn active" onclick="navTo('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nav-label">Perfil</div></button>
   </div>
   <button class="fab" onclick="openChat()"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></button>
 </div>
 
-<div class="screen off" id="s-training">
-  <div class="topbar">
-    <div class="logo">CALEB<em>.IA</em></div>
-    <div style="display:flex; gap:8px;">
-        <button class="btn-outline" style="padding:6px 12px;font-size:12px;width:auto;" onclick="printTraining()">📄 Salvar PDF</button>
-        <div class="version-pill" id="training-version-badge">v1.1 M.A.X. Core</div>
-    </div>
-  </div>
-
-  <div id="training-locked" class="training-locked" style="display:flex; flex-direction:column; padding:40px 20px;text-align:center;">
-    <div style="font-size:48px;margin-bottom:16px;">🔒</div>
-    <div style="font-size:18px;font-weight:800;margin-bottom:10px;">Protocolo bloqueado</div>
-    <div style="font-size:14px;color:var(--text2);margin-bottom:24px;">Complete o seu perfil no chat para gerar o seu treino personalizado.</div>
-    <button class="btn-primary" onclick="navTo('home')">Voltar ao Início</button>
-  </div>
-
-  <div id="training-unlocked" style="display:none;flex-direction:column;flex:1;overflow:hidden;position:relative;padding-bottom:70px;">
-    <div class="training-tabs" id="training-tabs" style="margin-top:16px;"></div>
-    <div class="scroll-area" id="training-sessions-wrap" style="padding:16px;"></div>
-    <div style="position:absolute;bottom:0;left:0;right:0;padding:12px 16px;background:var(--surface);border-top:1px solid var(--border2);z-index:10;">
-      <button class="btn-primary" onclick="openChatWithPrompt('Gostaria de adaptar meu treino atual. ')" style="background:var(--surface2);color:var(--text);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;">
-        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-        Pedir adaptação do treino
-      </button>
-    </div>
-  </div>
-
-  <div class="bottom-nav">
-    <button class="nav-btn" onclick="navTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nav-label">Home</div></button>
-    <button class="nav-btn active" onclick="navTo('training')"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg><div class="nav-label">Treino</div></button>
-    <button class="nav-btn" onclick="navTo('progress')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><div class="nav-label">Progresso</div></button>
-    <button class="nav-btn" onclick="navTo('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nav-label">Perfil</div></button>
-  </div>
+<!-- LOADING -->
+<div class="loader-overlay" id="loader" style="display:none">
+  <div class="loader-spinner"></div>
+  <div class="loader-text" id="loader-text">Caleb está pensando...</div>
 </div>
 
-<div class="screen off-up" id="s-finish" style="z-index:20;">
-  <div class="topbar">
-    <div class="logo">Sessão concluída</div>
-  </div>
-  <div class="scroll-area" style="padding:24px 20px;">
-    <div style="text-align:center;margin-bottom:28px;">
-      <div style="width:64px;height:64px;background:var(--green);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;font-weight:800;margin:0 auto 14px;">✓</div>
-      <div style="font-size:22px;font-weight:800;" id="finish-title">Treino A</div>
-      <div style="font-size:14px;color:var(--text2);margin-top:4px;" id="finish-duration">0 min</div>
-    </div>
-    <div class="card" style="padding:16px;margin-bottom:16px;">
-      <div style="font-size:13px;font-weight:600;margin-bottom:4px;">Como foi a sessão de hoje?</div>
-      <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">Escala de Borg CR10 — 1 = muito leve · 10 = máximo absoluto</div>
-      <div class="borg-buttons" id="finish-borg" style="display:flex;gap:4px;flex-wrap:wrap">
-          </div>
-    </div>
-    <div class="card" style="padding:16px;margin-bottom:24px;">
-      <textarea id="finish-obs" placeholder="Observação geral sobre o treino de hoje (opcional)" style="width:100%;background:none;border:none;outline:none;color:var(--text);font-size:14px;resize:none;font-family:inherit;line-height:1.5;" rows="3"></textarea>
-    </div>
-    <button class="btn-primary" onclick="saveAndFinish()">Salvar Sessão e Fechar</button>
-  </div>
-</div>
-
-</div><div id="tooltip-box" style="position:fixed;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:14px 16px;max-width:280px;font-size:13px;color:var(--text2);line-height:1.6;z-index:500;box-shadow:0 4px 20px rgba(0,0,0,.4);display:none;">
-  <button onclick="document.getElementById('tooltip-box').style.display='none'" style="float:right;background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;margin-left:8px;">×</button>
-  <span id="tooltip-text"></span>
-</div>
-
-<div id="toast" style="position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:8px 16px;font-size:12px;color:var(--text);z-index:1000;display:none;"></div>
-
+</div><!-- #app -->
 
 <script>
-// ══════════════════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════════════════
-let userProfile = null;
-let onboardingHistory = [];
-let chatHistory = [];
-let workoutTimer = null;
-let workoutSeconds = 0;
-let chatInitialized = false;
-let prevScreen = 's-home';
-
-// ══════════════════════════════════════════════════════
-// SYSTEM PROMPT
-// ══════════════════════════════════════════════════════
-const SYSTEM = `
-# IDENTIDADE
+/* ════════════════════════════════════════════════════
+   SYSTEM PROMPT DO CALEB — COMPLETO
+════════════════════════════════════════════════════ */
+const SYSTEM = `# IDENTIDADE
 Você é Caleb, assistente especializado em treinamento de força, hipertrofia e nutrição esportiva.
-Seu nome vem da figura bíblica de Caleb (Números 14:24) — aquele que seguiu completamente, sem hesitar.
+Seu nome vem da figura bíblica de Caleb (Números 14:24).
+Caleb foi um dos doze espias enviados por Moisés para reconhecer Canaã. Dez voltaram com medo e convenceram o povo a desistir. Só Caleb e Josué disseram: vamos em frente. A Bíblia diz que Caleb "seguiu completamente" — sem hesitar, sem atalho, sem meias medidas.
+É o mesmo princípio aqui: cada exercício tem um motivo, cada série tem um propósito, com base em evidência publicada.
+Quando perguntado sobre o nome, explicar essa história brevemente e retomar imediatamente a pergunta que estava fazendo antes — sem recomeçar o onboarding.
 Você é o braço direito de Lucas, personal trainer especialista em treinamento de força.
 TOM: Técnico e direto. Especialista confiável, não animador de torcida.
-Sempre que usar jargão técnico, explique entre parênteses.
+Sem frases motivacionais vazias. Sempre que usar jargão técnico, explique entre parênteses.
 IDIOMA: Sempre em português brasileiro.
 
 # BASE CIENTÍFICA
@@ -780,6 +708,7 @@ IDIOMA: Sempre em português brasileiro.
 - Helms — Muscle & Strength Pyramids
 - Zatsiorsky & Kraemer | ACSM 2026 | Rippetoe | Nuckols | Wendler
 - Morton, Schoenfeld, Phillips 2018 — proteína
+
 NUNCA invente protocolos fora desta base.
 
 # HIERARQUIA DE DECISÃO (Pirâmide de Helms)
@@ -788,512 +717,228 @@ NUNCA invente protocolos fora desta base.
 3. PROGRESSÃO (sobrecarga progressiva)
 4. SELEÇÃO DE EXERCÍCIOS
 5. DESCANSO E CADÊNCIA
-O melhor treino é o que o usuário vai realmente fazer.
 
 # REGRA CRÍTICA
-JAMAIS re-apresente quem você é ou qual é sua função geral. A conversa já foi iniciada na interface com a sua introdução pessoal.
-Ao receber o nome do usuário na primeira mensagem, apenas cumprimente-o usando o nome e vá DIRETAMENTE para a pergunta P1 (Objetivo).
 JAMAIS mais de 1 pergunta por mensagem. Espere a resposta. NUNCA listas de perguntas.
-NUNCA use o travessão (—) em nenhuma resposta, nem dentro das opções de chip.
-Substitua sempre por vírgula, dois-pontos, ou reescreva a frase sem ele.
 
-# ONBOARDING — uma pergunta por vez:
-P1. Objetivo [Ganhar músculo | Perder gordura | Força | Saúde | Condicionamento]
+# ONBOARDING — uma pergunta por vez
+P1. Objetivo [Hipertrofia | Perder gordura | Força | Saúde | Condicionamento]
 P2. Experiência [Nunca treinei | <6 meses | 6m–2 anos | 2+ anos | Voltando]
 P3. Dias/semana [2x|3x|4x|5x|6x+]
-P3B. SE 3x: quais dias? (alternados=A/B/FB | consecutivos=ABC)
+P3B. SE 3x: quais dias? (alternados = A/B/FB | consecutivos = ABC)
 P4. Tempo/sessão [≤30min | 30–45 | 45–60 | 60–90 | 90+]
-P5. Local [Academia | Academia básica | Casa com halteres | Peso corporal | Varia]
-P6. Limitação física? SE SIM: qual região?
-P7. Condição de saúde?
+P5. Local [Academia | Academia básica | Casa com halteres | Peso corporal | Outro]
+→ SE "Outro": "Pode descrever onde e com o que você treina?" (elásticos, kettlebell, parque, TRX, etc.)
+P6. Você tem alguma limitação física ou dor em alguma região do corpo?
+[Sim | Não]
+→ SE SIM: "Qual região? Por exemplo: ombro, joelho, lombar, quadril, punho, cervical..."
+P7. Tem alguma condição de saúde que eu precise considerar no seu treino?
+[Sim | Não]
+→ SE SIM: "Pode descrever. Por exemplo: hipertensão, diabetes, hérnia de disco, histórico de cirurgia, arritmia, osteoporose..."
 
+P7B. Você faz uso de algum hormônio, esteroide anabolizante ou medicamento para emagrecimento?
+[Sim | Não | Prefiro não informar]
+→ SE SIM: "Qual? Por exemplo: testosterona, boldenona, trembolona, Ozempic, Mounjaro, Wegovy, GH..."
+→ SE uso de GLP-1 (Ozempic/Mounjaro/Wegovy): protocolo focado em preservação muscular — volume maior de compostos, atenção redobrada ao RIR, proteína alvo mais alto
+→ SE uso de esteroides anabolizantes: volume tolerado significativamente maior, frequência mais alta, progressão mais agressiva, deload menos frequente
+→ SE "Prefiro não informar": seguir com protocolo natural sem comentar
+→ REGRA: Caleb NUNCA recomenda, comenta positivamente ou negativamente sobre o uso. Apenas registra para calibrar o protocolo. Nunca emite julgamento.
+[Sim | Não]
+→ SE SIM: "Pode descrever. Por exemplo: hipertensão, diabetes, hérnia de disco, histórico de cirurgia, arritmia, osteoporose..."
 # BLOCO 3 — ESTILO DE VIDA E RECUPERAÇÃO
+
 P_ESPORTE. Você pratica algum outro esporte ou atividade física além do treino de força?
 [Sim, pratico regularmente | Pratico às vezes | Não pratico nada além]
-→ SE SIM: Qual atividade? Em quais dias da semana?
-→ Impacto: dias com atividade intensa recebem menor volume de força ou são mantidos como descanso
+→ SE SIM: "Qual atividade? Por exemplo: corrida, natação, ciclismo, futebol, basquete, lutas, dança, yoga, crossfit, beach tennis..."
+  → SE "Lutas": "Qual modalidade? Por exemplo: jiu-jítsu, muay thai, boxe, judô, capoeira..."
+  → SE "Dança": "Qual estilo? Por exemplo: funk, forró, zumba, ballet, street dance..."
+  Perguntar em quais dias da semana.
+  Depois perguntar: "Essa atividade é uma prioridade para você ou o treino de força vem em primeiro lugar?"
+  [É prioridade, o treino de força é complementar | O treino de força é a prioridade | Os dois têm o mesmo peso]
+  → Atividade é prioridade: proteger os dias dela, organizar força em torno
+  → Força é prioridade: atividade extra como fator de recuperação
+  → Peso igual: distribuição equilibrada, volume ajustado nos dois lados
+→ Impacto: dias com atividade intensa recebem menor volume ou são descanso
 
 P_TRABALHO. Como é o seu trabalho fisicamente?
 [Trabalho sentado | Fico muito em pé | Trabalho físico leve | Trabalho físico pesado]
 → Trabalho físico pesado: reduzir volume geral 20%, mais descanso entre sessões
-→ Muito em pé: cuidado com volume de panturrilha e posteriores — já trabalham o dia todo
+→ Muito em pé: cuidado com volume de panturrilha e posteriores
 
 P_SONO. Como costuma ser o seu sono?
 [Durmo bem, 7h ou mais | Durmo ok mas poderia melhorar | Durmo pouco e acordo cansado | Tenho insônia ou sono muito ruim]
 → Sono ruim crônico: volume conservador, RIR mais tolerante (+0.5), nunca deload agressivo
-→ Sono ok: protocolo normal
-→ Durmo bem: protocolo completo sem restrição
 
 P_ESTRESSE. Como está seu nível de estresse no dia a dia?
 [Tranquilo, consigo descansar bem | Moderado, oscila bastante | Alto, muita coisa na cabeça | Muito alto, não consigo desligar]
-→ Estresse alto: volume conservador, priorizar aderência
 → Estresse muito alto: tom mais acolhedor, sessões mais curtas, foco em constância
 
 # BLOCO 4 — RELAÇÃO COM O TREINO
+
 P_HISTORICO. Qual é a sua situação atual com o treino?
 [Já treino atualmente | Já treinei mas parei | Nunca treinei de verdade]
-→ SE "Já treino atualmente":
-   Perguntar: Há quanto tempo você está nessa rotina atual?
-   [Menos de 6 meses | Entre 6 meses e 1 ano | Mais de 1 ano]
+→ SE "Já treino atualmente": perguntar há quanto tempo, o que está faltando, e enviar [FORM_CARGAS]
+→ SE "Já treinei mas parei": perguntar motivo e enviar [FORM_CARGAS]
+→ SE "Nunca treinei": tom didático, protocolo conservador, sem [FORM_CARGAS]
 
-   Perguntar: O que te trouxe aqui — o que está faltando no seu treino atual?
-   [Quero mais resultado | Falta organização e progressão | Quero entender o que estou fazendo | Outro motivo]
-   → Caleb valida o que já está funcionando antes de propor mudanças.
-     Nunca descarta o histórico do usuário — constrói em cima do que já existe.
-     Tom: "Você já tem base. Vamos organizar e potencializar o que você faz."
-
-   FORM_CARGAS deve ser enviado para qualquer usuário que já treinou (atual ou pausado).
-   Caleb OBRIGATORIAMENTE pede os números com um formulário de uma só vez (NUNCA faça perguntas exercício a exercício).
-   Para solicitar, o Caleb envia sua mensagem explicativa e CONCLUI COM A TAG ESPECIAL: [FORM_CARGAS]
-
-   Para quem treina há mais de 1 ano:
-   "Para calibrar as cargas do seu treino, me passa a última carga
-   e o número de repetições que você fez em cada movimento abaixo.
-   Se não treina algum deles, pode deixar em branco.
-   [FORM_CARGAS]"
-
-   Para quem treina há menos tempo ou voltou a treinar:
-   "Mesmo que você esteja começando ou voltando, me passa a carga
-   que você usa hoje em cada exercício — pode ser o que você consegue
-   fazer com boa técnica. Se não fizer algum deles ainda, deixa em branco.
-   [FORM_CARGAS]"
-
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   COMO USAR OS DADOS DE 1RM
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-   Após coletar os valores, Caleb deve:
-
-   1. Calcular o ratio força relativa (1RM ÷ peso corporal) para cada exercício
-      e classificar pelo padrão Nuckols:
-      Agachamento / Terra:
-        < 0.75× = Iniciante | 0.75–1.25× = Novato | 1.25–1.75× = Intermediário
-        1.75–2.25× = Avançado | > 2.25× = Elite
-      Supino / Desenvolvimento:
-        < 0.5× = Iniciante | 0.5–0.75× = Novato | 0.75–1.0× = Intermediário
-        1.0–1.35× = Avançado | > 1.35× = Elite
-
-   2. Usar o 1RM estimado para calibrar as cargas de trabalho do treino:
-      - Séries de 8–12 reps → usar 67–77% do 1RM como ponto de partida
-      - Séries de 4–6 reps → usar 82–88% do 1RM
-      - Apresentar sugestões de carga iniciais junto com o treino
-
-   3. Registrar os valores no PERFIL_JSON:
-      "rm_agachamento": "101kg (estimado)",
-      "rm_supino": "85kg (testado)",
-      "rm_terra": "",
-      "rm_desenvolvimento": "",
-      "rm_remada": ""
-
-   4. Exibir na aba Progresso uma seção "Força de referência" com:
-      - Tabela: Exercício | 1RM | Ratio × PC | Classificação Nuckols
-      - Botão "Atualizar" para o usuário informar novo valor quando testar de novo
-      - Comparativo visual: onde está em cada exercício na escala Nuckols
-
-   5. No relatório mensal do ciclo, recalcular o 1RM estimado a partir
-      das cargas e repetições registradas nas sessões e mostrar a evolução:
-      "Seu 1RM estimado no supino passou de 85kg para 92kg neste ciclo (+8%)"
-
-→ SE "Já treinei mas parei":
-   Perguntar: O que fez você parar?
-   [Falta de tempo | Não via resultado | Me machuquei | Perdi a motivação | Outro motivo]
-   → Caleb usa essa informação para antecipar o mesmo obstáculo no novo plano.
-   → Enviar [FORM_CARGAS] após coletar o motivo da pausa.
-
-→ SE "Nunca treinei de verdade":
-   Tom didático desde o início. Explicar cada escolha do treino de forma simples.
-   Protocolo mais conservador no volume inicial.
+[FORM_CARGAS] deve ser enviado para qualquer usuário com experiência prévia (atual ou passada).
+Tom para quem tem menos experiência: "Mesmo que você esteja começando ou voltando, me passa a carga que você usa hoje — pode ser o que você consegue fazer com boa técnica. Se não fizer algum deles, deixa em branco. [FORM_CARGAS]"
+Tom para quem tem mais de 1 ano: "Para calibrar as cargas do seu treino, me passa a última carga e o número de repetições em cada movimento abaixo. Se não treina algum, pode deixar em branco. [FORM_CARGAS]"
 
 P_RELACAO. Como você se sente em relação ao treino?
 [Gosto, é algo que curto | É obrigação, sei que preciso mas não curto | Ansiedade, fico culpado quando falto | Ainda não sei, nunca treinei de verdade]
-→ Gosto: tom mais técnico, pode desafiar mais
-→ Obrigação: sessões eficientes e curtas, mostrar ganhos práticos
-→ Ansiedade: nunca usar linguagem de punição, reforçar que descanso é parte do processo
-→ Nunca treinou: tom didático, explicar o porquê de cada escolha
 
 P_EXPECTATIVA. Em quanto tempo você espera ver resultados visíveis?
-[Em semanas, quero resultado rápido | Em 2 a 3 meses | Em 6 meses ou mais, tenho paciência | Não tenho pressa, quero para para sempre]
-→ Espera resultado rápido: calibrar honestamente — “Em 4 semanas você sente diferença. No espelho leva 3 meses.”
-→ Expectativa realista: validar e avançar
-→ Sem pressa: perfil de alta aderência, protocolo mais completo
+[Em semanas, quero resultado rápido | Em 2 a 3 meses | Em 6 meses ou mais, tenho paciência | Não tenho pressa, quero para sempre]
+→ Espera resultado rápido: calibrar honestamente — "Em 4 semanas você sente diferença. No espelho leva 3 meses."
 
-# REGRAS DOS BLOCOS 3 E 4
-- Todas seguem a regra de 1 pergunta por vez
-- Todas as opções usam o formato [Opção 1 | Opção 2 | ...] para virar chips clicáveis
-- P_ESPORTE, P_TRABALHO e P_SONO são obrigatórias
-- P_ESTRESSE, P_HISTORICO, P_RELACAO e P_EXPECTATIVA são importantes mas podem ser adaptadas se o usuário demonstrar impaciência
-- As respostas são salvas no PERFIL_JSON e usadas no check-in semanal e nas adaptações dinâmicas
-
-P8. Grupo muscular prioritário? (opcional)
-P9. Exercício que não quer fazer? (opcional)
+P8. Tem algum grupo muscular que quer priorizar?
+[Sim | Não]
+→ SE SIM: qual?
+P9. Tem algum exercício que prefere evitar ou não quer fazer?
+[Sim | Não]
+→ SE SIM: qual?
 P10. Nível de energia habitual
-[Muito alta | Alta | Regular | Baixa | Muito baixa]
+P11. Idade
+P12. Sexo biológico
+P13. Peso e altura? (opcional)
 
-P11. Qual é a sua idade? (obrigatório — afeta recuperação e volume tolerado)
-→ Caleb espera um número. Se o usuário não quiser informar, usar 30 como padrão silencioso.
+Ao final, confirme o perfil e gere o treino completo.
+Inclua a tag [ONBOARDING_COMPLETO] e um JSON com o perfil:
+[PERFIL_JSON]{"nome":"","objetivo":"","nivel":"","protocolo":"001","frequencia":"4x","duracao":"60min","local":"Academia","limitacoes":"Nenhuma","peso":"","altura":""}[/PERFIL_JSON]
 
-P12. Sexo biológico (obrigatório — necessário para calcular sua taxa metabólica corretamente)
-[Masculino | Feminino]
-
-P13a. Qual é o seu peso atual em kg? (obrigatório — necessário para calibrar as cargas do treino)
-→ Caleb espera um número. Insistir com gentileza se o usuário não responder.
-
-P13b. Qual é a sua altura em cm? (obrigatório — necessário para calcular sua taxa metabólica)
-→ Caleb espera um número. Insistir com gentileza se o usuário não responder.
-Ao final: confirme o perfil e gere o treino completo.
-Inclua ao final: [ONBOARDING_COMPLETO]
-[PERFIL_JSON]{"nome":"","objetivo":"","nivel":"","protocolo":"001","frequencia":"4x","duracao":"60min","local":"Academia","limitacoes":"Nenhuma","peso":"","altura":"","esporte_extra":"","trabalho_tipo":"","sono":"","estresse":"","historico_treino":"","relacao_treino":"","expectativa":"","rm_agachamento":"","rm_supino":"","rm_terra":"","rm_desenvolvimento":"","rm_remada":""}[/PERFIL_JSON]
-
-# SELEÇÃO DE PROTOCOLO
-Hipertrofia: Novato/Iniciante(0-12m)=001 | Intermediário(6m-2a)=002 | Avançado(2a+)=003
-Emagrecimento=004 | Força Máxima=005
+# PROTOCOLOS
+HIPERTROFIA: Novato/Iniciante(0-12m)=001 | Intermediário(6m-2a)=002 | Avançado(2a+)=003
+EMAGRECIMENTO=004 | FORÇA MÁXIMA=005
 
 # MÉTODO POR FREQUÊNCIA
-2x=Full Body | 3x alt=A/B/FB | 3x consec=ABC | 4x=ABCD | 5x<60=ABC+reforço | 5x>=60=ABCDE
+2x=Full Body | 3x alt=A/B/FB | 3x consec=ABC | 4x=ABCD | 5x<60=ABC+reforço | 5x≥60=ABCDE
 
 # PROTOCOLO 001 — INICIANTE + HIPERTROFIA
-Séries:2–3 | Volume mínimo:10 séries/músculo/semana (MEV — volume mínimo eficaz)
-Reps:8–12 | Descanso compostos:>=2min | Isoladores:60–90s
-RIR (repetições em reserva): 2–3 principais, 1 última série
-Falha absoluta: NUNCA
-Excêntrica: 2–3s
-Ciclo: 3 semanas + 1 deload (-40%)
-Gatilho progressão: RIR>=1 em 2 treinos consecutivos
+Séries:2–3 | Volume mínimo:10 séries/músculo/semana (MEV)
+Reps:8–12 | Descanso compostos:≥2min | Isoladores:60–90s
+RIR (repetições em reserva — quantas ainda conseguiria fazer):2–3 principais, 1 última série
+Falha absoluta:NUNCA | Excêntrica (fase de descida):2–3s
+Ciclo:3 semanas + 1 deload (semana de volume reduzido, -40%)
+Gatilho progressão:RIR≥1 em 2 treinos consecutivos
 
 # PROTOCOLO 002 — INTERMEDIÁRIO
-Base ABCD | Volume: 14–20 séries/músculo/semana
-RIR: 1 | Excêntrica: 3s
+Base ABCD | Volume:14–20 séries/músculo | RIR:1 | Excêntrica:3s
 Técnicas (máx 1/sessão): Drop-set | Rest-pause
 
 # PROTOCOLO 003 — AVANÇADO
 Macrociclos: Acumulação→Intensificação→Especialização→Deload
-Volume: 16–22+ séries | RIR: 0–1
-Técnicas: Drop-set | Rest-pause | Myo-reps | Lengthened partials
+Volume:16–22+ séries | RIR:0–1 | Técnicas: Drop-set | Rest-pause | Myo-reps | Lengthened partials
 
 # PROTOCOLO 004 — EMAGRECIMENTO
-Volume IGUAL ao do nível — não reduzir
-Proteína: 2,0–2,2g/kg/dia
+Volume IGUAL ao do nível — não reduzir (o déficit calórico faz o emagrecimento)
+Proteína:2,0–2,2g/kg/dia | Cardio separado do treino de força
 
 # PROTOCOLO 005 — FORÇA MÁXIMA
-Novato: Rippetoe 3x5 | Intermediário: Texas Method | Avançado: 5/3/1 Wendler
+Compostos: Agachamento | Terra | Supino | Desenvolvimento | Remada
+Novato:Rippetoe 3x5 | Intermediário:Texas Method | Avançado:5/3/1 Wendler
+
+# VOLUME LANDMARKS — ISRAETEL (NUNCA ultrapassar o MRV)
+Quadríceps:MEV8/MAV12–18/MRV22 | Posteriores:6/10–16/20 | Costas:10/14–20/25
+Peito:10/12–20/22 | Deltoide lat:8/16–22/26 | Tríceps:6/10–14/18 | Bíceps:8/14–20/26
 
 # EXERCÍCIOS — REGRAS
+Priorizar comprimento longo (fase alongada do músculo):
 - Rosca inclinada > rosca em pé (bíceps)
 - Flexora sentada > flexora deitada (isquiotibiais)
 - Fly cabo baixo > fly halteres (peitoral)
-- Face pull em TODO treino com empurrada (saúde do ombro)
+Face pull em TODO treino com empurrada (saúde do ombro)
 
-# ESCALA DE BORG CR10
+# ESCALA DE BORG CR10 (1982) — PERCEPÇÃO DE ESFORÇO
 1=Muito leve | 3=Moderado | 5=Difícil (RIR 3–4) | 7=Muito difícil (RIR 1–2) | 9=Extremo (RIR 0) | 10=Falha
 Zonas: Iniciante 5–7 | Intermediário 7–8 | Avançado 8–9 | Deload 3–5
 
 # FORMATO DO TREINO
-Ao entregar o treino, use EXATAMENTE este formato e nada mais.
-Sem numeração, sem emojis, sem separadores, sem explicações, sem notas técnicas,
-sem volume total, sem tempo estimado. Apenas os dados necessários.
+━━━━━━━━━━━━━━━━━━━━
+TREINO [LETRA] — [GRUPOS]
+━━━━━━━━━━━━━━━━━━━━
+1. [Exercício]
+   [N]x[reps] | Descanso:[X]min | RIR [N]
+   📝 [Nota técnica curta]
+━━━━━━━━━━━━━━━━━━━━
+📊 Volume: [Grupos e séries]
+⏱️ Tempo estimado: X–Y min
+━━━━━━━━━━━━━━━━━━━━
 
-[TREINO_A] Grupos musculares
-Nome do Exercício | NxReps | DescansoXmin | RIR N
-Nome do Exercício | NxReps | DescansoXmin | RIR N
-[/TREINO_A]
+Após todos os treinos: volume semanal + proteína recomendada + creatina 5g/dia.
 
-[TREINO_B] Grupos musculares
-Nome do Exercício | NxReps | DescansoXmin | RIR N
-[/TREINO_B]
+# NUTRIÇÃO
+# NUTRIÇÃO — REGRA
+Caleb NÃO prescreve dietas, macros ou suplementos.
+Quando o assunto for nutrição, calcular apenas a TMB:
+Mifflin-St Jeor: Homem=(10×peso kg)+(6,25×altura cm)−(5×idade)+5 | Mulher: mesma fórmula −161
+Apresentar o resultado e dizer: "Para cardápio e orientações completas, recomendo um nutricionista.
+A consultoria Forte e Corajoso do Lucas oferece acompanhamento especializado: @forteecorajoso no Instagram."
+# (linha original removida)
+Macros 40/30/30 | Proteína: Hipertrofia 1,6–2,0g/kg | Déficit 2,0–2,2g/kg
+❌ Caleb não recomenda suplementos nem quantidades de macros — indicar nutricionista.
+❌ BCAA, glutamina, gainers, termogênicos — não recomendar
 
-Exemplo real de como deve ficar:
-
-[TREINO_A] Peito + Tríceps
-Supino Inclinado com Halteres | 4x8-10 | 2min | RIR 2-3
-Fly no Cabo polia baixa | 3x10-12 | 90s | RIR 2-3
-Supino Reto com Barra | 3x6-8 | 2min | RIR 2
-Extensão de Tríceps Overhead | 3x10-12 | 90s | RIR 2
-Face Pull polia alta | 3x15-20 | 60s | RIR 2
-[/TREINO_A]
-
-[TREINO_B] Costas + Bíceps
-Remada Curvada com Barra | 4x8-10 | 2min | RIR 2-3
-Puxada na Frente pegada aberta | 3x10-12 | 90s | RIR 2-3
-Remada Unilateral com Haltere | 3x8-10 | 90s | RIR 2
-Rosca Inclinada com Halteres | 3x10-12 | 60s | RIR 2
-Rosca Martelo | 2x12-15 | 60s | RIR 2
-[/TREINO_B]
-
-[TREINO_ATUALIZADO]
-
-REGRAS OBRIGATÓRIAS DO FORMATO:
-- Cada linha de exercício tem exatamente 4 campos separados por |
-- Campo 1: nome do exercício (sem parênteses desnecessários)
-- Campo 2: séries x repetições (ex: 4x8-10)
-- Campo 3: descanso (ex: 2min ou 90s)
-- Campo 4: RIR (ex: RIR 2-3)
-- Nenhuma linha extra, nenhuma explicação, nenhum emoji
-- O bloco termina com [/TREINO_X] antes do próximo bloco começar
-- Sempre incluir [TREINO_ATUALIZADO] ao final de qualquer entrega de treino
-
-# CONCLUSÃO DO ONBOARDING / FINALIZAÇÃO
-Após exibir o treino de forma extremamente resumida, você OBRIGATORIAMENTE DEVE INCLUIR NO FINAL AS DUAS TAGS a seguir:
-[PERFIL_JSON]
-{
-  "nome": "Nome do usuário",
-  "objetivo": "Objetivo",
-  "nivel": "Iniciante/Intermediário/Avançado",
-  "protocolo": "001 ou outro",
-  "frequencia": "Quantas vezes por semana",
-  "duracao": "Tempo",
-  "local": "Local do treino",
-  "limitacoes": "Restrições"
-}
-[/PERFIL_JSON]
-[ONBOARDING_COMPLETO]
-
-# ADAPTAÇÃO DINÂMICA
-Confirmar entendimento → gerar versão adaptada mantendo compostos → explicar mudanças
+# ADAPTAÇÃO DINÂMICA VIA CHAT
+Quando pedido: confirmar pedido → gerar versão adaptada mantendo compostos e progressão → explicar mudanças
 Atividades externas (jiu-jítsu, natação, corrida) reduzem volume naquele dia
 
 # CHECK-IN SEMANAL (antes de qualquer treino novo)
-C1: Quantos dias essa semana?
-C2: Quanto tempo/sessão?
-C3: Disposição [Ótima|Regular|Ruim|Péssima]
-Adaptar: menos dias→mudar método | menos tempo→remover isoladores | ruim→-30% volume | péssima→deload
+C1: Quantos dias essa semana? C2: Quanto tempo/sessão? C3: Disposição [Ótima|Regular|Ruim|Péssima]
 
-# QUANDO O USUÁRIO PEDIR ADAPTAÇÃO DO TREINO
+# REGRAS ABSOLUTAS
+NUNCA diagnostica lesões | NUNCA falha para iniciantes | NUNCA ignora limitação física
+NUNCA ultrapassa MRV | NUNCA treino sem check-in | NUNCA mais de 1 pergunta/mensagem`;
 
-Quando o usuário mencionar: menos dias, menos tempo, cansáço, nova atividade
-esportiva, viagem, lesão leve ou qualquer mudança de contexto — Caleb deve:
+/* ════════════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════════════ */
+let onboardingHistory = [];
+let chatHistory = [];
+let userProfile = {};
+let workoutTimer = null;
+let workoutSeconds = 0;
 
-1. Fazer as perguntas necessárias antes de adaptar (uma por vez):
-   - Nova atividade esportiva: qual? em quais dias? que intensidade?
-     [Leve — só para me movimentar | Moderada — me canso bastante | Alta — treino de verdade]
-     é prioridade ou complementar ao treino de força?
-   - Cansáço: é essa semana ou algo recorrente?
-   - Menos tempo: quanto tempo disponível por sessão?
-   - Menos dias: quais dias estão disponíveis?
+/* ════════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  updateTimes();
+  setInterval(updateTimes, 30000);
 
-2. Adaptar baseado no que foi dito E no treino atual (disponível no contexto
-   como "# TREINO ATUAL DO USUÁRIO", se presente)
+  const saved = localStorage.getItem('caleb_profile');
+  const onboarded = localStorage.getItem('caleb_onboarded');
 
-3. Entregar o treino adaptado explicando:
-   - O que mudou e por quê
-   - O que foi preservado e por quê
-   - Como voltar ao treino anterior se quiser
-
-4. Terminar com a tag [TREINO_ATUALIZADO] para que o app
-   atualize automaticamente a aba Treino
-
-IMPORTANTE: nunca apague o histórico de versões — o usuário pode sempre
-voltar para qualquer versão anterior.
-
-# ANÁLISE DE PROGRESSÃO — COMO CALEB INTERPRETA OS DADOS
-
-Quando receber o relatório de um ciclo, Caleb deve:
-
-- Identificar discrepâncias relevantes entre exercícios
-  Ex: supino progrediu 50% mas agachamento só 10% — isso é incomum e merece investigação
-
-- Fazer perguntas abertas sobre as discrepâncias — nunca assumir o motivo:
-  [Sim, sinto dificuldade com esse exercício | Não, foi só essa fase | Tive medo de aumentar a carga | Outro motivo]
-
-- Investigar se é técnico, psicológico, físico ou de contexto:
-  Técnico: nunca aprendeu o movimento direito → oferecer regredir carga e focar na técnica
-  Psicológico: medo de carga pesada → progressão gradual com mais exposição
-  Físico: dor ou desconforto → adaptar exercício ou encaminhar
-  Contexto: trabalho, cansaço, menos sono naquelas semanas → validar e ajustar expectativa
-
-- Fazer as perguntas UMA DE CADA VEZ com chips de resposta [opção1 | opção2 | opção3]
-
-- Ao final da análise: gerar recomendações para o próximo ciclo e
-  atualizar o treino se necessário (terminar com [TREINO_ATUALIZADO])
-
-- Tom: investigativo e sem julgamento — o objetivo é entender, não cobrar
-
-Exemplo de abertura do Caleb após receber o relatório:
-"Fechamos o primeiro ciclo. Você completou X de Y sessões — isso já é [valorização honesta].
-Tenho algumas observações sobre a progressão. No supino você evoluiu bem.
-No agachamento a carga ficou praticamente estável. Quero entender melhor isso:
-quando você agacha com cargas mais pesadas, como você se sente?
-[Confortável e controlado | Um pouco inseguro | Sinto dificuldade técnica | Evito aumentar por precaução]"
-`;
-
-// ══════════════════════════════════════════════════════
-// WORKOUT TEMPLATES BASE
-// ══════════════════════════════════════════════════════
-const WK = {
-  '001': {
-    A: { title:'Treino A', sub:'Peito + Tríceps', rir:'RIR 2–3', exercises:[
-      {name:'Supino Inclinado com Halteres',  spec:'4×8–10 | Descanso: 2min | RIR 2–3', note:'Base do treino — comprimento longo do peitoral superior', sets:4},
-      {name:'Fly no Cabo (polia baixa)',       spec:'3×10–12 | Descanso: 90s | RIR 2–3', note:'Tensão constante — nunca substitua por fly com halteres', sets:3},
-      {name:'Supino Reto com Barra',           spec:'3×6–8 | Descanso: 2min | RIR 2', note:'Carga máxima da sessão', sets:3},
-      {name:'Extensão de Tríceps Overhead',    spec:'3×10–12 | Descanso: 90s | RIR 2', note:'Cabeça longa do tríceps em comprimento máximo', sets:3},
-      {name:'Face Pull (polia alta)',           spec:'3×15–20 | Descanso: 60s | RIR 2', note:'Saúde do ombro — obrigatório em todo treino com empurrada', sets:3}
-    ]},
-    B: { title:'Treino B', sub:'Costas + Bíceps', rir:'RIR 2–3', exercises:[
-      {name:'Remada Curvada com Barra',        spec:'4×8–10 | Descanso: 2min | RIR 2–3', note:'Movimento primário de costas — foco na retração escapular', sets:4},
-      {name:'Puxada na Frente (pegada aberta)',spec:'3×10–12 | Descanso: 90s | RIR 2–3', note:'Grande dorsal — fase de alongamento importante', sets:3},
-      {name:'Remada Unilateral com Haltere',   spec:'3×8–10 | Descanso: 90s | RIR 2', note:'Maior amplitude — aproveite o alongamento no fundo', sets:3},
-      {name:'Rosca Inclinada com Halteres',    spec:'3×10–12 | Descanso: 60s | RIR 2', note:'Bíceps em comprimento máximo — superior à rosca em pé', sets:3},
-      {name:'Rosca Martelo',                   spec:'2×12–15 | Descanso: 60s | RIR 2', note:'Braquial e braquiorradial — complementa bíceps', sets:2}
-    ]},
-    C: { title:'Treino C', sub:'Pernas', rir:'RIR 2–3', exercises:[
-      {name:'Agachamento Livre',               spec:'4×8–10 | Descanso: 2–3min | RIR 2–3', note:'Rei dos exercícios — profundidade e joelhos sobre os pés', sets:4},
-      {name:'Leg Press 45°',                   spec:'3×10–12 | Descanso: 2min | RIR 2–3', note:'Volume extra de quadríceps com menos demanda axial', sets:3},
-      {name:'Cadeira Flexora (sentada)',        spec:'3×10–12 | Descanso: 90s | RIR 2', note:'Isquiotibiais em comprimento máximo — superior à deitada', sets:3},
-      {name:'Panturrilha no Leg Press',         spec:'4×15–20 | Descanso: 60s | RIR 2', note:'Amplitude máxima — calcanhar abaixo da plataforma', sets:4}
-    ]},
-    D: { title:'Treino D', sub:'Ombros + Core', rir:'RIR 2–3', exercises:[
-      {name:'Desenvolvimento com Halteres',    spec:'4×8–10 | Descanso: 2min | RIR 2–3', note:'Movimento composto de ombros — base da sessão', sets:4},
-      {name:'Elevação Lateral com Cabos',      spec:'4×12–15 | Descanso: 60s | RIR 2', note:'Tensão constante — deltoide médio', sets:4},
-      {name:'Elevação Frontal',                spec:'3×10–12 | Descanso: 60s | RIR 2', note:'Deltoide anterior — fase de alongamento', sets:3},
-      {name:'Prancha',                         spec:'3×30–45s | Descanso: 60s', note:'Estabilidade do core — fundamental para os compostos', sets:3},
-      {name:'Crunch no Cabo',                  spec:'3×12–15 | Descanso: 60s | RIR 2', note:'Abdomen com carga — mais eficaz que crunch no chão', sets:3}
-    ]}
-  },
-  '002': {
-    A: { title:'Treino A', sub:'Peito + Tríceps', rir:'RIR 1', exercises:[
-      {name:'Supino Inclinado com Halteres',  spec:'4×8–10 | Descanso: 2min | RIR 1', note:'DROP-SET na última série', sets:4},
-      {name:'Fly no Cabo (polia baixa)',       spec:'4×10–12 | Descanso: 90s | RIR 0–1', note:'DROP-SET: reduz 25%, vai até falha', sets:4},
-      {name:'Supino Reto com Barra',           spec:'3×6–8 | Descanso: 2min | RIR 1', note:'Carga máxima da sessão', sets:3},
-      {name:'Extensão de Tríceps Overhead',    spec:'4×10–12 | Descanso: 90s | RIR 0–1', note:'Cabeça longa do tríceps', sets:4},
-      {name:'Tríceps Corda (pulley)',           spec:'3×12–15 | Descanso: 60s | RIR 0', note:'REST-PAUSE: 15s descanso + 4–5 reps extras', sets:3},
-      {name:'Face Pull (polia alta)',           spec:'3×15–20 | Descanso: 60s | RIR 1', note:'Saúde do ombro — obrigatório', sets:3}
-    ]},
-    B: { title:'Treino B', sub:'Costas + Bíceps', rir:'RIR 1', exercises:[
-      {name:'Remada Curvada com Barra',        spec:'4×8–10 | Descanso: 2min | RIR 1', note:'Movimento primário de costas', sets:4},
-      {name:'Puxada na Frente',               spec:'4×8–10 | Descanso: 90s | RIR 1', note:'DROP-SET na última série', sets:4},
-      {name:'Remada Cavalinho',                spec:'3×10–12 | Descanso: 90s | RIR 1', note:'Amplitude máxima — costas médias', sets:3},
-      {name:'Rosca Inclinada com Halteres',    spec:'4×10–12 | Descanso: 60s | RIR 0–1', note:'Bíceps em comprimento máximo', sets:4},
-      {name:'Rosca Scott',                     spec:'3×10–12 | Descanso: 60s | RIR 0', note:'REST-PAUSE: isola o bíceps completamente', sets:3}
-    ]},
-    C: { title:'Treino C', sub:'Pernas', rir:'RIR 1', exercises:[
-      {name:'Agachamento Livre',               spec:'4×6–8 | Descanso: 3min | RIR 1', note:'Carga alta — foco na progressão', sets:4},
-      {name:'Leg Press 45°',                   spec:'4×10–12 | Descanso: 2min | RIR 0–1', note:'DROP-SET na última série', sets:4},
-      {name:'Cadeira Extensora',               spec:'3×12–15 | Descanso: 90s | RIR 0', note:'REST-PAUSE na última série', sets:3},
-      {name:'Cadeira Flexora (sentada)',        spec:'4×10–12 | Descanso: 90s | RIR 0–1', note:'Isquiotibiais em comprimento máximo', sets:4},
-      {name:'Panturrilha no Smith',             spec:'4×15–20 | Descanso: 60s | RIR 0', note:'Amplitude máxima com carga progressiva', sets:4}
-    ]},
-    D: { title:'Treino D', sub:'Ombros + Core', rir:'RIR 1', exercises:[
-      {name:'Desenvolvimento com Halteres',    spec:'4×8–10 | Descanso: 2min | RIR 1', note:'Movimento composto de ombros', sets:4},
-      {name:'Elevação Lateral com Cabos',      spec:'4×12–15 | Descanso: 60s | RIR 0–1', note:'Tensão constante — deltoide médio', sets:4},
-      {name:'Crucifixo Invertido',             spec:'3×15–20 | Descanso: 60s | RIR 1', note:'Deltoide posterior — saúde postural', sets:3},
-      {name:'Levantamento Terra Romeno',       spec:'3×10–12 | Descanso: 2min | RIR 1', note:'Posteriores da coxa — hip hinge', sets:3},
-      {name:'Prancha com Carga',               spec:'3×45–60s | Descanso: 60s', note:'Core com progressão de carga', sets:3}
-    ]}
-  }
-};
-
-// Chart data (Mock fallback)
-const CHART_DATA = {
-  supino:         {vals:[60,65,70,75],   unit:'kg'},
-  agachamento:    {vals:[80,85,90,100],  unit:'kg'},
-  terra:          {vals:[70,80,90,95],   unit:'kg'},
-  rosca:          {vals:[12,14,14,16],   unit:'kg'},
-  desenvolvimento:{vals:[40,45,48,50],   unit:'kg'}
-};
-
-function nuckolsLevel(ratio) {
-  if (ratio < 0.75) return {label:'Iniciante',    pct:8};
-  if (ratio < 1.0)  return {label:'Novato',        pct:28};
-  if (ratio < 1.5)  return {label:'Intermediário', pct:52};
-  if (ratio < 2.0)  return {label:'Avançado',      pct:76};
-  return               {label:'Elite',          pct:95};
-}
-
-// ══════════════════════════════════════════════════════
-// HELPERS SEGUROS
-// ══════════════════════════════════════════════════════
-function safeParseJSON(key, fallback) {
-  try { return JSON.parse(localStorage.getItem(key)) || fallback; }
-  catch { return fallback; }
-}
-
-// ── Sistema de ciclos e semanas ──────────────────────
-function getCurrentCycle() {
-  const sessions = safeParseJSON('caleb_sessions', []);
-  const weeksCompleted = Math.floor(sessions.length / 4);
-  const currentWeek    = (sessions.length % 16 < 12)
-    ? Math.floor((sessions.length % 16) / 4) + 1
-    : 4; // semana 4 = deload
-  const totalCycle     = Math.floor(sessions.length / 16) + 1;
-  return {
-    cycle: totalCycle,
-    week: Math.max(1, currentWeek),
-    totalWeeks: 4,
-    isDeloadWeek: currentWeek === 4,
-    sessionCount: sessions.length
-  };
-}
-
-function updateCycleBadge() {
-  const c = getCurrentCycle();
-  const label = `Ciclo ${c.cycle} — Semana ${c.week} de ${c.totalWeeks}`;
-  ['home-cycle-badge', 'prog-cycle-label'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = label;
-  });
-  // Porcentagem do ciclo atual (16 sessões por ciclo)
-  const pct = Math.min(100, Math.round(((c.sessionCount % 16) / 16) * 100));
-  const pctEl = document.getElementById('prog-cycle-pct');
-  if (pctEl) pctEl.textContent = `${pct}%`;
-  const fill = document.querySelector('#screen-progress .progress-bar-fill');
-  if (fill) fill.style.width = `${pct}%`;
-}
-
-function checkDeload() {
-  const sessions = safeParseJSON('caleb_sessions', []);
-  if (sessions.length < 3) return false;
-  const recent = sessions.slice(-3);
-  const avg = recent.reduce((s, x) => s + (parseFloat(x.avgBorg) || 0), 0) / 3;
-  return avg >= 8.5;
-}
-
-// ══════════════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════════════
-let _timeInterval = null;
-
-function init() {
-  const onboarded  = localStorage.getItem('caleb_onboarded');
-  const profileStr = localStorage.getItem('caleb_profile');
-  const chatStr    = localStorage.getItem('caleb_conversation');
-
-  if (onboarded && profileStr) {
-    try { userProfile = JSON.parse(profileStr); } catch { userProfile = defaultProfile(); }
-    try { if (chatStr) chatHistory = JSON.parse(chatStr); } catch { chatHistory = []; }
-    applyProfile();
+  if (onboarded && saved) {
+    userProfile = JSON.parse(saved);
+    loadProfile();
+    loadHome();
     showOnly('s-home');
   } else {
     showOnly('s-splash');
   }
+  updateChart();
+});
 
-  updateChart('supino');
-  updateMetrics();
-  updateCycleBadge();
-
-  if (_timeInterval) clearInterval(_timeInterval);
-  window.addEventListener('beforeunload', () => {
-    if (_timeInterval) clearInterval(_timeInterval);
-    if (workoutTimer) clearInterval(workoutTimer);
-  });
+/* ════════════════════════════════════════════════════
+   TIME
+════════════════════════════════════════════════════ */
+function updateTimes() {
+  const now = new Date();
+  const t = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  document.querySelectorAll('[id^="t-"]').forEach(el => el.textContent = t);
 }
 
-// ══════════════════════════════════════════════════════
-// SCREEN NAVIGATION
-// ══════════════════════════════════════════════════════
+/* ════════════════════════════════════════════════════
+   SCREENS
+════════════════════════════════════════════════════ */
 function showOnly(id) {
   document.querySelectorAll('.screen').forEach(s => {
-    if (s.id === id) {
-      s.classList.remove('off','off-up','off-left');
-    } else {
-      if (s.id === 's-chat' || s.id === 's-faq' || s.id === 's-finish') {
-        if (!s.classList.contains('off-up')) s.classList.add('off-up');
-        s.classList.remove('off','off-left');
-      } else {
-        s.classList.add('off');
-        s.classList.remove('off-up','off-left');
-      }
-    }
+    s.classList.add('off');
+    s.classList.remove('off-up','off-left');
   });
-  prevScreen = id;
+  const el = document.getElementById(id);
+  if (el) { el.classList.remove('off','off-up','off-left'); }
 }
 
 function showScreen(id) {
@@ -1303,1129 +948,569 @@ function showScreen(id) {
 
 function hideScreen(id) {
   const el = document.getElementById(id);
-  if (el) { el.classList.add('off-up'); el.classList.remove('off','off-left'); }
+  if (el) el.classList.add('off-up');
 }
 
 function navTo(section) {
-  const map = {
-    home: 's-home',
-    training: 's-training',
-    progress: 's-progress',
-    profile: 's-profile'
-  };
-  const target = map[section];
-  if (!target) return;
+  const map = { home:'s-home', progress:'s-progress', profile:'s-profile' };
+  showOnly(map[section]);
+  if (section === 'profile') setTimeout(loadGamifiedProfile, 50);
+}
 
-  ['s-home','s-training','s-progress','s-profile'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.classList.add('off');
+function openChat() {
+  showScreen('s-chat');
+  initChat();
+}
+
+/* ════════════════════════════════════════════════════
+   API — chama /api/chat (serverless function no Vercel)
+   A chave Gemini fica segura no servidor
+════════════════════════════════════════════════════ */
+async function callCaleb(messages, system) {
+  const res = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages, system: system || SYSTEM })
   });
-  document.getElementById(target).classList.remove('off');
-
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    const onclick = btn.getAttribute('onclick') || '';
-    btn.classList.toggle('active', onclick.includes(`navTo('${section}')`));
-  });
-
-  if (section === 'profile')  applyProfileScreen();
-  if (section === 'progress') { updateChart('supino'); updateMetrics(); }
-  if (section === 'training') loadTrainingScreen();
-}
-
-// ══════════════════════════════════════════════════════
-// WORKOUT VERSION SYSTEM
-// ══════════════════════════════════════════════════════
-function saveWorkoutVersion(content, reason) {
-  const versions = safeParseJSON('caleb_workout_versions', []);
-  versions.forEach(v => v.isCurrent = false);
-  versions.push({
-    version: versions.length + 1,
-    createdAt: new Date().toISOString(),
-    reason: reason || 'Treino atualizado',
-    content,
-    isCurrent: true
-  });
-  localStorage.setItem('caleb_workout_versions', JSON.stringify(versions));
-  return versions[versions.length - 1];
-}
-
-function getCurrentWorkout() {
-  const versions = safeParseJSON('caleb_workout_versions', []);
-  return versions.find(v => v.isCurrent) || null;
-}
-
-function restoreWorkoutVersion(index) {
-  const versions = safeParseJSON('caleb_workout_versions', []);
-  const target = versions[index];
-  if (!target) return;
-  saveWorkoutVersion(target.content, `Restaurado de v${target.version}`);
-  loadTrainingScreen();
-  showToast('Versão restaurada ✅');
-}
-
-function containsWorkout(text) {
-  return /\[TREINO_[A-Z]\]/.test(text);
-}
-
-// ── IMPRESSÃO (PDF) ──────────────────────────────
-function printTraining() {
-  window.print();
-}
-
-// ── Renderizar aba Treino ──────────────────────────
-function loadTrainingScreen() {
-  const locked   = document.getElementById('training-locked');
-  const unlocked = document.getElementById('training-unlocked');
-  let current  = getCurrentWorkout();
-
-  // Se não houver treino customizado gerado, cria um a partir do protocolo base do perfil
-  if (!current) {
-    if (userProfile && userProfile.protocolo) {
-      const proto = ['001','002','003'].includes(userProfile.protocolo) ? userProfile.protocolo : '001';
-      const templates = WK[proto];
-      let mockContent = '';
-      Object.keys(templates).forEach(k => {
-        const t = templates[k];
-        mockContent += `\n━━━━━━━━━━━━━━━━━━━━\nTREINO ${k} — ${t.sub}\n━━━━━━━━━━━━━━━━━━━━\n`;
-        t.exercises.forEach((ex, i) => {
-          mockContent += `${i+1}. ${ex.name}\n   ${ex.spec}\n   📝 ${ex.note}\n\n`;
-        });
-      });
-      current = { version: 0, content: mockContent, reason: 'Protocolo Base' };
-    } else {
-      locked.style.display   = 'flex';
-      unlocked.style.display = 'none';
-      return;
-    }
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || `Erro ${res.status}`);
   }
-
-  locked.style.display   = 'none';
-  unlocked.style.display = 'flex';
-
-  renderTrainingContent(current);
+  const data = await res.json();
+  return data.text;
 }
 
-function renderTrainingContent(version) {
-  const tabsEl     = document.getElementById('training-tabs');
-  const sessionsEl = document.getElementById('training-sessions-wrap');
-  const badgeEl    = document.getElementById('training-version-badge');
-
-  const c = getCurrentCycle ? getCurrentCycle() : { week: 1, version: 1 };
-  if (badgeEl) badgeEl.innerHTML = `<div class="badge-dot"></div>Semana ${c.week} · v${version.version}`;
-
-  const sessions = [];
-  const content = version.content || '';
-
-  // Divide o conteúdo em cada marcador [TREINO_X]
-  const parts = content.split(/(?=\[TREINO_[A-Z]\])/);
-
-  parts.forEach(part => {
-    const headerMatch = part.match(/^\[TREINO_([A-Z])\]\s*([^\n]+)\n/);
-    if (!headerMatch) return;
-
-    const letter   = headerMatch[1];
-    const subtitle = headerMatch[2].trim();
-
-    // Pega tudo após a primeira linha até [/TREINO_X], [TREINO_ATUALIZADO] ou fim
-    const bodyRaw = part
-      .replace(/^\[TREINO_[A-Z]\][^\n]*\n/, '')
-      .replace(/\[\/TREINO_[A-Z]\][\s\S]*$/, '')
-      .replace(/\[TREINO_ATUALIZADO\][\s\S]*$/, '')
-      .trim();
-
-    const exercises = bodyRaw.split('\n')
-      .map(line => line.trim())
-      .filter(line => line.length > 0 && line.includes('|'))
-      .map(line => {
-        const partes = line.split('|').map(p => p.trim());
-        return {
-          name: partes[0] || '',
-          spec: [partes[1], partes[2], partes[3]].filter(Boolean).join(' | '),
-          sets: parseInt((partes[1] || '3x').split('x')[0]) || 3
-        };
-      })
-      .filter(ex => ex.name.length > 0);
-
-    if (exercises.length > 0) {
-      sessions.push({ letter, subtitle, exercises });
-    }
-  });
-
-  // Fallback: se não encontrou blocos no novo formato, mostra texto bruto
-  if (sessions.length === 0) {
-    tabsEl.innerHTML  = '';
-    sessionsEl.innerHTML = `<div style="padding:20px;font-size:14px;color:var(--text2);
-      white-space:pre-wrap;line-height:1.6">${version.content
-        .replace(/\[TREINO_ATUALIZADO\]/g, '')
-        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-        .trim()}</div>`;
-    renderVersionHistory(sessionsEl);
-    return;
-  }
-
-  tabsEl.innerHTML  = '';
-  sessionsEl.innerHTML = '';
-
-  sessions.forEach((session, i) => {
-    // Tab
-    const tab = document.createElement('button');
-    tab.className = 'training-tab' + (i === 0 ? ' active' : '');
-    tab.textContent = `Treino ${session.letter}`;
-    tab.onclick = () => switchTrainingTab(i);
-    tabsEl.appendChild(tab);
-
-    // Sessão
-    const sessionDiv = document.createElement('div');
-    sessionDiv.className = 'training-session' + (i === 0 ? ' active' : '');
-
-    sessionDiv.innerHTML = `
-      <div style="margin-bottom:14px">
-        <div style="font-size:20px;font-weight:800">Treino ${session.letter}</div>
-        <div style="font-size:13px;color:var(--text2);margin-top:2px">${session.subtitle}</div>
-      </div>`;
-
-    session.exercises.forEach(ex => {
-      const card = document.createElement('div');
-      card.className = 'training-ex-card';
-      card.innerHTML = `
-        <div class="training-ex-name">${ex.name}</div>
-        <div class="training-ex-spec">${ex.spec}</div>`;
-      sessionDiv.appendChild(card);
-    });
-
-    const btn = document.createElement('button');
-    btn.className = 'btn-primary';
-    btn.style.marginTop = '12px';
-    btn.textContent = 'Iniciar sessão';
-    btn.onclick = () => showWorkout(`Treino ${session.letter}`, session.exercises);
-    sessionDiv.appendChild(btn);
-
-    sessionsEl.appendChild(sessionDiv);
-  });
-
-  renderVersionHistory(sessionsEl);
-}
-
-function switchTrainingTab(index) {
-  document.querySelectorAll('#training-tabs .training-tab').forEach((t, i) =>
-    t.classList.toggle('active', i === index));
-  document.querySelectorAll('#training-sessions-wrap .training-session').forEach((s, i) =>
-    s.classList.toggle('active', i === index));
-}
-
-function splitIntoSessions(text) {
-  const parts = text.split(/(?=^(?:#+\s*|\*\*.*)?TREINO\s+[A-Z]\b)/im);
-  if (parts.length <= 1) return text.split(/(?=\bTREINO\s+[A-Z]\b)/i).filter(p => p.trim().length > 10);
-  return parts.filter(p => p.trim().length > 10);
-}
-
-function renderVersionHistory(container) {
-  const versions = safeParseJSON('caleb_workout_versions', []);
-  if (versions.length <= 1) return;
-
-  const section = document.createElement('div');
-  section.className = 'version-history';
-  section.innerHTML = `<div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;padding:20px 0 12px">Versões anteriores</div>`;
-
-  [...versions].reverse().forEach((v, ri) => {
-    const realIdx = versions.length - 1 - ri;
-    const date = new Date(v.createdAt).toLocaleDateString('pt-BR', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-    const item = document.createElement('div');
-    item.className = 'version-item';
-    item.innerHTML = `
-      <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border);">
-        <div>
-          <div style="font-size:13px;font-weight:600;color:var(--text);">v${v.version} — ${v.reason} ${v.isCurrent ? '<span style="color:var(--orange)">[atual]</span>' : ''}</div>
-          <div style="font-size:11px;color:var(--text3);">${date}</div>
-        </div>
-        <div style="display:flex;gap:6px;">
-          <button class="btn-outline" style="padding:4px 8px;font-size:11px;width:auto;height:auto;" onclick="previewVersion(${realIdx})">Ver</button>
-          ${!v.isCurrent ? `<button class="btn-outline" style="padding:4px 8px;font-size:11px;width:auto;height:auto;border-color:var(--orange);color:var(--orange);" onclick="restoreWorkoutVersion(${realIdx})">Restaurar</button>` : ''}
-        </div>
-      </div>`;
-    section.appendChild(item);
-  });
-  container.appendChild(section);
-}
-
-function previewVersion(index) {
-  const versions = safeParseJSON('caleb_workout_versions', []);
-  const v = versions[index];
-  if (!v) return;
-  alert(`v${v.version} — ${v.reason}\n\n${v.content.substring(0, 600)}...`);
-}
-
-// ── Toast ──────────────────────────────────────────
-let _toastTimer = null;
-function showToast(msg) {
-  const el = document.getElementById('toast');
-  if (!el) return;
-  el.textContent = msg;
-  el.classList.add('show');
-  if (_toastTimer) clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
-}
-
-function showWorkoutReadyBanner() {
-  const home = document.getElementById('s-home');
-  if (!home) return;
-  if (document.getElementById('workout-ready-banner')) return;
-  const scroll = home.querySelector('.scroll-area');
-  if (!scroll) return;
-  const banner = document.createElement('div');
-  banner.id = 'workout-ready-banner';
-  banner.style = "background:var(--surface);border:1px solid var(--orange);border-radius:var(--radius-sm);padding:14px;margin-bottom:16px;display:flex;align-items:center;gap:14px;cursor:pointer;";
-  banner.innerHTML = `
-    <div style="font-size:24px">📄</div>
-    <div style="flex:1">
-      <div style="font-size:14px;font-weight:700;color:var(--text);">Seu treino está pronto!</div>
-      <div style="font-size:12px;color:var(--text2);">Veja na aba Treino</div>
-    </div>
-    <div style="font-size:18px;color:var(--orange);font-weight:700;">›</div>`;
-  banner.onclick = () => navTo('training');
-  scroll.insertBefore(banner, scroll.firstChild);
-}
-
-// ══════════════════════════════════════════════════════
-// ONBOARDING
-// ══════════════════════════════════════════════════════
-function goToOnboarding() {
-  showOnly('s-onboarding');
-  startOnboarding();
-}
-
+/* ════════════════════════════════════════════════════
+   ONBOARDING
+════════════════════════════════════════════════════ */
 async function startOnboarding() {
-  document.getElementById('ob-messages').innerHTML = '';
+  showOnly('s-onboarding');
+  document.getElementById('onboarding-msgs').innerHTML = '';
   onboardingHistory = [];
-  const first = 'Olá! Sou o Caleb. Vou montar o seu protocolo personalizado agora.\n\nPrimeiro, como posso te chamar?';
-  appendBubble('ob-messages', 'caleb', first);
-  onboardingHistory.push({role:'assistant', content:first});
+  showLoader('Caleb está preparando seu protocolo...');
+  try {
+    const firstMsg = [{ role:'user', content:'Olá, quero montar meu protocolo de treino.' }];
+    const reply = await callCaleb(firstMsg, SYSTEM);
+    onboardingHistory.push({ role:'user', content:'Olá, quero montar meu protocolo de treino.' });
+    onboardingHistory.push({ role:'assistant', content:reply });
+    appendBubble('onboarding-msgs', 'caleb', reply);
+  } catch(e) {
+    appendBubble('onboarding-msgs', 'caleb', `Erro ao conectar: ${e.message}. Verifique a configuração do servidor.`);
+  } finally { hideLoader(); }
+}
+
+async function sendOnboardingText(text) {
+  const inp = document.getElementById('onboarding-input');
+  inp.value = text;
+  sendOnboarding();
 }
 
 async function sendOnboarding() {
-  const input = document.getElementById('ob-input');
-  const text  = input.value.trim();
-  if (!text) return;
+  const inp = document.getElementById('onboarding-input');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = '';
+  inp.style.height = '22px';
 
-  input.value = '';
-  autoResize(input);
-
-  appendBubble('ob-messages', 'user', text);
-  onboardingHistory.push({role:'user', content:text});
-
+  appendBubble('onboarding-msgs', 'user', txt);
+  onboardingHistory.push({ role:'user', content:txt });
   showLoader('Caleb está pensando...');
-
   try {
     const reply = await callCaleb(onboardingHistory, SYSTEM);
-    hideLoader();
+    onboardingHistory.push({ role:'assistant', content:reply });
+    appendBubble('onboarding-msgs', 'caleb', reply);
+    localStorage.setItem('caleb_conversation', JSON.stringify(onboardingHistory));
 
     if (reply.includes('[ONBOARDING_COMPLETO]')) {
-      const jsonMatch = reply.match(/\[PERFIL_JSON\]([\s\S]*?)\[\/PERFIL_JSON\]/);
-      if (jsonMatch) {
-        try { userProfile = JSON.parse(jsonMatch[1].trim()); }
-        catch(e) { userProfile = defaultProfile(); }
-      } else {
-        userProfile = defaultProfile();
+      const match = reply.match(/\[PERFIL_JSON\]([\s\S]*?)\[\/PERFIL_JSON\]/);
+      if (match) {
+        try { userProfile = JSON.parse(match[1]); } catch { userProfile = {}; }
       }
-      userProfile.startedAt = new Date().toISOString();
-
-      const clean = reply.replace('[ONBOARDING_COMPLETO]','').replace(/\[PERFIL_JSON\][\s\S]*?\[\/PERFIL_JSON\]/,'').trim();
-
-      appendBubble('ob-messages','caleb', clean || 'Protocolo montado! Levando você para o painel...');
-      onboardingHistory.push({role:'assistant', content:reply});
-      localStorage.setItem('caleb_onboarding_history', JSON.stringify(onboardingHistory));
+      userProfile.onboardedAt = new Date().toISOString();
       localStorage.setItem('caleb_profile', JSON.stringify(userProfile));
       localStorage.setItem('caleb_onboarded', '1');
-
-      setTimeout(() => {
-        applyProfile();
-        updateCycleBadge();
-        showOnly('s-home');
-      }, 2200);
-    } else {
-      appendBubble('ob-messages','caleb', reply);
-      onboardingHistory.push({role:'assistant', content:reply});
+      setTimeout(() => { loadProfile(); loadHome(); showOnly('s-home'); }, 2200);
     }
-
-    if (reply.includes('[ONBOARDING_COMPLETO]') && containsWorkout(reply)) {
-      const workoutContent = reply
-        .replace('[ONBOARDING_COMPLETO]', '')
-        .replace(/\[PERFIL_JSON\][\s\S]*?\[\/PERFIL_JSON\]/g, '')
-        .trim();
-      saveWorkoutVersion(workoutContent, 'Treino inicial');
-      showWorkoutReadyBanner();
-    } else if (!reply.includes('[ONBOARDING_COMPLETO]') && containsWorkout(reply)) {
-      saveWorkoutVersion(reply, 'Treino inicial');
-    }
-
-    scrollToBottom('ob-messages');
   } catch(e) {
-    hideLoader();
-    appendBubble('ob-messages','caleb', `Erro de conexão: ${e.message}\nVerifique sua internet e tente novamente.`);
-  }
+    appendBubble('onboarding-msgs', 'caleb', `Erro: ${e.message}`);
+  } finally { hideLoader(); }
 }
 
-function obKeydown(e) {
-  if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendOnboarding(); }
-}
-
-function defaultProfile() {
-  return {nome:'Atleta',objetivo:'Ganhar músculo',nivel:'Iniciante',protocolo:'001',frequencia:'4x',duracao:'60min',local:'Academia',limitacoes:'Nenhuma',peso:'',altura:''};
-}
-
-// ══════════════════════════════════════════════════════
-// PROFILE & HOME CARDS
-// ══════════════════════════════════════════════════════
-function applyProfile() {
-  if (!userProfile) return;
-  const name = userProfile.nome || 'Atleta';
-  const h = new Date().getHours();
-  const greet = h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';
-  const el = document.getElementById('home-greeting');
-  if (el) el.textContent = `${greet}, ${name} 👋`;
-  updateNextWorkoutCard();
-}
-
-// PERMITE TROCAR LIVREMENTE OS TREINOS NA HOME
-function showWorkoutByKey(key) {
-  if (!userProfile) return;
-  const proto = ['001','002','003'].includes(userProfile.protocolo) ? userProfile.protocolo : '001';
-  const wk = WK[proto][key];
-  if (!wk) return;
-
-  const titleEl = document.getElementById('home-title');
-  const subEl   = document.getElementById('home-sub');
-  const exsEl   = document.getElementById('home-tag-ex');
-  const rirEl   = document.getElementById('home-tag-rir');
-
-  if (titleEl) titleEl.textContent = wk.title;
-  if (subEl)   subEl.textContent   = wk.sub;
-  if (exsEl)   exsEl.textContent   = `${wk.exercises.length} exercícios`;
-  if (rirEl)   rirEl.textContent   = wk.rir;
-
-  const btnIniciar = document.querySelector('.next-workout-card .btn-primary');
-  if (btnIniciar) {
-    btnIniciar.onclick = () => showWorkout(wk.title, wk.exercises);
-  }
-
-  // Atualizar visual do botão de dia selecionado
-  document.querySelectorAll('.week-row .day-card').forEach(card => {
-    card.classList.remove('today');
-    if (card.querySelector('.day-letter').textContent === key) {
-      card.classList.add('today');
-    }
-  });
-}
-
-function updateNextWorkoutCard() {
-  if (!userProfile) return;
-  const proto = ['001','002','003'].includes(userProfile.protocolo) ? userProfile.protocolo : '001';
-  const templates = WK[proto] || WK['001'];
-  const sessions = safeParseJSON('caleb_sessions', []);
-  const keys = Object.keys(templates);
-  const nextKey = keys[sessions.length % keys.length];
-  
-  showWorkoutByKey(nextKey);
-  updateCycleBadge();
-}
-
-function applyProfileScreen() {
-  if (!userProfile) return;
-  const name = userProfile.nome || 'Atleta';
-  const av = document.getElementById('profile-avatar');
-  if (av) av.textContent = name.charAt(0).toUpperCase();
-  const nm = document.getElementById('profile-name');
-  if (nm) nm.textContent = name;
-
-  ['objetivo','nivel','protocolo','frequencia','duracao','local'].forEach(f => {
-    const el = document.getElementById('prof-'+f);
-    if (el && userProfile[f]) el.textContent = userProfile[f];
-  });
-}
-
-// ══════════════════════════════════════════════════════
-// CHAT FLUTUANTE
-// ══════════════════════════════════════════════════════
-function openChat() {
-  showScreen('s-chat');
-  if (!chatInitialized) { chatInitialized = true; initChat(); }
-}
-
-function closeChat() {
-  hideScreen('s-chat');
-}
-
-function showFaq() {
-  showScreen('s-faq');
-}
+/* ════════════════════════════════════════════════════
+   CHAT FLUTUANTE
+════════════════════════════════════════════════════ */
+let chatInited = false;
 
 function initChat() {
-  const container = document.getElementById('chat-messages');
-  if (!container) return;
+  if (chatInited) return;
+  chatInited = true;
+  const saved = localStorage.getItem('caleb_conversation');
+  if (saved) chatHistory = JSON.parse(saved);
 
-  // Chat pós-onboarding sempre começa do zero visualmente
-  // O histórico do onboarding é passado como contexto ao Caleb
-  // mas não é exibido na tela
-  if (chatHistory.length === 0) {
-    const nome = (userProfile && userProfile.nome) ? userProfile.nome : '';
-    const saudacao = nome
-      ? `Olá, ${nome}. No que posso te ajudar hoje?`
-      : 'No que posso te ajudar hoje?';
-
-    appendBubble('chat-messages', 'caleb', saudacao);
-    chatHistory.push({ role: 'assistant', content: saudacao });
-    buildQuickActions(container);
-  } else {
-    chatHistory.forEach(m => {
-      appendBubble('chat-messages', m.role === 'user' ? 'user' : 'caleb', m.content);
-    });
-  }
-  scrollToBottom('chat-messages');
+  const container = document.getElementById('chat-msgs');
+  const greeting = document.createElement('div');
+  greeting.className = 'msg-row';
+  greeting.innerHTML = `
+    <div class="msg-av">C</div>
+    <div>
+      <div class="bubble caleb" style="margin-bottom:10px"><b>O que você quer fazer hoje?</b><br>Escolha uma opção ou descreva livremente.</div>
+      <div class="quick-grid">
+        <button class="quick-btn" onclick="selectQuick(this,'Quero adaptar minha semana — os dias disponíveis vão mudar.')">
+          <div class="quick-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>Adaptar minha semana
+        </button>
+        <button class="quick-btn" onclick="selectQuick(this,'Quero trocar um exercício específico do meu treino.')">
+          <div class="quick-icon"><svg viewBox="0 0 24 24"><path d="M20 17.58A5 5 0 0018 8h-1.26A8 8 0 104 16.25"/><polyline points="8 16 12 12 16 16"/><line x1="12" y1="12" x2="12" y2="21"/></svg></div>Trocar um exercício
+        </button>
+        <button class="quick-btn" onclick="selectQuick(this,'Vou fazer uma atividade extra essa semana. Como ajustar meu treino de força?')">
+          <div class="quick-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>Encaixar atividade extra
+        </button>
+        <button class="quick-btn" onclick="selectQuick(this,'Tenho menos tempo disponível essa semana. Como ajustar o volume das sessões?')">
+          <div class="quick-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>Ajustar volume ou intensidade
+        </button>
+      </div>
+    </div>`;
+  container.appendChild(greeting);
 }
 
-function buildQuickActions(container) {
-  const qa = document.createElement('div');
-  qa.id = 'quick-actions';
-  qa.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-bottom:12px;';
-  const actions = [
-    {icon:'📅', text:'Adaptar minha semana'},
-    {icon:'🔄', text:'Trocar um exercício'},
-    {icon:'➕', text:'Encaixar atividade extra'},
-    {icon:'⚖️', text:'Ajustar volume ou intensidade'}
-  ];
-  actions.forEach(a => {
-    const btn = document.createElement('button');
-    btn.className = 'quick-btn';
-    btn.innerHTML = `<div class="quick-icon">${a.icon}</div><span>${a.text}</span>`;
-    btn.onclick = () => { document.getElementById('quick-actions')?.remove(); sendChatMsg(a.text); };
-    qa.appendChild(btn);
-  });
-  container.appendChild(qa);
+function selectQuick(btn, text) {
+  btn.classList.add('selected');
+  document.querySelectorAll('.quick-btn').forEach(b => b.disabled = true);
+  setTimeout(() => sendChatMsg(text), 200);
 }
 
 async function sendChat() {
-  const input = document.getElementById('chat-input');
-  const text  = input.value.trim();
-  if (!text) return;
-  input.value = '';
-  autoResize(input);
-  await sendChatMsg(text);
+  const inp = document.getElementById('chat-input');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = ''; inp.style.height = '22px';
+  sendChatMsg(txt);
 }
 
 async function sendChatMsg(text) {
-  document.getElementById('quick-actions')?.remove();
-  appendBubble('chat-messages','user', text);
-  chatHistory.push({role:'user', content:text});
+  chatHistory.push({ role:'user', content:text });
+  appendBubble('chat-msgs', 'user', text);
 
-  let sys = SYSTEM;
-  if (userProfile) {
-    sys += '\n\n# PERFIL DO USUÁRIO ATUAL\n' + Object.entries(userProfile).map(([k,v])=>`${k}: ${v}`).join('\n');
-  }
-  const currentWk = getCurrentWorkout();
-  if (currentWk) {
-    sys += '\n\n# TREINO ATUAL DO USUÁRIO\n' + currentWk.content;
-  }
-  // Injetar histórico do onboarding como memória do Caleb
-  const onboardingCtx = safeParseJSON('caleb_onboarding_history', []);
-  if (onboardingCtx.length > 0) {
-    const onboardingText = onboardingCtx
-      .map(m => `${m.role === 'user' ? 'Usuário' : 'Caleb'}: ${m.content}`)
-      .join('\n');
-    sys += '\n\n# HISTÓRICO DO ONBOARDING (memória — não repetir, apenas usar como contexto)\n' + onboardingText;
-  }
+  const profileCtx = Object.keys(userProfile).length > 0
+    ? `\n\n# PERFIL DO USUÁRIO ATUAL\n${Object.entries(userProfile).map(([k,v])=>`${k}: ${v}`).join('\n')}`
+    : '';
 
   showLoader('Caleb está pensando...');
   try {
-    const reply = await callCaleb(chatHistory, sys);
-    hideLoader();
-    appendBubble('chat-messages','caleb', reply);
-    chatHistory.push({role:'assistant', content:reply});
+    const reply = await callCaleb(chatHistory, SYSTEM + profileCtx);
+    chatHistory.push({ role:'assistant', content:reply });
     localStorage.setItem('caleb_conversation', JSON.stringify(chatHistory));
-    scrollToBottom('chat-messages');
-
-    if (reply.includes('[TREINO_ATUALIZADO]')) {
-      const clean = reply.replace('[TREINO_ATUALIZADO]','').trim();
-      saveWorkoutVersion(clean, 'Adaptado via chat');
-      showToast('✅ Treino atualizado na aba Treino');
-      showWorkoutReadyBanner();
-    } else if (containsWorkout(reply) && !getCurrentWorkout()) {
-      saveWorkoutVersion(reply, 'Treino inicial via chat');
-      showToast('📄 Treino salvo na aba Treino');
-      showWorkoutReadyBanner();
-    }
+    appendBubble('chat-msgs', 'caleb', reply);
   } catch(e) {
-    hideLoader();
-    appendBubble('chat-messages','caleb', `Erro: ${e.message}`);
-  }
+    appendBubble('chat-msgs', 'caleb', `Erro: ${e.message}`);
+  } finally { hideLoader(); }
 }
 
-function chatKeydown(e) {
-  if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
-}
-
-// ══════════════════════════════════════════════════════
-// WORKOUT EXECUTION
-// ══════════════════════════════════════════════════════
-function showWorkout(title, exercises) {
-  if (!exercises || exercises.length === 0) {
-    showToast("Nenhum exercício estruturado encontrado.");
-    return;
-  }
-
-  document.getElementById('wk-title').textContent = title;
-  const content = document.getElementById('workout-content');
-  content.innerHTML = '';
-
-  exercises.forEach((ex, i) => {
-    const card = document.createElement('div');
-    card.className = 'ex-card';
-
-    let setsHtml = '';
-    for (let s=1; s<=ex.sets; s++) {
-      setsHtml += `
-        <div class="set-row">
-          <div class="set-label">S${s}</div>
-          <input class="set-input" type="number" placeholder="kg" min="0" step="0.5">
-          <div class="set-check" data-ex="${i}" data-s="${s}" onclick="toggleSet(this)">
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>`;
-    }
-
-    // INTERFACE LIMPA: Borg retirado do exercício individual. Fica apenas o textarea para observações.
-    card.innerHTML = `
-      <div style="font-size:11px;color:var(--text3);font-weight:600;margin-bottom:4px;">Exercício ${i+1} de ${exercises.length}</div>
-      <div class="ex-name" style="font-size:18px;font-weight:800;margin-bottom:4px;">${ex.name}</div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:10px;">${ex.spec}</div>
-      <div style="border-left:3px solid var(--orange);padding-left:12px;font-size:12px;color:var(--text2);font-style:italic;margin-bottom:14px;">${ex.note}</div>
-      ${setsHtml}
-      <div style="margin-top:14px;">
-        <textarea class="ex-obs-input" placeholder="Anotação para este exercício (opcional)" style="width:100%;margin-top:4px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;resize:none;outline:none;font-family:inherit;" rows="2"></textarea>
-      </div>`;
-
-    content.appendChild(card);
-  });
-
-  showOnly('s-workout');
-
-  workoutSeconds = 0;
-  clearInterval(workoutTimer);
-  document.getElementById('wk-timer').textContent = '00:00';
-  workoutTimer = setInterval(() => {
-    workoutSeconds++;
-    const mm = String(Math.floor(workoutSeconds/60)).padStart(2,'0');
-    const ss = String(workoutSeconds%60).padStart(2,'0');
-    document.getElementById('wk-timer').textContent = `${mm}:${ss}`;
-  }, 1000);
-}
-
-function toggleSet(el) {
-  el.classList.toggle('done');
-  const svg = el.querySelector('svg');
-  svg.setAttribute('stroke', el.classList.contains('done') ? 'var(--orange)' : 'currentColor');
-}
-
-function cancelWorkout() {
-  clearInterval(workoutTimer);
-  showOnly('s-home');
-}
-
-// Botão de concluir a sessão agora apenas abre o modal de fechamento (onde coletaremos o Borg Global)
-function finishWorkout() {
-  clearInterval(workoutTimer);
-  const title = document.getElementById('wk-title').textContent;
-  const mins = Math.floor(workoutSeconds/60);
-  document.getElementById('finish-title').textContent = title;
-  document.getElementById('finish-duration').textContent = `${mins} min`;
-  document.getElementById('finish-obs').value = '';
-  renderFinishBorg();
-  showScreen('s-finish');
-}
-
-function renderFinishBorg() {
-  const container = document.getElementById('finish-borg');
-  if (!container) return;
-  container.innerHTML = '';
-  [1,2,3,4,5,6,7,8,9,10].forEach(n => {
-    const btn = document.createElement('button');
-    btn.className = 'borg-btn';
-    btn.dataset.val = n;
-    btn.textContent = n;
-    btn.onclick = () => {
-      container.querySelectorAll('.borg-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-    };
-    container.appendChild(btn);
-  });
-}
-
-function saveAndFinish() {
-  // Coletar Borg Global da Tela Final
-  const borgBtn = document.querySelector('#finish-borg .borg-btn.selected');
-  const avgBorg = borgBtn ? parseInt(borgBtn.dataset.val) : null;
-  const obs = document.getElementById('finish-obs').value.trim();
-
-  // Coletar Pesos e Infos dos Exercícios
-  const title = document.getElementById('wk-title').textContent;
-  const sessionTarget = title.replace('Treino ', '');
-  const exerciseData = [];
-  const detailedExercises = [];
-
-  document.querySelectorAll('.ex-card').forEach((card, i) => {
-    const exName = card.querySelector('.ex-name').textContent;
-    const setWeights = [];
-    const sets = [];
-    
-    card.querySelectorAll('.set-row').forEach((row, sIdx) => {
-      const inp = row.querySelector('.set-input');
-      const check = row.querySelector('.set-check');
-      const w = parseFloat(inp.value) || 0;
-      if (w > 0) setWeights.push(w);
-      sets.push({
-        setNumber: sIdx + 1,
-        weightKg: w,
-        completed: check.classList.contains('done')
-      });
-    });
-
-    if (setWeights.length > 0) {
-      exerciseData.push({ name: exName, weights: setWeights });
-    }
-    
-    const exObs = card.querySelector('.ex-obs-input')?.value.trim() || '';
-    
-    detailedExercises.push({
-      name: exName,
-      sets: sets,
-      borgScore: null, // Borg agora é só global
-      observation: exObs
-    });
-  });
-
-  // Salvar sessão (Métricas)
-  const sessions = safeParseJSON('caleb_sessions', []);
-  sessions.push({
-    date: new Date().toISOString(),
-    avgBorg,
-    duration: workoutSeconds,
-    workout: title,
-    exercises: exerciseData
-  });
-  localStorage.setItem('caleb_sessions', JSON.stringify(sessions));
-
-  // Salvar histórico de cargas (`caleb_weights`)
-  if (exerciseData.length > 0) {
-    const weights = safeParseJSON('caleb_weights', {});
-    const dateKey = new Date().toISOString().split('T')[0];
-    exerciseData.forEach(ex => {
-      if (!weights[ex.name]) weights[ex.name] = [];
-      const maxW = Math.max(...ex.weights);
-      weights[ex.name].push({ date: dateKey, max: maxW, all: ex.weights });
-      if (weights[ex.name].length > 12) weights[ex.name] = weights[ex.name].slice(-12);
-    });
-    localStorage.setItem('caleb_weights', JSON.stringify(weights));
-  }
-
-  // Log detalhado
-  const currentWk = getCurrentWorkout();
-  const currentVersion = currentWk ? currentWk.version : 0;
-  const sessLogs = safeParseJSON('caleb_session_logs', []);
-  sessLogs.push({
-    date: new Date().toISOString(),
-    workoutVersion: currentVersion,
-    session: sessionTarget,
-    exercises: detailedExercises,
-    sessionBorgAvg: avgBorg,
-    durationSeconds: workoutSeconds,
-    globalObservation: obs
-  });
-  localStorage.setItem('caleb_session_logs', JSON.stringify(sessLogs));
-
-  // Fechar e atualizar tudo
-  hideScreen('s-finish');
-  showOnly('s-home');
-  updateMetrics();
-  updateCycleBadge();
-  updateNextWorkoutCard();
-  checkAndGenerateCycleReport();
-
-  const needsDeload = checkDeload();
-  let msg = `Sessão concluída com sucesso! 🎉`;
-  if (needsDeload) msg += `\n\n⚠️ Borg médio alto recentemente. O Caleb recomenda deload em breve.`;
-  showToast(msg);
-}
-
-// ══════════════════════════════════════════════════════
-// PROGRESS & REPORTS
-// ══════════════════════════════════════════════════════
-function checkAndGenerateCycleReport() {
-  const logs = safeParseJSON('caleb_session_logs', []);
-  if (logs.length === 0) return;
-  
-  const SESSIONS_PER_CYCLE = 16;
-  if (logs.length % SESSIONS_PER_CYCLE === 0) {
-    const cycleNumber = logs.length / SESSIONS_PER_CYCLE;
-    const cycleLogs = logs.slice(-SESSIONS_PER_CYCLE);
-    
-    const exStats = {};
-    const allObservations = [];
-    
-    cycleLogs.forEach(log => {
-      log.exercises.forEach(ex => {
-        if (!exStats[ex.name]) exStats[ex.name] = { loads: [] };
-        const maxSetW = Math.max(...ex.sets.filter(s => s.completed).map(s => s.weightKg), 0);
-        if (maxSetW > 0) exStats[ex.name].loads.push(maxSetW);
-        if (ex.observation) allObservations.push(`- ${ex.name} (Sessão ${log.session}): ${ex.observation}`);
-      });
-      if (log.globalObservation) allObservations.push(`- Geral (Sessão ${log.session}): ${log.globalObservation}`);
-    });
-    
-    const finalExercises = [];
-    Object.keys(exStats).forEach(name => {
-      const d = exStats[name];
-      if (d.loads.length < 2) return;
-      const initialLoad = d.loads[0];
-      const finalLoad = d.loads[d.loads.length - 1];
-      const progression = initialLoad > 0 ? ((finalLoad - initialLoad) / initialLoad) * 100 : 0;
-      
-      let status = '';
-      if (progression >= 15) status = 'Evoluiu bem ✅';
-      else if (progression >= 5 && progression < 15) status = 'Progresso normal 📈';
-      else if (progression > 0 && progression < 5) status = 'Estagnado ⚠️';
-      else status = 'Regrediu 📉';
-      
-      finalExercises.push({ name, initialLoad, finalLoad, progression, status });
-    });
-    
-    const report = {
-      cycleNumber,
-      startDate: cycleLogs[0].date,
-      endDate: cycleLogs[cycleLogs.length - 1].date,
-      sessionsCompleted: cycleLogs.length,
-      sessionsPlanned: SESSIONS_PER_CYCLE,
-      exercises: finalExercises,
-      generatedAt: new Date().toISOString()
-    };
-    
-    const reports = safeParseJSON('caleb_cycle_reports', []);
-    reports.push(report);
-    localStorage.setItem('caleb_cycle_reports', JSON.stringify(reports));
-    
-    const chatContextMsg = `\n# RELATÓRIO DO CICLO ${cycleNumber}\nSessões completadas: ${report.sessionsCompleted} de ${report.sessionsPlanned}\n\nEXERCÍCIOS:\n${finalExercises.map(e => `- ${e.name}: ${e.initialLoad}kg → ${e.finalLoad}kg (${e.progression > 0 ? '+' : ''}${e.progression.toFixed(1)}%) | Status: ${e.status}`).join('\n')}\n\nObservações registradas:\n${allObservations.join('\n')}`;
-    
-    setTimeout(() => {
-      openChat();
-      appendBubble('chat-messages', 'user', "Gerei o relatório do nosso ciclo atual! O que você acha dos meus resultados?");
-      chatHistory.push({role:'user', content: "Mandei o relatório do nosso ciclo atual (gerado pelo meu app)." + chatContextMsg + "\n\nO que você acha dos meus resultados? Fale como meu treinador, focando bastante nesse relatório!"});
-      sendChatMsgHidden("Faça a análise deste ciclo conforme instruído no system prompt.");
-    }, 3000);
-  }
-}
-
-async function sendChatMsgHidden(triggerPrompt) {
-  let sys = SYSTEM;
-  if (userProfile) sys += '\n\n# PERFIL DO USUÁRIO ATUAL\n' + Object.entries(userProfile).map(([k,v])=>`${k}: ${v}`).join('\n');
-  const currentWk = getCurrentWorkout();
-  if (currentWk) sys += '\n\n# TREINO ATUAL DO USUÁRIO\n' + currentWk.content;
-  
-  try {
-    const reply = await callCaleb(chatHistory, sys);
-    appendBubble('chat-messages','caleb', reply);
-    chatHistory.push({role:'assistant', content:reply});
-    localStorage.setItem('caleb_conversation', JSON.stringify(chatHistory));
-    scrollToBottom('chat-messages');
-  } catch(e) {
-    appendBubble('chat-messages','caleb', `Erro na análise do ciclo: ${e.message}`);
-  }
-}
-
-function updateChart(exercise) {
-  const container = document.getElementById('chart-bars');
-  if (!container) return;
-
-  const weights = safeParseJSON('caleb_weights', {});
-  const nameMap = { supino: 'Supino Inclinado com Halteres', agachamento: 'Agachamento Livre', terra: 'Levantamento Terra Romeno', rosca: 'Rosca Inclinada com Halteres', desenvolvimento: 'Desenvolvimento com Halteres' };
-  const exName = nameMap[exercise];
-  
-  const sessLogs = safeParseJSON('caleb_session_logs', []);
-  const sessionHist = [];
-  sessLogs.forEach(log => {
-    const ex = log.exercises.find(e => e.name === exName);
-    if (ex) {
-      const maxW = Math.max(...ex.sets.filter(s => s.completed).map(s => s.weightKg), 0);
-      if (maxW > 0) sessionHist.push({ max: maxW });
-    }
-  });
-
-  let vals = [];
-  if (sessionHist.length > 0) {
-    const last4 = sessionHist.slice(-4);
-    vals = last4.map(e => e.max);
-    while (vals.length < 4) vals.unshift(vals[0]);
-  } else {
-    const realHist = exName && weights[exName] ? weights[exName] : null;
-    if (realHist && realHist.length > 0) {
-      const last4 = realHist.slice(-4);
-      vals = last4.map(e => e.max);
-      while (vals.length < 4) vals.unshift(vals[0]);
-    } else {
-      const mockData = CHART_DATA[exercise];
-      if (mockData) vals = mockData.vals;
-    }
-  }
-
-  const maxVal = Math.max(...vals, 1);
-  container.innerHTML = vals.map((v,i) => `
-    <div class="chart-bar-wrap" style="position:relative;">
-      <span class="chart-val">${v}</span>
-      <div class="chart-bar ${i===vals.length-1?'current':''}" style="height:${Math.max(6,Math.round((v/maxVal)*80))}px;"></div>
-    </div>`).join('');
-    
-  let progressEl = document.getElementById('chart-progress-info');
-  if (!progressEl) {
-    progressEl = document.createElement('div');
-    progressEl.id = 'chart-progress-info';
-    progressEl.style = "font-size:12px; margin-top:16px; margin-bottom:8px; padding:8px; background:var(--surface2); border-radius:8px; display:flex; justify-content:space-between;";
-    const labels = container.nextElementSibling;
-    labels.parentNode.insertBefore(progressEl, labels.nextElementSibling);
-  }
-  
-  if (sessionHist.length >= 2) {
-    const firstLoad = sessionHist[0].max;
-    const maxNow = sessionHist[sessionHist.length-1].max;
-    const pct = firstLoad > 0 ? ((maxNow - firstLoad) / firstLoad) * 100 : 0;
-    progressEl.innerHTML = `<span><strong>Progressão:</strong></span> <span style="color:${pct >= 0 ? 'var(--green)' : 'red'};">${pct > 0 ? '+' : ''}${pct.toFixed(1)}%</span>`;
-  } else {
-    progressEl.innerHTML = `<span><strong>Progressão:</strong></span> <span style="color:var(--text3);">Dados insuficientes</span>`;
-  }
-
-  const bw = (userProfile && userProfile.peso) ? parseFloat(userProfile.peso) : 75;
-  const last  = vals[vals.length-1];
-  const ratio = bw > 0 ? last/bw : 0;
-  const lv    = nuckolsLevel(ratio);
-
-  const tag = document.getElementById('nuckols-tag');
-  if (tag) tag.textContent = lv.label;
-  const fill = document.getElementById('nuckols-fill');
-  if (fill) fill.style.width = `${lv.pct}%`;
-  const ratioEl = document.getElementById('nuckols-ratio');
-  if (ratioEl) ratioEl.textContent = `Ratio: ${ratio.toFixed(2)}× peso corporal`;
-}
-
-function updateMetrics() {
-  const sessions = safeParseJSON('caleb_sessions', []);
-  const el = (id, v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
-
-  el('metric-sessions', sessions.length || '0');
-
-  const c = getCurrentCycle();
-  const sessionsDoneCycle = (c.sessionCount % 16) || sessions.length;
-  const adh = sessionsDoneCycle > 0 ? Math.min(100, Math.round((sessionsDoneCycle / 16) * 100)) + '%' : '—';
-  el('metric-adherence', adh);
-
-  const borgList = sessions.filter(s => s.avgBorg != null).map(s => parseFloat(s.avgBorg));
-  const avgBorg  = borgList.length ? (borgList.reduce((a,b) => a+b, 0) / borgList.length).toFixed(1) : '—';
-  el('metric-borg', avgBorg);
-
-  const weights = safeParseJSON('caleb_weights', {});
-  let progressions = 0;
-  Object.values(weights).forEach(hist => {
-    if (hist.length >= 2 && hist[hist.length-1].max > hist[0].max) progressions++;
-  });
-  el('metric-progressions', progressions > 0 ? progressions : (sessions.length >= 2 ? '—' : '—'));
-
-  if (avgBorg !== '—') {
-    const hb = document.getElementById('home-borg');
-    if (hb) hb.textContent = avgBorg;
-    const hbb = document.getElementById('home-borg-fill'); // ID CORRIGIDO AQUI!
-    if (hbb) hbb.style.width = `${(parseFloat(avgBorg)/10)*100}%`;
-    const hbs = document.getElementById('home-borg-sub');
-    if (hbs) hbs.textContent = 'Percepção de esforço'; // TEXTO ATUALIZADO AQUI!
-  }
-  
-  render1RMTable();
-}
-
-function render1RMTable() {
-  const tbody = document.getElementById('rm-table-body');
-  if (!tbody || !userProfile) return;
-  
-  const bWeight = parseFloat(userProfile.peso) || 75;
-  const metrics = [
-    { key: 'rm_agachamento', name: 'Agachamento Livre' }, { key: 'rm_supino', name: 'Supino Reto' }, { key: 'rm_terra', name: 'Lev. Terra' }, { key: 'rm_desenvolvimento', name: 'Desenvolvimento' }, { key: 'rm_remada', name: 'Remada Curvada' }
-  ];
-  
-  let html = '';
-  metrics.forEach(m => {
-    let raw = userProfile[m.key] || '';
-    if (!raw) return;
-    const numMatch = raw.match(/(\d+\.?\d*)/);
-    let nuck = '—', ratioStr = '—';
-    if (numMatch && numMatch[1]) {
-      const ratio = parseFloat(numMatch[1]) / bWeight;
-      ratioStr = ratio.toFixed(2) + '×';
-      if (m.key.includes('agachamento') || m.key.includes('terra')) {
-        if (ratio < 0.75) nuck = 'Iniciante'; else if (ratio < 1.25) nuck = 'Novato'; else if (ratio < 1.75) nuck = 'Intermediário'; else nuck = 'Avançado/Elite';
-      } else {
-        if (ratio < 0.5) nuck = 'Iniciante'; else if (ratio < 0.75) nuck = 'Novato'; else if (ratio < 1.0) nuck = 'Intermediário'; else nuck = 'Avançado/Elite';
-      }
-    }
-    html += `<tr><td style="padding:8px 4px; border-bottom:1px solid rgba(255,255,255,0.05);">${m.name}</td><td style="padding:8px 4px; border-bottom:1px solid rgba(255,255,255,0.05);">${raw}</td><td style="padding:8px 4px; border-bottom:1px solid rgba(255,255,255,0.05); color:var(--orange);">${ratioStr} / ${nuck}</td></tr>`;
-  });
-  
-  if (!html) html = `<tr><td colspan="3" style="padding:12px; text-align:center; color:var(--text3); font-style:italic;">Nenhum dado de Força de Referência (RM) salvo.</td></tr>`;
-  tbody.innerHTML = html;
-}
-
-function openChatWithPrompt(promptStr) {
-  openChat();
-  setTimeout(() => {
-    const input = document.getElementById('chat-input');
-    if (input) {
-      input.value = promptStr;
-      setTimeout(() => sendChatMsg(promptStr), 500);
-    }
-  }, 100);
-}
-
-// ══════════════════════════════════════════════════════
-// API & CHIPS
-// ══════════════════════════════════════════════════════
-function setInputsDisabled(disabled) {
-  ['ob-input','chat-input'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.disabled = disabled;
-  });
-  document.querySelectorAll('.send-btn').forEach(btn => {
-    btn.disabled = disabled;
-    btn.style.opacity = disabled ? '0.5' : '';
-  });
-}
-
-async function callCaleb(messages, system, attempt = 1) {
-  const MAX_RETRIES = 3;
-  try {
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({messages, system})
-    });
-    if (!res.ok) {
-      if ((res.status === 429 || res.status >= 500) && attempt < MAX_RETRIES) {
-        await new Promise(r => setTimeout(r, 1000 * attempt));
-        return callCaleb(messages, system, attempt + 1);
-      }
-      throw new Error(`HTTP ${res.status}`);
-    }
-    const data = await res.json();
-    return data.text;
-  } catch(e) {
-    if (attempt < MAX_RETRIES && e.message && e.message.startsWith('Failed to fetch')) {
-      await new Promise(r => setTimeout(r, 1000 * attempt));
-      return callCaleb(messages, system, attempt + 1);
-    }
-    throw e;
-  }
-}
-
+/* ════════════════════════════════════════════════════
+   BUBBLE
+════════════════════════════════════════════════════ */
 function formatCalebMsg(text, containerId) {
-  text = text.replace(/\[ONBOARDING_COMPLETO\]/g, '').replace(/\[PERFIL_JSON\][\s\S]*?\[\/PERFIL_JSON\]/g, '').trim();
+  text = text
+    .replace(/\[ONBOARDING_COMPLETO\]/g,'')
+    .replace(/\[PERFIL_JSON\][\s\S]*?\[\/PERFIL_JSON\]/g,'')
+    .trim();
+
+  // Detect [Opt1 | Opt2 | Opt3] patterns and render as chips
   const parts = text.split(/(\[[^\]]+\|[^\]]+\])/g);
   let result = '';
+
   parts.forEach((part, i) => {
     if (i % 2 === 1 && /\|/.test(part)) {
-      const opts = part.slice(1, -1).split('|').map(o => o.trim()).filter(Boolean);
-      const fn = (containerId.includes('ob-') || containerId.includes('onboarding')) ? 'sendObChip' : 'sendChatChip';
-      result += '<div class="option-chips">' + opts.map(opt => `<button class="option-chip" onclick="${fn}(this,'${opt.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')">${opt}</button>`).join('') + '</div>';
+      // Option group
+      const inner = part.slice(1, -1);
+      const opts = inner.split('|').map(o => o.trim()).filter(Boolean);
+      const fn = containerId === 'onboarding-msgs' ? 'sendObChip' : 'sendChatChip';
+      result += '<div class="option-chips">' +
+        opts.map(opt => {
+          const safe = opt.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+          return `<button class="option-chip" onclick="${fn}(this,'${safe}')">${opt}</button>`;
+        }).join('') +
+        '</div>';
     } else {
-      result += part.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+      result += part
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/\*\*(.*?)\*\*/g,'<b>$1</b>')
+        .replace(/━+/g,'<hr style="border:none;border-top:1px solid var(--border);margin:8px 0">')
+        .replace(/\n/g,'<br>');
     }
   });
   return result;
 }
 
 function sendObChip(btn, text) {
-  btn.closest('.option-chips').querySelectorAll('.option-chip').forEach(b => { b.disabled = true; });
+  btn.closest('.option-chips').querySelectorAll('.option-chip')
+    .forEach(b => { b.disabled=true; });
   btn.classList.add('chosen');
-  setTimeout(() => {
-    const inp = document.getElementById('ob-input');
-    if (inp) inp.value = text;
-    if (typeof sendOnboarding === 'function') sendOnboarding();
-  }, 160);
+  setTimeout(() => sendOnboardingText(text), 160);
 }
 
 function sendChatChip(btn, text) {
-  btn.closest('.option-chips').querySelectorAll('.option-chip').forEach(b => { b.disabled = true; });
+  btn.closest('.option-chips').querySelectorAll('.option-chip')
+    .forEach(b => { b.disabled=true; });
   btn.classList.add('chosen');
-  setTimeout(() => {
-    if (typeof sendChatMsg === 'function') sendChatMsg(text);
-  }, 160);
+  setTimeout(() => sendChatMsg(text), 160);
 }
 
 function appendBubble(containerId, role, text) {
-  const c = document.getElementById(containerId);
-  if (!c) return;
-  const wrap = document.createElement('div');
-  wrap.className = 'msg-row' + (role === 'user' ? ' user' : '');
-  if (role === 'user') {
-    wrap.innerHTML = `<div class="bubble user">${esc(text)}</div>`;
+  const container = document.getElementById(containerId);
+  const row = document.createElement('div');
+  row.className = `msg-row ${role}`;
+
+  const formatted = role === 'caleb'
+    ? formatCalebMsg(text, containerId)
+    : text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+
+  if (role === 'caleb') {
+    row.innerHTML = `<div class="msg-av">C</div><div class="bubble caleb">${formatted}</div>`;
   } else {
-    const hasForm = text.includes('[FORM_CARGAS]');
-    const cleanText = text.replace(/\[FORM_CARGAS\]/g, '').trim();
-    const formatted = formatCalebMsg(cleanText, containerId);
-    wrap.innerHTML = `<div class="msg-av">C</div><div class="bubble caleb">${formatted}${hasForm ? buildFormCargas() : ''}</div>`;
+    row.innerHTML = `<div class="bubble user">${formatted}</div>`;
   }
-  c.appendChild(wrap);
-  scrollToBottom(containerId);
+  container.appendChild(row);
+  container.scrollTop = container.scrollHeight;
 }
 
-function esc(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'); }
-function scrollToBottom(id) { const el = document.getElementById(id); if (el) setTimeout(() => { el.scrollTop = el.scrollHeight; }, 40); }
-function showLoader(text) { const tx = document.getElementById('loader-text'); if(tx) tx.textContent=text; document.getElementById('loader').classList.add('visible'); setInputsDisabled(true); }
-function hideLoader() { document.getElementById('loader').classList.remove('visible'); setInputsDisabled(false); }
-function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
-function confirmReset() { if (confirm('Tem certeza? Todo o progresso e protocolo serão perdidos.')) resetAll(); }
+/* ════════════════════════════════════════════════════
+   HOME
+════════════════════════════════════════════════════ */
+function loadHome() {
+  const p = userProfile;
+  if (p.nome) document.getElementById('home-greeting').textContent = `${p.nome} 👋`;
+
+  const proto = p.protocolo || '001';
+  const tagRir = proto === '001' ? 'RIR 2–3' : proto === '002' ? 'RIR 1' : 'RIR 0–1';
+  document.getElementById('home-tag-rir').textContent = tagRir;
+
+  const sessions = JSON.parse(localStorage.getItem('caleb_sessions') || '[]');
+  if (sessions.length > 0) {
+    const avg = sessions.reduce((a,s)=>a+(s.avgBorg||0),0)/sessions.length;
+    document.getElementById('home-borg').textContent = avg.toFixed(1);
+    document.getElementById('home-borg-sub').textContent = 'Na zona alvo ✓';
+    document.getElementById('home-borg-fill').style.width = `${(avg/10)*100}%`;
+  }
+}
+
+/* ════════════════════════════════════════════════════
+   PROFILE
+════════════════════════════════════════════════════ */
+function loadProfile() {
+  const p = userProfile;
+  const name = p.nome || 'Atleta';
+  document.getElementById('prof-name').textContent = name;
+  document.getElementById('prof-av').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('prof-obj').textContent = p.objetivo || '—';
+  document.getElementById('prof-nivel').textContent = p.nivel || '—';
+  document.getElementById('prof-proto').textContent = p.protocolo ? `Protocolo ${p.protocolo}` : '—';
+  document.getElementById('prof-freq').textContent = p.frequencia || '—';
+  document.getElementById('prof-dur').textContent = p.duracao || '—';
+  document.getElementById('prof-local').textContent = p.local || '—';
+  if (p.onboardedAt) {
+    const d = new Date(p.onboardedAt);
+    d.setDate(d.getDate()+14);
+    document.getElementById('prof-expira').textContent = d.toLocaleDateString('pt-BR');
+  }
+}
+
+/* ════════════════════════════════════════════════════
+   WORKOUT
+════════════════════════════════════════════════════ */
+const TEMPLATES = {
+  '001': [
+    {name:'Supino Inclinado com Halteres',spec:'4 × 8–10 reps | Descanso: 2 min | RIR 2–3',note:'Base do treino — comprimento longo do peitoral superior',sets:4},
+    {name:'Fly no Cabo (polia baixa)',spec:'3 × 10–12 reps | Descanso: 90s | RIR 2–3',note:'Tensão constante — nunca substitua por fly com halteres',sets:3},
+    {name:'Supino Reto com Barra',spec:'3 × 6–8 reps | Descanso: 2 min | RIR 2',note:'Carga máxima da sessão — compostos primeiro, isoladores depois',sets:3},
+    {name:'Extensão de Tríceps Overhead',spec:'3 × 10–12 reps | Descanso: 90s | RIR 2',note:'Cabeça longa do tríceps em comprimento máximo — prioritário',sets:3},
+    {name:'Face Pull (polia alta)',spec:'3 × 15–20 reps | Descanso: 60s | RIR 2',note:'Saúde do ombro — obrigatório em todo treino com empurrada',sets:3},
+  ],
+  '002': [
+    {name:'Supino Inclinado com Halteres',spec:'4 × 8–10 reps | Descanso: 2 min | RIR 1',note:'Composto base — DROP-SET na última série',sets:4},
+    {name:'Fly no Cabo (polia baixa)',spec:'4 × 10–12 reps | Descanso: 90s | RIR 0–1',note:'Último set: DROP-SET (reduz 25%, vai até falha)',sets:4},
+    {name:'Supino Reto com Barra',spec:'3 × 6–8 reps | Descanso: 2 min | RIR 1',note:'Carga máxima — foco em progressão semanal',sets:3},
+    {name:'Extensão de Tríceps Overhead',spec:'4 × 10–12 reps | Descanso: 90s | RIR 0–1',note:'Cabeça longa em comprimento máximo',sets:4},
+    {name:'Tríceps Corda (pulley)',spec:'3 × 12–15 reps | Descanso: 60s | RIR 0',note:'Finalizador: REST-PAUSE (15s descanso + 4–5 reps extras)',sets:3},
+    {name:'Face Pull (polia alta)',spec:'3 × 15–20 reps | Descanso: 60s | RIR 1',note:'Saúde do ombro — obrigatório',sets:3},
+  ],
+  '003': [
+    {name:'Supino Inclinado com Halteres',spec:'5 × 8–10 reps | Descanso: 2 min | RIR 0–1',note:'DROP-SET na última série',sets:5},
+    {name:'Fly no Cabo (polia baixa)',spec:'4 × 10–12 reps | Descanso: 90s | RIR 0',note:'LENGTHENED PARTIALS — apenas fase de comprimento máximo',sets:4},
+    {name:'Supino Reto com Barra',spec:'4 × 6–8 reps | Descanso: 3 min | RIR 1',note:'Carga máxima do ciclo — progresso a cada sessão',sets:4},
+    {name:'MYO-REPS — Peitoral Cabo',spec:'1 série ativação + 4 mini-séries | RIR 0',note:'Myo-reps: ativação até RIR 1 → 5 reps com 5s descanso (×4)',sets:1},
+    {name:'Extensão de Tríceps Overhead',spec:'4 × 10–12 reps | Descanso: 90s | RIR 0–1',note:'Cabeça longa em comprimento máximo — REST-PAUSE no final',sets:4},
+    {name:'Tríceps Corda (pulley)',spec:'3 × 12–15 reps | Descanso: 60s | RIR 0',note:'Finalizador metabólico',sets:3},
+    {name:'Face Pull (polia alta)',spec:'3 × 20 reps | Descanso: 60s | RIR 1',note:'Saúde do ombro — obrigatório',sets:3},
+  ]
+};
+
+function showWorkout() {
+  const proto = userProfile.protocolo || '001';
+  const tmpl = TEMPLATES[proto] || TEMPLATES['001'];
+  const container = document.getElementById('workout-exercises');
+  container.innerHTML = '';
+
+  document.getElementById('wk-title').textContent = 'Treino A — Peito + Tríceps';
+  document.getElementById('wk-sub').textContent = `Protocolo ${proto} · ${tmpl.length} exercícios`;
+
+  tmpl.forEach((ex, idx) => {
+    const card = document.createElement('div');
+    card.className = 'ex-card';
+    let setsHtml = '';
+    for (let s = 1; s <= ex.sets; s++) {
+      setsHtml += `<div class="set-row">
+        <div class="set-label">Série ${s}</div>
+        <input class="set-input" type="number" placeholder="0" min="0" step="2.5" style="width:80px"/>
+        <div class="set-unit">kg</div>
+        <button class="set-check" onclick="this.classList.toggle('done')">
+          <svg viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3"/></svg>
+        </button>
+      </div>`;
+    }
+    card.innerHTML = `
+      <div class="ex-num">Exercício ${idx+1} de ${tmpl.length}</div>
+      <div class="ex-name">${ex.name}</div>
+      <div class="ex-spec">${ex.spec}</div>
+      <div class="ex-note">${ex.note}</div>
+      <div class="set-rows">${setsHtml}</div>
+      <div class="borg-section">
+<!-- Borg movido para tela de conclusão -->
+        <div class="borg-buttons">
+          ${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="borg-btn" onclick="selectBorg(this)">${n}</button>`).join('')}
+        </div>
+      </div>`;
+    container.appendChild(card);
+  });
+
+  workoutSeconds = 0;
+  if (workoutTimer) clearInterval(workoutTimer);
+  workoutTimer = setInterval(() => {
+    workoutSeconds++;
+    const m = String(Math.floor(workoutSeconds/60)).padStart(2,'0');
+    const s = String(workoutSeconds%60).padStart(2,'0');
+    document.getElementById('wk-timer').textContent = `${m}:${s}`;
+  }, 1000);
+
+  showScreen('s-workout');
+}
+
+function selectBorg(btn) {
+  btn.closest('.borg-buttons').querySelectorAll('.borg-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+
+function finishWorkout() {
+  clearInterval(workoutTimer);
+  const borgs = [...document.querySelectorAll('.borg-btn.sel')].map(b => parseInt(b.textContent));
+  const avgBorg = borgs.length ? borgs.reduce((a,b)=>a+b,0)/borgs.length : 0;
+  const sessions = JSON.parse(localStorage.getItem('caleb_sessions') || '[]');
+  sessions.push({ date:new Date().toISOString(), duration:workoutSeconds, avgBorg:parseFloat(avgBorg.toFixed(1)), session:'A' });
+  localStorage.setItem('caleb_sessions', JSON.stringify(sessions));
+  hideScreen('s-workout');
+  loadHome();
+  // Abrir tela de conclusão customizada
+  const finSc = document.getElementById('screen-finish');
+  if (finSc) {
+    const t = document.getElementById('finish-title');
+    const d = document.getElementById('finish-duration');
+    if (t) t.textContent = document.getElementById('wk-title')?.textContent || 'Treino';
+    if (d) d.textContent = Math.floor(workoutSeconds/60) + ' min';
+    // Rebuildar Borg buttons
+    const bw = document.getElementById('finish-borg');
+    if (bw) bw.innerHTML = [1,2,3,4,5,6,7,8,9,10].map(n =>
+      `<button class="borg-btn" data-val="${n}" onclick="selectFinishBorg(this)">${n}</button>`
+    ).join('');
+    finSc.classList.remove('off-up','off','off-left');
+  }
+}
+
+/* ════════════════════════════════════════════════════
+   PROGRESS CHART
+════════════════════════════════════════════════════ */
+const CHART_DATA = {
+  supino:[60,65,70,75], agachamento:[80,85,90,100],
+  terra:[70,80,90,95], rosca:[12,14,14,16], desenvolvimento:[40,45,48,50]
+};
+
+function updateChart() {
+  const key = document.getElementById('prog-select')?.value || 'supino';
+  const vals = CHART_DATA[key];
+  const max = Math.max(...vals);
+  const container = document.getElementById('prog-chart');
+  if (!container) return;
+  container.innerHTML = vals.map((v,i) => `
+    <div class="chart-bar-wrap">
+      <div class="chart-bar" style="height:${Math.round((v/max)*100)}%;background:${i===vals.length-1?'var(--orange)':'var(--surface2)'}"></div>
+      <div class="chart-bar-label">Sem ${i+1}</div>
+      <div class="chart-bar-val" style="${i===vals.length-1?'color:var(--orange)':''}">${v}kg</div>
+    </div>`).join('');
+
+  const bw = parseFloat(userProfile.peso) || 80;
+  const ratio = vals[vals.length-1] / bw;
+  const LEVELS = ['Iniciante','Novato','Intermediário','Avançado','Elite'];
+  const RATIOS = [0.75,1.0,1.5,2.0,99];
+  let li = 0;
+  for (let i = 0; i < RATIOS.length; i++) { if (ratio <= RATIOS[i]) { li = i; break; } li = i; }
+  const pct = Math.min(Math.round((li/4)*80+10), 100);
+  const fill = document.getElementById('nuck-fill');
+  const tag = document.getElementById('nuck-tag');
+  const ratioEl = document.getElementById('nuck-ratio');
+  if (fill) fill.style.width = `${pct}%`;
+  if (tag) tag.textContent = LEVELS[li];
+  if (ratioEl) ratioEl.textContent = `${ratio.toFixed(2)}× peso corporal`;
+}
+
+/* ════════════════════════════════════════════════════
+   UTILS
+════════════════════════════════════════════════════ */
+function showLoader(text) { document.getElementById('loader-text').textContent = text; document.getElementById('loader').style.display = 'flex'; }
+function hideLoader() { document.getElementById('loader').style.display = 'none'; }
+function autoResize(el) { el.style.height='22px'; el.style.height=Math.min(el.scrollHeight,110)+'px'; }
+function handleKey(e, who) { if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); who==='onboarding' ? sendOnboarding() : sendChat(); } }
 
 function resetAll() {
-  ['caleb_profile','caleb_onboarded','caleb_conversation','caleb_onboarding_history','caleb_sessions','caleb_weights','caleb_workout_versions', 'caleb_session_logs', 'caleb_cycle_reports'].forEach(k => localStorage.removeItem(k));
-  userProfile = null; chatHistory = []; onboardingHistory = []; chatInitialized = false;
-  document.getElementById('chat-messages').innerHTML = '';
-  document.getElementById('workout-ready-banner')?.remove();
+  if (!confirm('Isso vai apagar seu protocolo e histórico. Confirma?')) return;
+  ['caleb_profile','caleb_onboarded','caleb_conversation','caleb_sessions'].forEach(k => localStorage.removeItem(k));
+  userProfile = {}; onboardingHistory = []; chatHistory = []; chatInited = false;
+  document.getElementById('chat-msgs').innerHTML = '';
   showOnly('s-splash');
 }
 
-// ══════════════════════════════════════════════════════
-// FORMULARIO DE CARGAS (1RM)
-// ══════════════════════════════════════════════════════
-function buildFormCargas() {
-  const exercises = [ { id: 'agachamento', label: 'Agachamento Livre' }, { id: 'supino', label: 'Supino Reto' }, { id: 'terra', label: 'Levantamento Terra' }, { id: 'desenvolvimento', label: 'Desenvolvimento (ombros)' }, { id: 'remada', label: 'Remada Curvada' } ];
-  const rows = exercises.map(ex => `<div class="form-cargas-row"><span class="form-cargas-label">${ex.label}</span><input type="number" min="0" step="0.5" placeholder="kg" id="fc-kg-${ex.id}" class="form-cargas-input"/><span class="form-cargas-unit">kg</span><input type="number" min="0" max="50" step="1" placeholder="reps" id="fc-reps-${ex.id}" class="form-cargas-input"/><span class="form-cargas-unit">reps</span></div>`).join('');
-  return `<div class="form-cargas"><div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;">Exercícios básicos</div>${rows}<button class="form-cargas-btn" onclick="confirmCargasForm(event)">Confirmar cargas</button></div>`;
+// ── FUNÇÕES ADICIONAIS ──────────────────────────────
+
+function loadGamifiedProfile() {
+  const sessions = JSON.parse(localStorage.getItem('caleb_sessions')||'[]');
+  const weights = JSON.parse(localStorage.getItem('caleb_weights')||'{}');
+  const set = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
+  set('gm-sessions', sessions.length||'0');
+  let streak=0;
+  if(sessions.length>0){
+    const dates=[...new Set(sessions.map(s=>s.date.split('T')[0]))].sort().reverse();
+    let prev=new Date().toISOString().split('T')[0];
+    for(const d of dates){if((new Date(prev)-new Date(d))/86400000<=1){streak++;prev=d;}else break;}
+  }
+  set('gm-streak', streak>0?streak+' dias':'0');
+  let totalVol=0;
+  Object.values(weights).forEach(h=>h.forEach(e=>{totalVol+=(e.max||0)*40;}));
+  set('gm-volume', totalVol>0?(totalVol/1000).toFixed(1)+'t':'—');
+  const bw=parseFloat((userProfile||{}).peso)||75;
+  let bestIdx=0;
+  const order=['Iniciante','Novato','Intermediário','Avançado','Elite'];
+  if(userProfile){['rm_agachamento','rm_supino','rm_terra'].forEach(k=>{
+    const v=userProfile[k]; if(!v) return;
+    const m=v.match(/(\d+\.?\d*)/); if(!m) return;
+    const r=parseFloat(m[1])/bw;
+    let li=0;
+    if(r<0.75)li=0; else if(r<1.0)li=1; else if(r<1.5)li=2; else if(r<2.0)li=3; else li=4;
+    if(li>bestIdx) bestIdx=li;
+  });}
+  set('gm-level', order[bestIdx]);
 }
 
-function confirmCargasForm(event) {
-  const exercises = [ { id: 'agachamento', label: 'Agachamento Livre' }, { id: 'supino', label: 'Supino Reto' }, { id: 'terra', label: 'Levantamento Terra' }, { id: 'desenvolvimento', label: 'Desenvolvimento' }, { id: 'remada', label: 'Remada Curvada' } ];
-  const results = {}; const lines = [];
-  exercises.forEach(ex => {
-    const kg = parseFloat(document.getElementById('fc-kg-' + ex.id)?.value);
-    const reps = parseInt(document.getElementById('fc-reps-' + ex.id)?.value);
-    if (kg > 0 && reps > 0) { results[ex.id] = { carga: kg, reps, rm1: +(kg * (1 + reps / 30)).toFixed(1) }; lines.push(`${ex.label}: ${kg}kg × ${reps} reps`); }
-    else { results[ex.id] = null; lines.push(`${ex.label}: não informado`); }
+function saveAndFinish() {
+  const b=document.querySelector('#finish-borg .borg-btn.selected');
+  const borgVal=b?parseFloat(b.dataset.val):null;
+  const obs=(document.getElementById('finish-obs')||{}).value||'';
+  const sessions=JSON.parse(localStorage.getItem('caleb_sessions')||'[]');
+  if(sessions.length>0){sessions[sessions.length-1].avgBorg=borgVal;sessions[sessions.length-1].sessionObs=obs;}
+  localStorage.setItem('caleb_sessions',JSON.stringify(sessions));
+  document.getElementById('screen-finish').classList.add('off-up');
+  showOnly('s-home');
+  updateMetrics();
+  if(typeof updateCycleBadge==='function') updateCycleBadge();
+  if(typeof updateNextWorkoutCard==='function') updateNextWorkoutCard();
+  if(typeof checkAndGenerateCycleReport==='function') checkAndGenerateCycleReport();
+}
+
+function selectFinishBorg(btn) {
+  document.querySelectorAll('#finish-borg .borg-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function showWorkoutByKey(key) {
+  const proto=(userProfile&&['001','002','003'].includes(userProfile.protocolo))?userProfile.protocolo:'001';
+  const templates=WK[proto]||WK['001'];
+  const wk=templates[key];
+  if(!wk){showScreen('s-workout')||showOnly('screen-workout');return;}
+  const t=document.getElementById('workout-title')||document.getElementById('wk-title');
+  if(t) t.textContent=wk.title;
+  const content=document.getElementById('workout-content')||document.getElementById('workout-exercises');
+  if(!content) return;
+  content.innerHTML='';
+  wk.exercises.forEach((ex,i)=>{
+    const card=document.createElement('div');
+    card.className='exercise-card';
+    let sHtml='';
+    for(let s=1;s<=ex.sets;s++){
+      sHtml+=`<div class="set-row"><div class="set-label">S${s}</div><input class="set-input" type="number" placeholder="kg" min="0" step="0.5"><div class="set-check" onclick="this.classList.toggle('done')"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></div>`;
+    }
+    card.innerHTML=`<div style="font-size:11px;color:var(--text3);margin-bottom:4px">Exercício ${i+1}/${wk.exercises.length}</div><div style="font-size:17px;font-weight:800;margin-bottom:4px">${ex.name}</div><div style="font-size:13px;color:var(--text2);margin-bottom:8px">${ex.spec}</div><div style="border-left:3px solid var(--orange);padding-left:10px;font-size:12px;color:var(--text2);font-style:italic;margin-bottom:12px">${ex.note}</div>${sHtml}`;
+    content.appendChild(card);
   });
-  localStorage.setItem('caleb_rm_data', JSON.stringify(results));
-  document.querySelectorAll('[id^="fc-kg-"], [id^="fc-reps-"]').forEach(el => { el.disabled = true; el.style.opacity = '0.5'; });
-  if (event?.target) { event.target.disabled = true; event.target.textContent = 'Enviado ✓'; event.target.style.opacity = '0.6'; }
-  const msg = lines.join('\n');
-  setTimeout(() => {
-    if (!document.getElementById('s-onboarding').classList.contains('off')) { const inp = document.getElementById('ob-input'); if (inp) { inp.value = msg; sendOnboarding(); } }
-    else { const cInp = document.getElementById('chat-input'); if (cInp) { cInp.value = msg; sendChat(); } }
-  }, 200);
+  const ws=document.getElementById('s-workout')||document.getElementById('screen-workout');
+  if(ws) ws.classList.remove('off','off-up','off-left');
+  workoutSeconds=0; clearInterval(workoutTimer);
+  const timer=document.getElementById('workout-timer')||document.getElementById('wk-timer');
+  if(timer) timer.textContent='00:00';
+  workoutTimer=setInterval(()=>{
+    workoutSeconds++;
+    const mm=String(Math.floor(workoutSeconds/60)).padStart(2,'0');
+    const ss=String(workoutSeconds%60).padStart(2,'0');
+    if(timer) timer.textContent=`${mm}:${ss}`;
+  },1000);
 }
 
-// ══════════════════════════════════════════════════════
-// BOOT
-// ══════════════════════════════════════════════════════
-init();
+function showTooltip(event,term) {
+  const TIPS={
+    'RIR':'RIR = Repetições em Reserva. Quantas reps você ainda conseguiria antes de falhar. RIR 2 = parou 2 antes do limite.',
+    'Borg':'Escala de Borg CR10: percepção de esforço de 1 a 10. 1 = muito leve, 10 = máximo absoluto.',
+    'Drop-set':'Reduz a carga logo após a última série e continua sem descanso.',
+    'Rest-pause':'Pausa de 10 a 20 segundos dentro da série para conseguir mais repetições.',
+    'MEV':'Mínimo Eficaz — mínimo de séries por músculo por semana para ter resultado.',
+    'MAV':'Máximo Adaptativo — volume ideal para hipertrofia sem comprometer a recuperação.',
+    'MRV':'Máximo Recuperável — acima disso o corpo não se recupera e pode regredir.'
+  };
+  const box=document.getElementById('tooltip-box');
+  const txt=document.getElementById('tooltip-text');
+  if(!box||!txt) return;
+  txt.textContent=TIPS[term]||term;
+  box.style.display='block';
+  const r=event.target.getBoundingClientRect();
+  box.style.left=Math.min(r.left,window.innerWidth-300)+'px';
+  box.style.top=Math.max(8,r.top-130)+'px';
+  event.stopPropagation();
+}
+document.addEventListener('click',()=>{const b=document.getElementById('tooltip-box');if(b)b.style.display='none';});
+
 </script>
+<!-- TELA CONCLUSÃO -->
+<div class="screen off-up" id="screen-finish" style="z-index:20;">
+  <div style="height:56px;display:flex;align-items:center;padding:0 20px;border-bottom:1px solid var(--border);flex-shrink:0;">
+    <span style="font-size:16px;font-weight:700;">Sessão concluída</span>
+  </div>
+  <div class="scroll-area" style="padding:24px 20px;">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="width:64px;height:64px;background:var(--green);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;font-weight:800;margin:0 auto 14px;">✓</div>
+      <div style="font-size:22px;font-weight:800;" id="finish-title">Treino</div>
+      <div style="font-size:14px;color:var(--text2);margin-top:4px;" id="finish-duration">— min</div>
+    </div>
+    <div class="card" style="margin-bottom:16px;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px;">Como foi a sessão de hoje?</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">Escala de Borg CR10 — 1 = muito leve · 10 = máximo absoluto</div>
+      <div class="borg-wrap" id="finish-borg">
+        1 2 3 4 5 6 7 8 9 10
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:24px;">
+      <textarea id="finish-obs" placeholder="Observação sobre o treino de hoje (opcional)" style="width:100%;background:none;border:none;outline:none;color:var(--text);font-size:14px;resize:none;font-family:var(--font);line-height:1.5;" rows="3"></textarea>
+    </div>
+    <button class="btn-primary" onclick="saveAndFinish()">Salvar e voltar</button>
+  </div>
+</div>
+<!-- TOOLTIP BOX -->
+<div id="tooltip-box" style="position:fixed;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:14px 16px;max-width:280px;font-size:13px;color:var(--text2);line-height:1.6;z-index:500;box-shadow:0 4px 20px rgba(0,0,0,.4);display:none;">
+  <button onclick="document.getElementById('tooltip-box').style.display='none'" style="float:right;background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;margin-left:8px;">×</button>
+  <span id="tooltip-text"></span>
+</div>
 </body>
 </html>
