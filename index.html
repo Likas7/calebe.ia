@@ -384,6 +384,21 @@ textarea{resize:none}
   display:inline-flex;align-items:center;gap:8px}
 .verse-item::before{content:'✝';font-size:10px;opacity:0.7}
 @keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+/* FORM CARGAS */
+.cargas-form{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:14px;margin-top:10px}
+.cargas-title{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+.carga-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.carga-name{flex:1;font-size:13px;color:var(--text);font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.carga-inputs{display:flex;gap:6px;flex-shrink:0}
+.carga-input{width:62px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-xs);
+  color:var(--text);font-size:13px;padding:7px 8px;outline:none;text-align:center;
+  font-family:var(--font-mono);transition:border-color .2s}
+.carga-input:focus{border-color:var(--orange)}
+.carga-unit{font-size:11px;color:var(--text3);flex-shrink:0;line-height:1}
+.cargas-submit{width:100%;margin-top:14px;background:var(--orange);border:none;border-radius:var(--radius-xs);
+  padding:11px;font-size:13px;font-weight:600;color:#1a0a04;cursor:pointer;
+  transition:background .15s,transform .15s}
+.cargas-submit:active{transform:scale(.97);background:var(--orange-lo)}
 </style>
 </head>
 <body>
@@ -1170,6 +1185,56 @@ async function sendChatMsg(text) {
    BUBBLE
 ════════════════════════════════════════════════════ */
 function formatCalebMsg(text, containerId) {
+  // Intercepta [FORM_CARGAS] ANTES de qualquer outro processamento
+  if (text.includes('[FORM_CARGAS]')) {
+    const formId = 'cargas-form-' + Date.now();
+    const exercises = [
+      'Supino Reto com Barra',
+      'Remada Curvada com Barra',
+      'Agachamento Livre',
+      'Levantamento Terra',
+      'Desenvolvimento com Barra (Ombros)',
+      'Rosca Direta com Barra',
+      'Tríceps Testa com Barra',
+      'Elevação Lateral',
+      'Puxada Frontal (Pulldown)',
+      'Cadeira Extensora',
+      'Mesa Flexora',
+    ];
+    const rows = exercises.map((ex, i) => `
+      <div class="carga-row">
+        <div class="carga-name" title="${ex}">${ex}</div>
+        <div class="carga-inputs">
+          <input class="carga-input" id="${formId}-kg-${i}" type="number" placeholder="kg" min="0" step="2.5">
+          <span class="carga-unit">×</span>
+          <input class="carga-input" id="${formId}-rep-${i}" type="number" placeholder="reps" min="0" step="1" style="width:52px">
+        </div>
+      </div>`).join('');
+
+    const formHtml = `<div class="cargas-form" id="${formId}">
+      <div class="cargas-title">⚖️ Cargas atuais — preencha o que treina</div>
+      ${rows}
+      <button class="cargas-submit" onclick="submitCargas('${formId}','${containerId}')">Enviar cargas →</button>
+    </div>`;
+
+    // Processa o texto ao redor da tag
+    const before = text.split('[FORM_CARGAS]')[0];
+    const after  = text.split('[FORM_CARGAS]').slice(1).join('');
+    const fmtBefore = before
+      .replace(/\[ONBOARDING_COMPLETO\]/g,'')
+      .replace(/\[PERFIL_JSON\][\s\S]*?\[\/PERFIL_JSON\]/g,'')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\*\*(.*?)\*\*/g,'<b>$1</b>')
+      .replace(/━+/g,'<hr style="border:none;border-top:1px solid var(--border);margin:8px 0">')
+      .replace(/\n/g,'<br>');
+    const fmtAfter = after
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\*\*(.*?)\*\*/g,'<b>$1</b>')
+      .replace(/━+/g,'<hr style="border:none;border-top:1px solid var(--border);margin:8px 0">')
+      .replace(/\n/g,'<br>');
+    return fmtBefore + formHtml + fmtAfter;
+  }
+
   text = text
     .replace(/\[ONBOARDING_COMPLETO\]/g,'')
     .replace(/\[PERFIL_JSON\][\s\S]*?\[\/PERFIL_JSON\]/g,'')
@@ -1200,6 +1265,36 @@ function formatCalebMsg(text, containerId) {
     }
   });
   return result;
+}
+
+function submitCargas(formId, containerId) {
+  const form = document.getElementById(formId);
+  if (!form) return;
+  const exercises = [
+    'Supino Reto com Barra','Remada Curvada com Barra','Agachamento Livre',
+    'Levantamento Terra','Desenvolvimento com Barra (Ombros)','Rosca Direta com Barra',
+    'Tríceps Testa com Barra','Elevação Lateral','Puxada Frontal (Pulldown)',
+    'Cadeira Extensora','Mesa Flexora',
+  ];
+  const lines = [];
+  exercises.forEach((ex, i) => {
+    const kg  = document.getElementById(`${formId}-kg-${i}`)?.value?.trim();
+    const rep = document.getElementById(`${formId}-rep-${i}`)?.value?.trim();
+    if (kg || rep) lines.push(`${ex}: ${kg || '?'}kg × ${rep || '?'} reps`);
+  });
+  if (lines.length === 0) {
+    lines.push('Não faço nenhum desses exercícios atualmente.');
+  }
+  const msg = 'Minhas cargas atuais:\n' + lines.join('\n');
+
+  // Desabilita o form para evitar duplo envio
+  form.querySelectorAll('input,button').forEach(el => el.disabled = true);
+  form.querySelector('.cargas-submit').textContent = 'Enviado ✓';
+
+  setTimeout(() => {
+    if (containerId === 'onboarding-msgs') sendOnboardingText(msg);
+    else sendChatMsg(msg);
+  }, 160);
 }
 
 function sendObChip(btn, text) {
