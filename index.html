@@ -1355,13 +1355,10 @@ function loadHome() {
     } catch(e) {}
   }
 
-  const sessions = JSON.parse(localStorage.getItem('caleb_sessions') || '[]');
-  if (sessions.length > 0) {
-    const avg = sessions.reduce((a,s)=>a+(s.avgBorg||0),0)/sessions.length;
-    document.getElementById('home-borg').textContent = avg.toFixed(1);
-    document.getElementById('home-borg-sub').textContent = 'Na zona alvo ✓';
-    document.getElementById('home-borg-fill').style.width = `${(avg/10)*100}%`;
-  }
+  // Actualiza métricas e badge de ciclo com dados reais
+  updateMetrics();
+  updateCycleBadge();
+  updateNextWorkoutCard();
 }
 
 function setHomeWorkoutCard(key, wks) {
@@ -1498,21 +1495,26 @@ function selectBorg(btn) {
 
 function finishWorkout() {
   clearInterval(workoutTimer);
-  const borgs = [...document.querySelectorAll('.borg-btn.sel')].map(b => parseInt(b.textContent));
-  const avgBorg = borgs.length ? borgs.reduce((a,b)=>a+b,0)/borgs.length : 0;
-  const sessions = JSON.parse(localStorage.getItem('caleb_sessions') || '[]');
-  sessions.push({ date:new Date().toISOString(), duration:workoutSeconds, avgBorg:parseFloat(avgBorg.toFixed(1)), session:'A' });
+  // Salva sessão temporária (Borg será atualizado na tela de conclusão)
+  const sessions = (() => { try { return JSON.parse(localStorage.getItem('caleb_sessions')) || []; } catch { return []; } })();
+  const currentKey = document.getElementById('wk-title')?.textContent?.match(/Treino\s+([A-E])/i)?.[1] || 'A';
+  sessions.push({
+    date: new Date().toISOString(),
+    duration: workoutSeconds,
+    avgBorg: null,
+    session: currentKey
+  });
   localStorage.setItem('caleb_sessions', JSON.stringify(sessions));
   hideScreen('s-workout');
   loadHome();
-  // Abrir tela de conclusão customizada
+  // Abrir tela de conclusão
   const finSc = document.getElementById('screen-finish');
   if (finSc) {
     const t = document.getElementById('finish-title');
     const d = document.getElementById('finish-duration');
     if (t) t.textContent = document.getElementById('wk-title')?.textContent || 'Treino';
     if (d) d.textContent = Math.floor(workoutSeconds/60) + ' min';
-    // Rebuildar Borg buttons
+    // Rebuildar Borg buttons com classe 'sel' (padrão do app)
     const bw = document.getElementById('finish-borg');
     if (bw) bw.innerHTML = [1,2,3,4,5,6,7,8,9,10].map(n =>
       `<button class="borg-btn" data-val="${n}" onclick="selectFinishBorg(this)">${n}</button>`
@@ -1605,56 +1607,152 @@ function loadGamifiedProfile() {
 }
 
 function saveAndFinish() {
-  const b=document.querySelector('#finish-borg .borg-btn.selected');
-  const borgVal=b?parseFloat(b.dataset.val):null;
-  const obs=(document.getElementById('finish-obs')||{}).value||'';
-  const sessions=JSON.parse(localStorage.getItem('caleb_sessions')||'[]');
-  if(sessions.length>0){sessions[sessions.length-1].avgBorg=borgVal;sessions[sessions.length-1].sessionObs=obs;}
-  localStorage.setItem('caleb_sessions',JSON.stringify(sessions));
+  // Suporta tanto 'sel' (padrão) quanto 'selected' (legado)
+  const b = document.querySelector('#finish-borg .borg-btn.sel') || document.querySelector('#finish-borg .borg-btn.selected');
+  const borgVal = b ? parseFloat(b.dataset.val) : null;
+  const obs = (document.getElementById('finish-obs') || {}).value || '';
+  const sessions = (() => { try { return JSON.parse(localStorage.getItem('caleb_sessions')) || []; } catch { return []; } })();
+  if (sessions.length > 0) {
+    sessions[sessions.length-1].avgBorg = borgVal;
+    sessions[sessions.length-1].sessionObs = obs;
+  }
+  localStorage.setItem('caleb_sessions', JSON.stringify(sessions));
   document.getElementById('screen-finish').classList.add('off-up');
   showOnly('s-home');
   updateMetrics();
-  if(typeof updateCycleBadge==='function') updateCycleBadge();
-  if(typeof updateNextWorkoutCard==='function') updateNextWorkoutCard();
-  if(typeof checkAndGenerateCycleReport==='function') checkAndGenerateCycleReport();
+  updateCycleBadge();
+  updateNextWorkoutCard();
 }
 
 function selectFinishBorg(btn) {
-  document.querySelectorAll('#finish-borg .borg-btn').forEach(b=>b.classList.remove('selected'));
-  btn.classList.add('selected');
+  // Usa 'sel' como padrão do app (consistente com selectBorg)
+  document.querySelectorAll('#finish-borg .borg-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
 }
 
 function showWorkoutByKey(key) {
-  const proto=(userProfile&&['001','002','003'].includes(userProfile.protocolo))?userProfile.protocolo:'001';
-  const templates=WK[proto]||WK['001'];
-  const wk=templates[key];
-  if(!wk){showScreen('s-workout')||showOnly('screen-workout');return;}
-  const t=document.getElementById('workout-title')||document.getElementById('wk-title');
-  if(t) t.textContent=wk.title;
-  const content=document.getElementById('workout-content')||document.getElementById('workout-exercises');
-  if(!content) return;
-  content.innerHTML='';
-  wk.exercises.forEach((ex,i)=>{
-    const card=document.createElement('div');
-    card.className='exercise-card';
-    let sHtml='';
-    for(let s=1;s<=ex.sets;s++){
-      sHtml+=`<div class="set-row"><div class="set-label">S${s}</div><input class="set-input" type="number" placeholder="kg" min="0" step="0.5"><div class="set-check" onclick="this.classList.toggle('done')"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></div>`;
+  // Usa TEMPLATES (a estrutura de dados que existe neste arquivo)
+  const proto = (userProfile && ['001','002','003'].includes(userProfile.protocolo)) ? userProfile.protocolo : '001';
+  const exercises = TEMPLATES[proto] || TEMPLATES['001'];
+  const container = document.getElementById('workout-exercises');
+  if (!container) { showScreen('s-workout'); return; }
+
+  const titleEl = document.getElementById('wk-title');
+  const subEl   = document.getElementById('wk-sub');
+  if (titleEl) titleEl.textContent = `Treino ${key} — Protocolo ${proto}`;
+  if (subEl)   subEl.textContent   = `${exercises.length} exercícios`;
+
+  container.innerHTML = '';
+  exercises.forEach((ex, idx) => {
+    const card = document.createElement('div');
+    card.className = 'ex-card';
+    let setsHtml = '';
+    for (let s = 1; s <= ex.sets; s++) {
+      setsHtml += `<div class="set-row">
+        <div class="set-label">Série ${s}</div>
+        <input class="set-input" type="number" placeholder="0" min="0" step="2.5" style="width:80px"/>
+        <div class="set-unit">kg</div>
+        <button class="set-check" onclick="this.classList.toggle('done')">
+          <svg viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3"/></svg>
+        </button>
+      </div>`;
     }
-    card.innerHTML=`<div style="font-size:11px;color:var(--text3);margin-bottom:4px">Exercício ${i+1}/${wk.exercises.length}</div><div style="font-size:17px;font-weight:800;margin-bottom:4px">${ex.name}</div><div style="font-size:13px;color:var(--text2);margin-bottom:8px">${ex.spec}</div><div style="border-left:3px solid var(--orange);padding-left:10px;font-size:12px;color:var(--text2);font-style:italic;margin-bottom:12px">${ex.note}</div>${sHtml}`;
-    content.appendChild(card);
+    card.innerHTML = `
+      <div class="ex-num">Exercício ${idx+1} de ${exercises.length}</div>
+      <div class="ex-name">${ex.name}</div>
+      <div class="ex-spec">${ex.spec}</div>
+      <div class="ex-note">${ex.note}</div>
+      <div class="set-rows">${setsHtml}</div>
+      <div class="borg-section">
+        <div class="borg-title-sm">Percepção de esforço (Borg)</div>
+        <div class="borg-buttons">
+          ${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="borg-btn" onclick="selectBorg(this)">${n}</button>`).join('')}
+        </div>
+      </div>`;
+    container.appendChild(card);
   });
-  const ws=document.getElementById('s-workout')||document.getElementById('screen-workout');
-  if(ws) ws.classList.remove('off','off-up','off-left');
-  workoutSeconds=0; clearInterval(workoutTimer);
-  const timer=document.getElementById('workout-timer')||document.getElementById('wk-timer');
-  if(timer) timer.textContent='00:00';
-  workoutTimer=setInterval(()=>{
+
+  const ws = document.getElementById('s-workout');
+  if (ws) ws.classList.remove('off','off-up','off-left');
+  workoutSeconds = 0;
+  clearInterval(workoutTimer);
+  const timerEl = document.getElementById('wk-timer');
+  if (timerEl) timerEl.textContent = '00:00';
+  workoutTimer = setInterval(() => {
     workoutSeconds++;
-    const mm=String(Math.floor(workoutSeconds/60)).padStart(2,'0');
-    const ss=String(workoutSeconds%60).padStart(2,'0');
-    if(timer) timer.textContent=`${mm}:${ss}`;
-  },1000);
+    const mm = String(Math.floor(workoutSeconds/60)).padStart(2,'0');
+    const ss = String(workoutSeconds%60).padStart(2,'0');
+    if (timerEl) timerEl.textContent = `${mm}:${ss}`;
+  }, 1000);
+}
+
+/* ════════════════════════════════════════════════════
+   MÉTRICAS E CICLO — funções chamadas por saveAndFinish
+════════════════════════════════════════════════════ */
+function updateMetrics() {
+  const sessions = (() => { try { return JSON.parse(localStorage.getItem('caleb_sessions')) || []; } catch { return []; } })();
+  // Borg médio geral
+  const borgSessions = sessions.filter(s => s.avgBorg !== null && s.avgBorg > 0);
+  if (borgSessions.length > 0) {
+    const avg = borgSessions.reduce((a,s) => a + s.avgBorg, 0) / borgSessions.length;
+    const borgEl  = document.getElementById('home-borg');
+    const borgSub = document.getElementById('home-borg-sub');
+    const borgFill = document.getElementById('home-borg-fill');
+    if (borgEl)   borgEl.textContent  = avg.toFixed(1);
+    if (borgSub)  borgSub.textContent = avg >= 5 && avg <= 8 ? 'Na zona alvo ✓' : avg < 5 ? 'Abaixo da zona' : 'Acima da zona ⚠️';
+    if (borgFill) borgFill.style.width = `${(avg/10)*100}%`;
+  }
+  // Progresso
+  const progS = document.getElementById('prog-sessions');
+  const progA = document.getElementById('prog-adh');
+  const progB = document.getElementById('prog-borg');
+  if (progS) progS.textContent = `${sessions.length}/12`;
+  if (progB && borgSessions.length > 0) {
+    const avg = borgSessions.reduce((a,s) => a + s.avgBorg, 0) / borgSessions.length;
+    progB.textContent = avg.toFixed(1);
+  }
+  if (progA) {
+    const expected = Math.max(1, Math.ceil((new Date() - new Date(sessions[0]?.date || new Date())) / (7*86400000)) * 4);
+    const adh = Math.min(100, Math.round((sessions.length / expected) * 100));
+    progA.textContent = `${adh}%`;
+  }
+}
+
+function updateCycleBadge() {
+  const sessions = (() => { try { return JSON.parse(localStorage.getItem('caleb_sessions')) || []; } catch { return []; } })();
+  const sessPerCycle = 12; // 3 semanas × 4 dias + 1 deload
+  const cycle  = Math.floor(sessions.length / sessPerCycle) + 1;
+  const weekInCycle = Math.floor((sessions.length % sessPerCycle) / 4) + 1;
+  const totalWeeks  = 4;
+  const cycleEl = document.getElementById('home-cycle');
+  const progCycle = document.getElementById('prog-cycle');
+  const text = `Semana ${weekInCycle} de ${totalWeeks}`;
+  if (cycleEl)   cycleEl.textContent   = text;
+  if (progCycle) progCycle.textContent = text;
+  const pct = Math.round(((sessions.length % sessPerCycle) / sessPerCycle) * 100);
+  const bar = document.getElementById('prog-bar');
+  const pctEl = document.getElementById('prog-pct');
+  if (bar)   bar.style.width   = `${pct}%`;
+  if (pctEl) pctEl.textContent = `${pct}% concluído`;
+}
+
+function updateNextWorkoutCard() {
+  const sessions = (() => { try { return JSON.parse(localStorage.getItem('caleb_sessions')) || []; } catch { return []; } })();
+  const keys = ['A','B','C','D'];
+  // O próximo treino é o que vem após o último feito
+  const lastSession = sessions.length > 0 ? sessions[sessions.length-1].session : null;
+  const lastIdx = lastSession ? keys.indexOf(lastSession) : -1;
+  const nextKey = keys[(lastIdx + 1) % keys.length];
+  const saved = localStorage.getItem('caleb_workouts');
+  if (saved) {
+    try {
+      const wks = JSON.parse(saved);
+      setHomeWorkoutCard(nextKey, wks);
+    } catch(e) {}
+  } else {
+    const titleEl = document.getElementById('home-title');
+    if (titleEl) titleEl.textContent = `Treino ${nextKey}`;
+  }
 }
 
 function showTooltip(event,term) {
