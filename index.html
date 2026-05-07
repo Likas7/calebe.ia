@@ -886,6 +886,20 @@ TREINO [LETRA] — [GRUPOS]
 
 Após todos os treinos: volume semanal + proteína recomendada + creatina 5g/dia.
 
+Ao final de QUALQUER resposta que crie ou modifique um protocolo de treino, OBRIGATORIAMENTE anexe no final da sua resposta um bloco JSON com todos os treinos da semana, usando EXATAMENTE as tags [TREINOS_JSON] e [/TREINOS_JSON].
+Atenção: Use este formato exato para que o aplicativo possa ler os dados:
+[TREINOS_JSON]
+{
+  "A": [
+    {"name": "Supino Inclinado", "spec": "4x8-10 | 2min | RIR 2", "note": "Comprimento longo", "sets": 4},
+    {"name": "Fly no Cabo", "spec": "3x10-12 | 90s | RIR 2-3", "note": "Tensão constante", "sets": 3}
+  ],
+  "B": [
+    {"name": "Agachamento", "spec": "4x6-8 | 3min | RIR 1-2", "note": "Carga máxima", "sets": 4}
+  ]
+}
+[/TREINOS_JSON]
+
 # NUTRIÇÃO
 # NUTRIÇÃO — REGRA
 Caleb NÃO prescreve dietas, macros ou suplementos.
@@ -1089,16 +1103,31 @@ async function sendOnboarding() {
       localStorage.setItem('caleb_profile', JSON.stringify(userProfile));
       localStorage.setItem('caleb_onboarded', '1');
 
-      // Extrai metadados dos treinos A/B/C/D para seleção dinâmica na home
-      const workoutMap = {};
-      const wkPattern = /TREINO\s+([A-E])\s*[—\-–]\s*([^\n\r]{2,60})/gi;
-      let wm;
-      while ((wm = wkPattern.exec(reply)) !== null) {
-        const key = wm[1].toUpperCase();
-        workoutMap[key] = { title: wm[2].trim(), sub: wm[2].trim(), exCount: null, duration: '~60 min' };
-      }
-      if (Object.keys(workoutMap).length > 0) {
-        localStorage.setItem('caleb_workouts', JSON.stringify(workoutMap));
+      // Extrai treinos JSON (se houver) para tornar os treinos 100% dinâmicos via I.A.
+      const tMatch = reply.match(/\[TREINOS_JSON\]([\s\S]*?)\[\/TREINOS_JSON\]/);
+      if (tMatch) {
+        try { 
+          const dynWks = JSON.parse(tMatch[1]);
+          localStorage.setItem('caleb_dynamic_workouts', JSON.stringify(dynWks));
+          
+          const workoutMap = {};
+          Object.keys(dynWks).forEach(key => {
+            workoutMap[key] = { title: `Treino ${key}`, sub: `${dynWks[key].length} exercícios`, exCount: dynWks[key].length, duration: '~60 min' };
+          });
+          localStorage.setItem('caleb_workouts', JSON.stringify(workoutMap));
+        } catch(e) { console.error("Erro no TREINOS_JSON:", e); }
+      } else {
+        // Fallback antigo (via regex no texto)
+        const workoutMap = {};
+        const wkPattern = /TREINO\s+([A-E])\s*[—\-–]\s*([^\n\r]{2,60})/gi;
+        let wm;
+        while ((wm = wkPattern.exec(reply)) !== null) {
+          const key = wm[1].toUpperCase();
+          workoutMap[key] = { title: wm[2].trim(), sub: wm[2].trim(), exCount: null, duration: '~60 min' };
+        }
+        if (Object.keys(workoutMap).length > 0) {
+          localStorage.setItem('caleb_workouts', JSON.stringify(workoutMap));
+        }
       }
 
       setTimeout(() => { loadProfile(); loadHome(); showOnly('s-home'); }, 2200);
@@ -1172,6 +1201,21 @@ async function sendChatMsg(text) {
     chatHistory.push({ role:'assistant', content:reply });
     localStorage.setItem('caleb_conversation', JSON.stringify(chatHistory));
     appendBubble('chat-msgs', 'caleb', reply);
+    
+    // Verifica se a I.A. gerou um novo treino dinâmico
+    const tMatch = reply.match(/\[TREINOS_JSON\]([\s\S]*?)\[\/TREINOS_JSON\]/);
+    if (tMatch) {
+      try { 
+        const dynWks = JSON.parse(tMatch[1]);
+        localStorage.setItem('caleb_dynamic_workouts', JSON.stringify(dynWks));
+        const workoutMap = {};
+        Object.keys(dynWks).forEach(key => {
+          workoutMap[key] = { title: `Treino ${key}`, sub: `${dynWks[key].length} exercícios`, exCount: dynWks[key].length, duration: '~60 min' };
+        });
+        localStorage.setItem('caleb_workouts', JSON.stringify(workoutMap));
+        loadHome(); // recarrega a home para mostrar a alteração
+      } catch(e) { console.error("Erro no TREINOS_JSON via chat:", e); }
+    }
   } catch(e) {
     appendBubble('chat-msgs', 'caleb', `Erro: ${e.message}`);
   } finally { hideLoader(); }
@@ -1219,6 +1263,7 @@ function formatCalebMsg(text, containerId) {
     const fmtBefore = before
       .replace(/\[ONBOARDING_COMPLETO\]/g,'')
       .replace(/\[PERFIL_JSON\][\s\S]*?\[\/PERFIL_JSON\]/g,'')
+      .replace(/\[TREINOS_JSON\][\s\S]*?\[\/TREINOS_JSON\]/g,'')
       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
       .replace(/\*\*(.*?)\*\*/g,'<b>$1</b>')
       .replace(/━+/g,'<hr style="border:none;border-top:1px solid var(--border);margin:8px 0">')
@@ -1234,6 +1279,7 @@ function formatCalebMsg(text, containerId) {
   text = text
     .replace(/\[ONBOARDING_COMPLETO\]/g,'')
     .replace(/\[PERFIL_JSON\][\s\S]*?\[\/PERFIL_JSON\]/g,'')
+    .replace(/\[TREINOS_JSON\][\s\S]*?\[\/TREINOS_JSON\]/g,'')
     .trim();
 
   // Detect [Opt1 | Opt2 | Opt3] patterns and render as chips
@@ -1495,14 +1541,28 @@ function selectBorg(btn) {
 
 function finishWorkout() {
   clearInterval(workoutTimer);
-  // Salva sessão temporária (Borg será atualizado na tela de conclusão)
+  // Extrai as cargas e reps para salvar no histórico
+  const exercisesData = [];
+  document.querySelectorAll('.ex-card').forEach((card) => {
+    const name = card.querySelector('.ex-name').textContent;
+    const sets = [];
+    card.querySelectorAll('.set-row').forEach(row => {
+      const weight = row.querySelector('.weight-input')?.value;
+      const reps = row.querySelector('.reps-input')?.value;
+      const done = row.querySelector('.set-check')?.classList.contains('done');
+      sets.push({ weight, reps, done });
+    });
+    exercisesData.push({ name, sets });
+  });
+
   const sessions = (() => { try { return JSON.parse(localStorage.getItem('caleb_sessions')) || []; } catch { return []; } })();
   const currentKey = document.getElementById('wk-title')?.textContent?.match(/Treino\s+([A-E])/i)?.[1] || 'A';
   sessions.push({
     date: new Date().toISOString(),
     duration: workoutSeconds,
     avgBorg: null,
-    session: currentKey
+    session: currentKey,
+    exercises: exercisesData
   });
   localStorage.setItem('caleb_sessions', JSON.stringify(sessions));
   hideScreen('s-workout');
@@ -1631,27 +1691,49 @@ function selectFinishBorg(btn) {
 }
 
 function showWorkoutByKey(key) {
-  // Usa TEMPLATES (a estrutura de dados que existe neste arquivo)
+  // Usa o treino dinâmico gerado pela I.A. (se existir), senão cai nos TEMPLATES hardcoded
+  const dynamicStr = localStorage.getItem('caleb_dynamic_workouts');
+  const dynamicWks = dynamicStr ? JSON.parse(dynamicStr) : null;
   const proto = (userProfile && ['001','002','003'].includes(userProfile.protocolo)) ? userProfile.protocolo : '001';
-  const exercises = TEMPLATES[proto] || TEMPLATES['001'];
+  const exercises = (dynamicWks && dynamicWks[key]) ? dynamicWks[key] : (TEMPLATES[proto] || TEMPLATES['001']);
+
   const container = document.getElementById('workout-exercises');
   if (!container) { showScreen('s-workout'); return; }
 
   const titleEl = document.getElementById('wk-title');
   const subEl   = document.getElementById('wk-sub');
-  if (titleEl) titleEl.textContent = `Treino ${key} — Protocolo ${proto}`;
+  if (titleEl) titleEl.textContent = `Treino ${key}`;
   if (subEl)   subEl.textContent   = `${exercises.length} exercícios`;
 
   container.innerHTML = '';
+  
+  // Busca o histórico da última sessão para preencher as cargas e reps automaticamente
+  const sessions = (() => { try { return JSON.parse(localStorage.getItem('caleb_sessions')) || []; } catch { return []; } })();
+  const lastExecutions = {};
+  for (let i = sessions.length - 1; i >= 0; i--) {
+    const s = sessions[i];
+    if (s.exercises) {
+      s.exercises.forEach(ex => {
+        if (!lastExecutions[ex.name]) lastExecutions[ex.name] = ex.sets;
+      });
+    }
+  }
+
   exercises.forEach((ex, idx) => {
     const card = document.createElement('div');
     card.className = 'ex-card';
     let setsHtml = '';
+    const lastSets = lastExecutions[ex.name] || [];
+    
     for (let s = 1; s <= ex.sets; s++) {
+      const wVal = (lastSets[s-1] && lastSets[s-1].weight) ? `value="${lastSets[s-1].weight}"` : '';
+      const rVal = (lastSets[s-1] && lastSets[s-1].reps) ? `value="${lastSets[s-1].reps}"` : '';
+      
       setsHtml += `<div class="set-row">
         <div class="set-label">Série ${s}</div>
-        <input class="set-input" type="number" placeholder="0" min="0" step="2.5" style="width:80px"/>
-        <div class="set-unit">kg</div>
+        <input class="set-input weight-input" type="number" placeholder="kg" min="0" step="0.5" ${wVal}/>
+        <div class="set-unit" style="width:auto; margin:0 4px">×</div>
+        <input class="set-input reps-input" type="number" placeholder="reps" min="0" step="1" ${rVal}/>
         <button class="set-check" onclick="this.classList.toggle('done')">
           <svg viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3"/></svg>
         </button>
