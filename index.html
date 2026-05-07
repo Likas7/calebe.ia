@@ -375,15 +375,13 @@ textarea{resize:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loader-text{font-size:14px;color:var(--text2)}
 
-/* MARQUEE CRISTÃO */
-.verse-marquee{width:100%;overflow:hidden;background:var(--orange-dim);border-bottom:1px solid rgba(232,93,47,0.3);
-  padding:6px 0;flex-shrink:0;display:flex;align-items:center}
-.verse-marquee-inner{display:flex;gap:80px;white-space:nowrap;animation:marqueeScroll 28s linear infinite}
-.verse-marquee-inner:hover{animation-play-state:paused}
+/* VERSÍCULO DO DIA */
+.verse-marquee{width:100%;background:var(--orange-dim);border-bottom:1px solid rgba(232,93,47,0.3);
+  padding:7px 20px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .verse-item{font-size:11.5px;color:var(--orange-hi);font-weight:500;letter-spacing:0.01em;
-  display:inline-flex;align-items:center;gap:8px}
-.verse-item::before{content:'✝';font-size:10px;opacity:0.7}
-@keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+  text-align:center;animation:verseFadeIn .6s ease forwards;opacity:0}
+.verse-item::before{content:'✝ ';font-size:10px;opacity:0.7}
+@keyframes verseFadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
 /* FORM CARGAS */
 .cargas-form{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:14px;margin-top:10px}
 .cargas-title{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
@@ -969,16 +967,14 @@ const VERSES = [
 ];
 
 function initMarquee() {
-  // Sorteia versículo fixo para o dia (seed pelo dia do mês)
-  const dayIdx = new Date().getDate() % VERSES.length;
-  // Exibe 4 itens distintos em loop (duplicados para animação contínua)
-  const picks = [];
-  for (let i = 0; i < 4; i++) picks.push(VERSES[(dayIdx + i) % VERSES.length]);
-  const doubled = [...picks, ...picks]; // duplica para loop contínuo
-  const inner = `<div class="verse-marquee-inner">${doubled.map(v => `<span class="verse-item">${v}</span>`).join('')}</div>`;
+  // Versículo fixo do dia — seed pelo número do dia do ano para maior variedade
+  const now = new Date();
+  const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+  const verse = VERSES[dayOfYear % VERSES.length];
+  const html = `<span class="verse-item">${verse}</span>`;
   ['home-marquee','prog-marquee','prof-marquee'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.innerHTML = inner;
+    if (el) el.innerHTML = html;
   });
 }
 
