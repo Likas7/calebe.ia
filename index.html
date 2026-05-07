@@ -24,7 +24,7 @@
   --font-mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
   --ease:cubic-bezier(0.22,1,0.36,1);--dur:220ms;
   --radius:16px;--radius-sm:10px;--radius-xs:8px;
-  --nav-h:80px;--header-h:56px;--status-h:44px;
+  --nav-h:80px;--header-h:56px;
   --shadow-1:0 1px 0 rgba(255,255,255,0.03) inset,0 1px 2px rgba(0,0,0,0.4);
   --shadow-2:0 8px 24px rgba(0,0,0,0.5),0 1px 0 rgba(255,255,255,0.04) inset;
   --shadow-orange:0 0 0 1px rgba(232,93,47,0.3),0 10px 30px -10px rgba(232,93,47,0.5);
@@ -48,11 +48,7 @@ textarea{resize:none}
 .screen.off-up{transform:translateY(100%);opacity:0;pointer-events:none}
 .screen.off-left{transform:translateX(-20%);opacity:0;pointer-events:none}
 
-/* STATUS BAR */
-.status-bar{height:var(--status-h);display:flex;align-items:center;
-  justify-content:space-between;padding:0 24px;flex-shrink:0}
-.status-time{font-size:15px;font-weight:600}
-.status-icon{width:18px;height:10px;background:var(--text);border-radius:2px;opacity:.8}
+
 
 /* TOP BAR */
 .topbar{height:var(--header-h);display:flex;align-items:center;
@@ -371,13 +367,23 @@ textarea{resize:none}
 .report-ex{font-size:13px;color:var(--text);flex:1}
 .report-detail{font-size:12px;color:var(--text2)}
 
-/* LOADING */
+/* LOADER */
 .loader-overlay{position:fixed;inset:0;background:rgba(10,10,10,.85);z-index:200;
   display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px}
 .loader-spinner{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--orange);
   border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loader-text{font-size:14px;color:var(--text2)}
+
+/* MARQUEE CRISTÃO */
+.verse-marquee{width:100%;overflow:hidden;background:var(--orange-dim);border-bottom:1px solid rgba(232,93,47,0.3);
+  padding:6px 0;flex-shrink:0;display:flex;align-items:center}
+.verse-marquee-inner{display:flex;gap:80px;white-space:nowrap;animation:marqueeScroll 28s linear infinite}
+.verse-marquee-inner:hover{animation-play-state:paused}
+.verse-item{font-size:11.5px;color:var(--orange-hi);font-weight:500;letter-spacing:0.01em;
+  display:inline-flex;align-items:center;gap:8px}
+.verse-item::before{content:'✝';font-size:10px;opacity:0.7}
+@keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 </style>
 </head>
 <body>
@@ -385,7 +391,7 @@ textarea{resize:none}
 
 <!-- SCREEN: SPLASH -->
 <div class="screen" id="s-splash">
-  <div class="status-bar"><span class="status-time" id="t-splash">--:--</span><div class="status-icon"></div></div>
+
   <div class="topbar">
     <div class="logo">CALEB<em>.IA</em></div>
     <div class="version-pill">v1.1 M.A.X. Core <div class="live-dot"></div></div>
@@ -426,7 +432,7 @@ textarea{resize:none}
 
 <!-- SCREEN: ONBOARDING CHAT -->
 <div class="screen off" id="s-onboarding">
-  <div class="status-bar"><span class="status-time" id="t-onboarding">--:--</span><div class="status-icon"></div></div>
+
   <div class="topbar">
     <div class="logo">CALEB<em>.IA</em></div>
     <div style="font-size:12px;color:var(--text3)">Montando seu protocolo</div>
@@ -445,7 +451,7 @@ textarea{resize:none}
 
 <!-- SCREEN: HOME -->
 <div class="screen off" id="s-home">
-  <div class="status-bar"><span class="status-time" id="t-home">--:--</span><div class="status-icon"></div></div>
+  <div id="home-marquee" class="verse-marquee"></div>
   <div class="topbar">
     <div class="logo">CALEB<em>.IA</em></div>
     <div class="version-pill">v1.1 M.A.X. Core <div class="live-dot"></div></div>
@@ -509,7 +515,7 @@ textarea{resize:none}
 
 <!-- SCREEN: CHAT FLUTUANTE -->
 <div class="screen off-up" id="s-chat">
-  <div class="status-bar"><span class="status-time" id="t-chat">--:--</span><div class="status-icon"></div></div>
+
   <div class="chat-header">
     <button class="icon-btn" onclick="hideScreen('s-chat')">
       <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
@@ -534,7 +540,7 @@ textarea{resize:none}
 
 <!-- SCREEN: FAQ -->
 <div class="screen off" id="s-faq">
-  <div class="status-bar"><span class="status-time" id="t-faq">--:--</span><div class="status-icon"></div></div>
+
   <div class="chat-header">
     <button class="icon-btn" onclick="hideScreen('s-faq')">
       <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
@@ -562,7 +568,7 @@ textarea{resize:none}
 
 <!-- SCREEN: EXECUÇÃO DO TREINO -->
 <div class="screen off" id="s-workout">
-  <div class="status-bar"><span class="status-time" id="t-workout">--:--</span><div class="status-icon"></div></div>
+
   <div class="chat-header">
     <button class="icon-btn" onclick="hideScreen('s-workout')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div style="flex:1">
@@ -579,7 +585,7 @@ textarea{resize:none}
 
 <!-- SCREEN: PROGRESSO -->
 <div class="screen off" id="s-progress">
-  <div class="status-bar"><span class="status-time" id="t-progress">--:--</span><div class="status-icon"></div></div>
+  <div id="prog-marquee" class="verse-marquee"></div>
   <div class="topbar"><div class="logo">CALEB<em>.IA</em></div><div class="version-pill">v1.1 M.A.X. Core <div class="live-dot"></div></div></div>
   <div class="scroll-area" style="padding:18px 16px 40px">
     <div style="font-size:22px;font-weight:800;text-align:center;margin-bottom:6px">Seu Progresso</div>
@@ -611,7 +617,7 @@ textarea{resize:none}
       </div>
       <div class="chart-bars" id="prog-chart"></div>
       <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
-        <div class="section-label" style="margin-bottom:8px">Classificação Nuckols</div>
+        <div class="section-label" style="margin-bottom:8px"><span onclick="showTooltip(event,'Nuckols')" style="cursor:pointer;border-bottom:1px dotted var(--orange)">Classificação Nuckols</span></div>
         <div class="nuck-labels"><span>Inic.</span><span>Novato</span><span>Inter.</span><span>Avanç.</span><span>Elite</span></div>
         <div class="nuck-bar"><div class="nuck-fill" id="nuck-fill" style="width:45%"></div></div>
         <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
@@ -641,7 +647,7 @@ textarea{resize:none}
 
 <!-- SCREEN: PERFIL -->
 <div class="screen off" id="s-profile">
-  <div class="status-bar"><span class="status-time" id="t-profile">--:--</span><div class="status-icon"></div></div>
+  <div id="prof-marquee" class="verse-marquee"></div>
   <div class="topbar"><div class="logo">CALEB<em>.IA</em></div><div class="version-pill">v1.1 M.A.X. Core <div class="live-dot"></div></div></div>
   <div class="scroll-area" style="padding:24px 16px 40px">
     <div class="profile-avatar" id="prof-av">?</div>
@@ -888,7 +894,15 @@ C1: Quantos dias essa semana? C2: Quanto tempo/sessão? C3: Disposição [Ótima
 
 # REGRAS ABSOLUTAS
 NUNCA diagnostica lesões | NUNCA falha para iniciantes | NUNCA ignora limitação física
-NUNCA ultrapassa MRV | NUNCA treino sem check-in | NUNCA mais de 1 pergunta/mensagem`;
+NUNCA ultrapassa MRV | NUNCA treino sem check-in | NUNCA mais de 1 pergunta/mensagem
+
+# MOTIVAÇÃO CRISTÃ
+Quando o usuário expressar desânimo, estresse, cansaço emocional ou desistência:
+- Ofereça uma palavra de encorajamento com base cristã/protestante — concisa, genuína, sem ser piegas.
+- Use versículos bíblicos aplicáveis (Fp 4:13, Is 40:31, Dt 31:6, Hb 12:1, Nm 14:24, 1Co 15:58).
+- Tom: encorajador e humano, nunca genérico. Conecte à disciplina e constância como virtudes cristãs.
+- Exemplo de gatilhos: "estou desanimado", "não quero treinar", "to com preguiça", "to estressado", "não aguentei", "falhei".
+- Após a palavra de encorajamento, retome o assunto prático com objetividade.`;
 
 /* ════════════════════════════════════════════════════
    STATE
@@ -903,8 +917,7 @@ let workoutSeconds = 0;
    INIT
 ════════════════════════════════════════════════════ */
 window.addEventListener('load', () => {
-  updateTimes();
-  setInterval(updateTimes, 30000);
+  initMarquee();
 
   const saved = localStorage.getItem('caleb_profile');
   const onboarded = localStorage.getItem('caleb_onboarded');
@@ -919,6 +932,41 @@ window.addEventListener('load', () => {
   }
   updateChart();
 });
+
+/* ════════════════════════════════════════════════════
+   MARQUEE — LETREIRO MOTIVACIONAL CRISTÃO
+════════════════════════════════════════════════════ */
+const VERSES = [
+  'Tudo posso naquele que me fortalece. — Fp 4:13',
+  'Sede fortes e corajosos. Não temais. — Dt 31:6',
+  'O fruto do Espírito é... domínio próprio. — Gl 5:22',
+  'Honrai a Deus no vosso corpo. — 1Co 6:20',
+  'Caleb seguiu completamente ao Senhor. — Nm 14:24',
+  'Não nos cansemos de fazer o bem. — Gl 6:9',
+  'O caminho dos justos é como a luz da aurora. — Pv 4:18',
+  'Aquele que começou a boa obra em vós a completará. — Fp 1:6',
+  'A disciplina do presente momento produz fruto. — Hb 12:11',
+  'Sede firmes, inabaláveis, e sempre abundantes na obra do Senhor. — 1Co 15:58',
+  'Correi de tal maneira que possais alcançar o prêmio. — 1Co 9:24',
+  'O temor do Senhor é o princípio da sabedoria. — Pv 9:10',
+  'Confia no Senhor de todo o teu coração. — Pv 3:5',
+  'Buscai primeiro o Reino de Deus, e o mais vos será acrescentado. — Mt 6:33',
+];
+
+function initMarquee() {
+  // Sorteia versículo fixo para o dia (seed pelo dia do mês)
+  const dayIdx = new Date().getDate() % VERSES.length;
+  // Exibe 4 itens distintos em loop (duplicados para animação contínua)
+  const picks = [];
+  for (let i = 0; i < 4; i++) picks.push(VERSES[(dayIdx + i) % VERSES.length]);
+  const doubled = [...picks, ...picks]; // duplica para loop contínuo
+  const inner = `<div class="verse-marquee-inner">${doubled.map(v => `<span class="verse-item">${v}</span>`).join('')}</div>`;
+  ['home-marquee','prog-marquee','prof-marquee'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = inner;
+  });
+}
+
 
 /* ════════════════════════════════════════════════════
    TIME
@@ -1029,6 +1077,19 @@ async function sendOnboarding() {
       userProfile.onboardedAt = new Date().toISOString();
       localStorage.setItem('caleb_profile', JSON.stringify(userProfile));
       localStorage.setItem('caleb_onboarded', '1');
+
+      // Extrai metadados dos treinos A/B/C/D para seleção dinâmica na home
+      const workoutMap = {};
+      const wkPattern = /TREINO\s+([A-E])\s*[—\-–]\s*([^\n\r]{2,60})/gi;
+      let wm;
+      while ((wm = wkPattern.exec(reply)) !== null) {
+        const key = wm[1].toUpperCase();
+        workoutMap[key] = { title: wm[2].trim(), sub: wm[2].trim(), exCount: null, duration: '~60 min' };
+      }
+      if (Object.keys(workoutMap).length > 0) {
+        localStorage.setItem('caleb_workouts', JSON.stringify(workoutMap));
+      }
+
       setTimeout(() => { loadProfile(); loadHome(); showOnly('s-home'); }, 2200);
     }
   } catch(e) {
@@ -1184,6 +1245,25 @@ function loadHome() {
   const tagRir = proto === '001' ? 'RIR 2–3' : proto === '002' ? 'RIR 1' : 'RIR 0–1';
   document.getElementById('home-tag-rir').textContent = tagRir;
 
+  // Seleção dinâmica dos treinos A/B/C/D...
+  const saved = localStorage.getItem('caleb_workouts');
+  const weekRow = document.getElementById('home-week');
+  if (saved && weekRow) {
+    try {
+      const wks = JSON.parse(saved); // { A: {title, sub, exCount}, B: {...}, ... }
+      const keys = Object.keys(wks);
+      weekRow.innerHTML = keys.map((k, i) => {
+        const cls = i === 0 ? 'day-card today' : 'day-card';
+        return `<div class="${cls}" onclick="selectWorkoutDay('${k}')" style="cursor:pointer">
+          <div class="day-letter">${k}</div>
+          <div class="day-date">${wks[k].sub || ''}</div>
+        </div>`;
+      }).join('');
+      // Inicializa card com treino A
+      if (wks['A']) setHomeWorkoutCard('A', wks);
+    } catch(e) {}
+  }
+
   const sessions = JSON.parse(localStorage.getItem('caleb_sessions') || '[]');
   if (sessions.length > 0) {
     const avg = sessions.reduce((a,s)=>a+(s.avgBorg||0),0)/sessions.length;
@@ -1191,6 +1271,32 @@ function loadHome() {
     document.getElementById('home-borg-sub').textContent = 'Na zona alvo ✓';
     document.getElementById('home-borg-fill').style.width = `${(avg/10)*100}%`;
   }
+}
+
+function setHomeWorkoutCard(key, wks) {
+  const wk = wks[key];
+  if (!wk) return;
+  const titleEl = document.getElementById('home-title');
+  const subEl = document.getElementById('home-sub');
+  const exEl = document.getElementById('home-tag-ex');
+  const timeEl = document.getElementById('home-tag-time');
+  if (titleEl) titleEl.textContent = `Treino ${key}`;
+  if (subEl) subEl.textContent = wk.title || wk.sub || '';
+  if (exEl) exEl.textContent = `${wk.exCount || '?'} exercícios`;
+  if (timeEl) timeEl.textContent = wk.duration || '~60 min';
+  // Marca card ativo
+  document.querySelectorAll('#home-week .day-card').forEach(c => c.classList.remove('today'));
+  const allCards = document.querySelectorAll('#home-week .day-card');
+  allCards.forEach(c => { if (c.querySelector('.day-letter')?.textContent === key) c.classList.add('today'); });
+}
+
+function selectWorkoutDay(key) {
+  const saved = localStorage.getItem('caleb_workouts');
+  if (!saved) { showWorkout(); return; }
+  try {
+    const wks = JSON.parse(saved);
+    setHomeWorkoutCard(key, wks);
+  } catch(e) { showWorkout(); }
 }
 
 /* ════════════════════════════════════════════════════
@@ -1370,7 +1476,7 @@ function handleKey(e, who) { if (e.key==='Enter' && !e.shiftKey) { e.preventDefa
 
 function resetAll() {
   if (!confirm('Isso vai apagar seu protocolo e histórico. Confirma?')) return;
-  ['caleb_profile','caleb_onboarded','caleb_conversation','caleb_sessions'].forEach(k => localStorage.removeItem(k));
+  ['caleb_profile','caleb_onboarded','caleb_conversation','caleb_sessions','caleb_workouts'].forEach(k => localStorage.removeItem(k));
   userProfile = {}; onboardingHistory = []; chatHistory = []; chatInited = false;
   document.getElementById('chat-msgs').innerHTML = '';
   showOnly('s-splash');
@@ -1463,7 +1569,8 @@ function showWorkoutByKey(key) {
 function showTooltip(event,term) {
   const TIPS={
     'RIR':'RIR = Repetições em Reserva. Quantas reps você ainda conseguiria antes de falhar. RIR 2 = parou 2 antes do limite.',
-    'Borg':'Escala de Borg CR10: percepção de esforço de 1 a 10. 1 = muito leve, 10 = máximo absoluto.',
+    'Borg':'Escala de Borg CR10: percepção de esforço de 1 a 10. 1 = muito leve, 10 = máximo absoluto. Use para calibrar o volume sem tecnologia.',
+    'Nuckols':'Classificação de Nuckols: mede a força relativa dividindo a carga pelo peso corporal. Ex: levantar 1,5× seu peso no supino = Intermediário. Referências: Iniciante <0,75× | Novato <1,0× | Intermediário <1,5× | Avançado <2,0× | Elite 2,0×+. Criada por Greg Nuckols (Stronger by Science).',
     'Drop-set':'Reduz a carga logo após a última série e continua sem descanso.',
     'Rest-pause':'Pausa de 10 a 20 segundos dentro da série para conseguir mais repetições.',
     'MEV':'Mínimo Eficaz — mínimo de séries por músculo por semana para ter resultado.',
